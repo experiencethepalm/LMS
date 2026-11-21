@@ -1,0 +1,69 @@
+{
+  "_note": "Gated content: served only to verified visitors by the Worker. Anything marked TBC must be filled in before launch. Do NOT add Skyvillas, penthouses or floors above 16 until released.",
+  "project": {
+    "name": "The Palm Unity",
+    "tagline": "Rising Above Kudasan, Rooted in Zen Living",
+    "location": "Kudasan, Gandhinagar",
+    "developer": "The Palm Group",
+    "type": "Residential apartments",
+    "possession": "TBC",
+    "rera": "TBC — RERA registered; number to be added",
+    "about": "The Palm Unity is a Zen Living address by The Palm Group in Kudasan, Gandhinagar — spacious 3 and 4 BHK homes crafted for an exclusive community, with sky bridges linking the towers, a resort-style pool deck and The Sky Hall on the 20th floor."
+  },
+  "highlights": [
+    "Spacious 3 & 4 BHK homes from 314 to 463 sq.yds super built-up",
+    "Sky bridges connecting every tower, above a resort-style pool deck",
+    "Cantilevered balconies that project beyond the facade for open views",
+    "3 basement levels of parking — the ground floor stays for people",
+    "Covered porte-cochère with pick-up & drop-off zone and valet parking",
+    "The Sky Hall — a banquet hall on the 20th floor"
+  ],
+  "gallery": [
+    { "src": "assets/img/gallery-01.jpg", "caption": "Elevation" },
+    { "src": "assets/img/gallery-02.jpg", "caption": "Sky bridges & pool deck" },
+    { "src": "assets/img/gallery-03.jpg", "caption": "Terrace garden" },
+    { "src": "assets/img/gallery-04.jpg", "caption": "Porte-cochère" },
+    { "src": "assets/img/gallery-05.jpg", "caption": "Cantilevered balconies" },
+    { "src": "assets/img/gallery-06.jpg", "caption": "Entrance porch" }
+  ],
+  "walkthrough": { "youtubeId": "", "note": "TBC — add YouTube video ID (unlisted is fine)" },
+  "floorplans": [
+    { "id": "pure",  "name": "Pure",  "config": "3 BHK", "sbAreaSqYd": 314, "parking": 2, "image": "assets/img/plan-pure.jpg" },
+    { "id": "bliss", "name": "Bliss", "config": "3 BHK", "sbAreaSqYd": 350, "parking": 2, "image": "assets/img/plan-bliss.jpg" },
+    { "id": "zeal",  "name": "Zeal",  "config": "4 BHK", "sbAreaSqYd": 429, "parking": 3, "image": "assets/img/plan-zeal.jpg" },
+    { "id": "nova",  "name": "Nova",  "config": "4 BHK", "sbAreaSqYd": 463, "parking": 3, "image": "assets/img/plan-nova.jpg" }
+  ],
+  "paymentPlan": {
+    "note": "TBC — replace with the approved milestone schedule",
+    "milestones": [
+      { "stage": "Booking", "percent": null },
+      { "stage": "Construction milestones", "percent": null },
+      { "stage": "Possession", "percent": null }
+    ]
+  },
+  "amenities": [
+    { "group": "Wellness & Fitness", "items": ["The Fitness Studio", "The Pool Deck", "Outdoor Sports Court", "Garden Walk"] },
+    { "group": "Leisure", "items": ["Cinema Room", "Indoor Games Room", "Recreation Room", "Kid's Play Zone", "The Julla Deck"] },
+    { "group": "Community & Work", "items": ["The Sky Hall", "The Sky Garden", "The Work Lounge", "Guest Suites"] }
+  ],
+  "specifications": [
+    { "item": "Structure", "detail": "TBC" },
+    { "item": "Flooring", "detail": "TBC" },
+    { "item": "Kitchen", "detail": "TBC" },
+    { "item": "Doors & windows", "detail": "TBC" },
+    { "item": "Bathrooms", "detail": "TBC" },
+    { "item": "Electrical", "detail": "TBC" },
+    { "item": "Elevators", "detail": "TBC" }
+  ],
+  "location": {
+    "mapsUrl": "https://maps.app.goo.gl/v7so8DxPx3hQxj836",
+    "embedQuery": "The Palm Unity Kudasan Gandhinagar",
+    "landmarks": [
+      { "group": "Business hubs", "places": [ { "name": "GIFT City", "km": null, "mins": null }, { "name": "Infocity", "km": null, "mins": null } ] },
+      { "group": "Education", "places": [ { "name": "TBC", "km": null, "mins": null } ] },
+      { "group": "Hospitals", "places": [ { "name": "TBC", "km": null, "mins": null } ] },
+      { "group": "Connectivity", "places": [ { "name": "Ahmedabad Airport", "km": null, "mins": null }, { "name": "Nearest metro station (TBC)", "km": null, "mins": null } ] }
+    ]
+  },
+  "brochure": { "url": "", "note": "TBC — PDF link (e.g. assets/unity-brochure.pdf or a Cloudflare R2 URL)" }
+}

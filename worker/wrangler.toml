@@ -1,0 +1,33 @@
+name = "palm-unity-api"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+# Lets the Worker import knowledge.md as text and unity.json as data
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "palm-leads"
+database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create"
+
+[vars]
+# Where the project page is hosted (used for salesperson share links)
+SITE_URL = "https://YOUR-GITHUB-USERNAME.github.io/palm-unity/"
+# Comma-separated origins allowed to call this API (your GitHub Pages origin + local testing)
+ALLOWED_ORIGINS = "https://YOUR-GITHUB-USERNAME.github.io,http://localhost:8080"
+# dev | whatsapp | msg91   — keep "dev" until the WhatsApp template is approved
+OTP_PROVIDER = "dev"
+WA_TEMPLATE_NAME = "unity_otp"
+WA_TEMPLATE_LANG = "en"
+AI_MODEL = "claude-haiku-5-5"
+
+# Secrets — set with `npx wrangler secret put NAME` (never commit them):
+#   TOKEN_SECRET        long random string (signs logins)
+#   ADMIN_PASSWORD      owner dashboard password
+#   ANTHROPIC_API_KEY   for the AI assistant
+#   WA_ACCESS_TOKEN, WA_PHONE_NUMBER_ID      if OTP_PROVIDER = "whatsapp"
+#   MSG91_AUTH_KEY, MSG91_TEMPLATE_ID        if OTP_PROVIDER = "msg91"
+#   ALERT_WEBHOOK_URL   optional: Google Chat/Slack webhook for visit & callback alerts
