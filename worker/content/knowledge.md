@@ -7,8 +7,8 @@ After editing, redeploy the Worker (`npx wrangler deploy`).
 - Name: The Palm Unity, by The Palm Group (Gandhinagar-based developer).
 - Location: Kudasan, Gandhinagar, Gujarat. Google Maps: https://maps.app.goo.gl/v7so8DxPx3hQxj836
 - Theme: "Zen Living". Taglines: "Crafted for Exclusive Community" and "Rising Above Kudasan, Rooted in Zen Living".
-- RERA: registered. (Number: TBC — until added, say the sales team will share it.)
-- Possession: TBC — until added, say the sales team will confirm the timeline.
+- RERA: registered under GujRERA. RERA No: PR/GJ/GANDHINAGAR/GANDHINAGAR/Gandhinagar Municipal Corporation/RAA17286/210826/311232
+- Possession: December 2030.
 
 ## Homes currently offered
 - 3 BHK — "Pure" (314 sq.yds super built-up) and "Bliss" (350 sq.yds). 2 allocated parkings.
