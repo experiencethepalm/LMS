@@ -127,7 +127,7 @@
       const b = new maplibregl.LngLatBounds(home, home);
       pts.forEach((p) => b.extend(p));
       const pad = window.innerWidth < 600 ? 40 : 70;
-      map.fitBounds(b, { padding: { top: pad, bottom: pad + 30, left: pad, right: pad }, maxZoom, duration: 700 });
+      map.fitBounds(b, { padding: { top: pad + (card.classList.contains('hidden') ? 0 : 70), bottom: pad, left: pad, right: pad }, maxZoom, duration: 700 });
     };
     const showCard = (html) => { card.innerHTML = html; card.classList.remove('hidden'); };
 
@@ -141,6 +141,7 @@
         showCard(`<div class="mc-icon">${svg(p.icon, 18)}</div><div><b>${esc(p.name)}</b><span>${fmtKm(p.km)} · about ${fmtMin(p.mins)} by car</span>${p.note ? `<small>${esc(p.note)}</small>` : ''}</div>`);
         emit(`place:${p.id}`);
         if (!map) return;
+        // card is already visible here, so fit() leaves room for it
         clearRoute();
         const coords = p.route && p.route.length > 1 ? p.route : [home, [p.lng, p.lat]];
         map.getSource('route').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: coords } });
