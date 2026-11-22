@@ -15,9 +15,9 @@ database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create"
 
 [vars]
 # Where the project page is hosted (used for salesperson share links)
-SITE_URL = "https://YOUR-GITHUB-USERNAME.github.io/palm-unity/"
+SITE_URL = "https://experiencethepalm.github.io/LMS/"
 # Comma-separated origins allowed to call this API (your GitHub Pages origin + local testing)
-ALLOWED_ORIGINS = "https://YOUR-GITHUB-USERNAME.github.io,http://localhost:8080"
+ALLOWED_ORIGINS = "https://experiencethepalm.github.io,http://localhost:8080"
 # dev | whatsapp | msg91   — keep "dev" until the WhatsApp template is approved
 OTP_PROVIDER = "dev"
 WA_TEMPLATE_NAME = "unity_otp"
