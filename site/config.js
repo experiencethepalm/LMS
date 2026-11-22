@@ -1,7 +1,7 @@
 // Edit these before publishing.
 window.UNITY_CONFIG = {
   // Your Cloudflare Worker URL (from `npx wrangler deploy`), no trailing slash
-  API_BASE: 'http://localhost:8787',
+  API_BASE: 'https://palm-unity-api.withered-sun-cb14.workers.dev',
   // Sales contact shown on the page
   SALES_PHONE: '+910000000000',
   SALES_WHATSAPP: '910000000000', // digits only, with country code
