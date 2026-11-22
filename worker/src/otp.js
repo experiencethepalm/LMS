@@ -8,22 +8,31 @@ export async function sendOtp(env, phone10, code) {
   const provider = (env.OTP_PROVIDER || 'dev').toLowerCase();
 
   if (provider === 'wati') {
-    // WATI_API_ENDPOINT looks like https://live-mt-server.wati.io/123456 (Wati → API Docs)
-    const base = String(env.WATI_API_ENDPOINT || '').replace(/\/+$/, '');
+    // Wati API v3 (Developers → API keys & docs). Key needs the messagetemplatev3:write scope (or full access).
+    const base = String(env.WATI_API_ENDPOINT || 'https://live-mt-server.wati.io').replace(/\/api\/ext\/v3.*$/, '').replace(/\/+$/, '');
     const token = String(env.WATI_ACCESS_TOKEN || '').replace(/^Bearer\s+/i, '');
-    const res = await fetch(`${base}/api/v1/sendTemplateMessage?whatsappNumber=91${phone10}`, {
+    const res = await fetch(`${base}/api/ext/v3/messageTemplates/send`, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({
         template_name: env.WATI_TEMPLATE_NAME || 'unity_otp',
-        broadcast_name: 'unity_otp',
-        parameters: [{ name: '1', value: code }],
+        broadcast_name: `unity_otp_${new Date().toISOString().slice(0, 10)}`,
+        recipients: [
+          {
+            phone_number: `91${phone10}`,
+            // Name of the template's code variable in Wati; change WATI_OTP_PARAM in wrangler.toml if Wati uses another
+            custom_params: [{ name: env.WATI_OTP_PARAM || '1', value: code }],
+          },
+        ],
       }),
     });
     const text = await res.text();
     let data = {};
     try { data = JSON.parse(text); } catch {}
-    if (!res.ok || data.result === false) throw new Error(`Wati send failed: ${res.status} ${text.slice(0, 300)}`);
+    const recipientErrors = (data.recipients || []).flatMap((r) => r.errors || []);
+    if (!res.ok || data.success === false || recipientErrors.length) {
+      throw new Error(`Wati send failed: ${res.status} ${(data.error || recipientErrors.join('; ') || text).slice(0, 300)}`);
+    }
     return { channel: 'whatsapp' };
   }
 
