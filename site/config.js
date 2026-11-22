@@ -8,5 +8,4 @@ window.UNITY_CONFIG = {
   WHATSAPP_TEXT: "Hi, I'm interested in The Palm Unity, Kudasan. Please share details.",
   HELP_EMAIL: 'info@thepalm.in',
   PRIVACY_URL: 'privacy.html', // buyer privacy notice in this repo — have it reviewed
-  HERO_IMAGE: 'assets/img/hero.jpg',
 };

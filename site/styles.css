@@ -190,3 +190,9 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .bar-actions { gap: 6px; }
 .bar-actions .btn.sm { padding: 10px 14px; white-space: nowrap; }
 @media (max-width: 360px) { .ask span.label { display: none; } }
+
+/* --- real renders --- */
+.hero-img { aspect-ratio: 16 / 9; }
+.gallery figure { position: relative; }
+.gallery figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 8px 6px; font-size: 11.5px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.55)); }
+.gallery figure.missing figcaption { display: none; }

@@ -19,51 +19,260 @@
     "The Sky Hall — a banquet hall on the 20th floor"
   ],
   "gallery": [
-    { "src": "assets/img/gallery-01.jpg", "caption": "Elevation" },
-    { "src": "assets/img/gallery-02.jpg", "caption": "Sky bridges & pool deck" },
-    { "src": "assets/img/gallery-03.jpg", "caption": "Terrace garden" },
-    { "src": "assets/img/gallery-04.jpg", "caption": "Porte-cochère" },
-    { "src": "assets/img/gallery-05.jpg", "caption": "Cantilevered balconies" },
-    { "src": "assets/img/gallery-06.jpg", "caption": "Entrance porch" }
+    {
+      "src": "assets/img/the-palm-unity-kudasan-gandhinagar-elevation.webp",
+      "thumb": "assets/img/the-palm-unity-kudasan-gandhinagar-elevation-800.webp",
+      "w": 1920,
+      "h": 1923,
+      "alt": "Front elevation of The Palm Unity residential towers in Kudasan, Gandhinagar at dusk",
+      "caption": "Elevation"
+    },
+    {
+      "src": "assets/img/the-palm-unity-tower-low-angle-view.webp",
+      "thumb": "assets/img/the-palm-unity-tower-low-angle-view-800.webp",
+      "w": 1920,
+      "h": 1920,
+      "alt": "Low-angle view of The Palm Unity tower with lit balconies against the evening sky",
+      "caption": "The towers"
+    },
+    {
+      "src": "assets/img/the-palm-unity-cantilevered-balconies.webp",
+      "thumb": "assets/img/the-palm-unity-cantilevered-balconies-800.webp",
+      "w": 1920,
+      "h": 1080,
+      "alt": "Close-up of The Palm Unity facade showing cantilevered balconies with glass railings",
+      "caption": "Cantilevered balconies"
+    },
+    {
+      "src": "assets/img/the-palm-unity-entrance-signage-water-feature.webp",
+      "thumb": "assets/img/the-palm-unity-entrance-signage-water-feature-800.webp",
+      "w": 1920,
+      "h": 1080,
+      "alt": "The Palm Unity entrance with illuminated signage and water feature, Kudasan",
+      "caption": "Entrance"
+    },
+    {
+      "src": "assets/img/the-palm-unity-entrance-lobby.webp",
+      "thumb": "assets/img/the-palm-unity-entrance-lobby-800.webp",
+      "w": 1920,
+      "h": 1080,
+      "alt": "Landscaped entrance lobby of The Palm Unity with lantern lighting and lattice screens",
+      "caption": "Entrance lobby"
+    },
+    {
+      "src": "assets/img/the-palm-unity-porte-cochere-drop-off.webp",
+      "thumb": "assets/img/the-palm-unity-porte-cochere-drop-off-800.webp",
+      "w": 1920,
+      "h": 1080,
+      "alt": "Covered porte-cochere and drop-off zone at The Palm Unity, Gandhinagar",
+      "caption": "Porte-cochère & drop-off"
+    },
+    {
+      "src": "assets/img/the-palm-unity-pool-deck-lounge.webp",
+      "thumb": "assets/img/the-palm-unity-pool-deck-lounge-800.webp",
+      "w": 1920,
+      "h": 1080,
+      "alt": "The Pool Deck and lounge at The Palm Unity, surrounded by landscaped gardens",
+      "caption": "The Pool Deck"
+    },
+    {
+      "src": "assets/img/the-palm-unity-pool-deck-elevated-walkway.webp",
+      "thumb": "assets/img/the-palm-unity-pool-deck-elevated-walkway-800.webp",
+      "w": 1920,
+      "h": 1080,
+      "alt": "Pool deck with elevated walkway above at The Palm Unity, Kudasan",
+      "caption": "Pool deck & walkway"
+    },
+    {
+      "src": "assets/img/the-palm-unity-sky-garden-terrace-lawn.webp",
+      "thumb": "assets/img/the-palm-unity-sky-garden-terrace-lawn-800.webp",
+      "w": 1920,
+      "h": 1080,
+      "alt": "The Sky Garden terrace lawn with seating and lanterns at The Palm Unity",
+      "caption": "The Sky Garden"
+    },
+    {
+      "src": "assets/img/the-palm-unity-sky-garden-gazebo.webp",
+      "thumb": "assets/img/the-palm-unity-sky-garden-gazebo-800.webp",
+      "w": 1920,
+      "h": 1080,
+      "alt": "Gazebo lounge in The Sky Garden at The Palm Unity, Gandhinagar",
+      "caption": "Sky Garden gazebo"
+    }
   ],
-  "walkthrough": { "youtubeId": "", "note": "TBC — add YouTube video ID (unlisted is fine)" },
+  "walkthrough": {
+    "youtubeId": "",
+    "note": "TBC — add YouTube video ID (unlisted is fine)"
+  },
   "floorplans": [
-    { "id": "pure",  "name": "Pure",  "config": "3 BHK", "sbAreaSqYd": 314, "parking": 2, "image": "assets/img/plan-pure.jpg" },
-    { "id": "bliss", "name": "Bliss", "config": "3 BHK", "sbAreaSqYd": 350, "parking": 2, "image": "assets/img/plan-bliss.jpg" },
-    { "id": "zeal",  "name": "Zeal",  "config": "4 BHK", "sbAreaSqYd": 429, "parking": 3, "image": "assets/img/plan-zeal.jpg" },
-    { "id": "nova",  "name": "Nova",  "config": "4 BHK", "sbAreaSqYd": 463, "parking": 3, "image": "assets/img/plan-nova.jpg" }
+    {
+      "id": "pure",
+      "name": "Pure",
+      "config": "3 BHK",
+      "sbAreaSqYd": 314,
+      "parking": 2,
+      "image": "assets/img/plan-pure.jpg"
+    },
+    {
+      "id": "bliss",
+      "name": "Bliss",
+      "config": "3 BHK",
+      "sbAreaSqYd": 350,
+      "parking": 2,
+      "image": "assets/img/plan-bliss.jpg"
+    },
+    {
+      "id": "zeal",
+      "name": "Zeal",
+      "config": "4 BHK",
+      "sbAreaSqYd": 429,
+      "parking": 3,
+      "image": "assets/img/plan-zeal.jpg"
+    },
+    {
+      "id": "nova",
+      "name": "Nova",
+      "config": "4 BHK",
+      "sbAreaSqYd": 463,
+      "parking": 3,
+      "image": "assets/img/plan-nova.jpg"
+    }
   ],
   "paymentPlan": {
     "note": "TBC — replace with the approved milestone schedule",
     "milestones": [
-      { "stage": "Booking", "percent": null },
-      { "stage": "Construction milestones", "percent": null },
-      { "stage": "Possession", "percent": null }
+      {
+        "stage": "Booking",
+        "percent": null
+      },
+      {
+        "stage": "Construction milestones",
+        "percent": null
+      },
+      {
+        "stage": "Possession",
+        "percent": null
+      }
     ]
   },
   "amenities": [
-    { "group": "Wellness & Fitness", "items": ["The Fitness Studio", "The Pool Deck", "Outdoor Sports Court", "Garden Walk"] },
-    { "group": "Leisure", "items": ["Cinema Room", "Indoor Games Room", "Recreation Room", "Kid's Play Zone", "The Julla Deck"] },
-    { "group": "Community & Work", "items": ["The Sky Hall", "The Sky Garden", "The Work Lounge", "Guest Suites"] }
+    {
+      "group": "Wellness & Fitness",
+      "items": [
+        "The Fitness Studio",
+        "The Pool Deck",
+        "Outdoor Sports Court",
+        "Garden Walk"
+      ]
+    },
+    {
+      "group": "Leisure",
+      "items": [
+        "Cinema Room",
+        "Indoor Games Room",
+        "Recreation Room",
+        "Kid's Play Zone",
+        "The Julla Deck"
+      ]
+    },
+    {
+      "group": "Community & Work",
+      "items": [
+        "The Sky Hall",
+        "The Sky Garden",
+        "The Work Lounge",
+        "Guest Suites"
+      ]
+    }
   ],
   "specifications": [
-    { "item": "Structure", "detail": "TBC" },
-    { "item": "Flooring", "detail": "TBC" },
-    { "item": "Kitchen", "detail": "TBC" },
-    { "item": "Doors & windows", "detail": "TBC" },
-    { "item": "Bathrooms", "detail": "TBC" },
-    { "item": "Electrical", "detail": "TBC" },
-    { "item": "Elevators", "detail": "TBC" }
+    {
+      "item": "Structure",
+      "detail": "TBC"
+    },
+    {
+      "item": "Flooring",
+      "detail": "TBC"
+    },
+    {
+      "item": "Kitchen",
+      "detail": "TBC"
+    },
+    {
+      "item": "Doors & windows",
+      "detail": "TBC"
+    },
+    {
+      "item": "Bathrooms",
+      "detail": "TBC"
+    },
+    {
+      "item": "Electrical",
+      "detail": "TBC"
+    },
+    {
+      "item": "Elevators",
+      "detail": "TBC"
+    }
   ],
   "location": {
     "mapsUrl": "https://maps.app.goo.gl/v7so8DxPx3hQxj836",
     "embedQuery": "The Palm Unity Kudasan Gandhinagar",
     "landmarks": [
-      { "group": "Business hubs", "places": [ { "name": "GIFT City", "km": null, "mins": null }, { "name": "Infocity", "km": null, "mins": null } ] },
-      { "group": "Education", "places": [ { "name": "TBC", "km": null, "mins": null } ] },
-      { "group": "Hospitals", "places": [ { "name": "TBC", "km": null, "mins": null } ] },
-      { "group": "Connectivity", "places": [ { "name": "Ahmedabad Airport", "km": null, "mins": null }, { "name": "Nearest metro station (TBC)", "km": null, "mins": null } ] }
+      {
+        "group": "Business hubs",
+        "places": [
+          {
+            "name": "GIFT City",
+            "km": null,
+            "mins": null
+          },
+          {
+            "name": "Infocity",
+            "km": null,
+            "mins": null
+          }
+        ]
+      },
+      {
+        "group": "Education",
+        "places": [
+          {
+            "name": "TBC",
+            "km": null,
+            "mins": null
+          }
+        ]
+      },
+      {
+        "group": "Hospitals",
+        "places": [
+          {
+            "name": "TBC",
+            "km": null,
+            "mins": null
+          }
+        ]
+      },
+      {
+        "group": "Connectivity",
+        "places": [
+          {
+            "name": "Ahmedabad Airport",
+            "km": null,
+            "mins": null
+          },
+          {
+            "name": "Nearest metro station (TBC)",
+            "km": null,
+            "mins": null
+          }
+        ]
+      }
     ]
   },
-  "brochure": { "url": "", "note": "TBC — PDF link (e.g. assets/unity-brochure.pdf or a Cloudflare R2 URL)" }
+  "brochure": {
+    "url": "",
+    "note": "TBC — PDF link (e.g. assets/unity-brochure.pdf or a Cloudflare R2 URL)"
+  }
 }

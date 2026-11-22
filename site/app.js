@@ -19,7 +19,7 @@
   let phone = '';
 
   // ---------- static bits ----------
-  setImg($('#heroImg'), C.HERO_IMAGE);
+  setImg($('#heroImg'));
   $('#privacyLink').href = C.PRIVACY_URL;
   const tel = `tel:${C.SALES_PHONE}`;
   const wa = `https://wa.me/${C.SALES_WHATSAPP}?text=${encodeURIComponent(C.WHATSAPP_TEXT)}`;
@@ -33,10 +33,12 @@
 
   function setImg(img, src) {
     const box = img.closest('.ph');
-    box?.classList.add('missing');
-    img.onload = () => box?.classList.remove('missing');
-    img.onerror = () => box?.classList.add('missing');
-    if (src) img.src = src;
+    const ok = () => box?.classList.remove('missing');
+    const fail = () => box?.classList.add('missing');
+    img.onload = ok;
+    img.onerror = fail;
+    if (src) { box?.classList.add('missing'); img.src = src; }
+    else if (img.complete) (img.naturalWidth ? ok : fail)();
   }
 
   async function api(path, opts = {}) {
@@ -133,7 +135,7 @@
 
       <div class="sec" id="gallery" data-track="gallery">
         <h2>Gallery</h2>
-        <div class="gallery">${c.gallery.map((g, i) => `<figure class="ph" data-label="${esc(g.caption)}" data-gal="${i}"><img alt="${esc(g.caption)}" data-src="${esc(g.src)}" loading="lazy" /></figure>`).join('')}</div>
+        <div class="gallery">${c.gallery.map((g, i) => `<figure class="ph" data-label="${esc(g.caption)}" data-gal="${i}"><img alt="${esc(g.alt || g.caption)}" data-src="${esc(g.thumb || g.src)}"${g.thumb ? ` data-srcset="${esc(g.thumb)} 800w, ${esc(g.src)} 1920w" sizes="(max-width: 760px) 66vw, 500px"` : ''} width="${g.w || 800}" height="${g.h || 450}" loading="lazy" decoding="async" /><figcaption>${esc(g.caption)}</figcaption></figure>`).join('')}</div>
         ${yt ? `<h3 style="margin-top:22px">Walkthrough</h3><div class="video" id="walkthrough"><iframe src="https://www.youtube-nocookie.com/embed/${esc(yt)}" title="The Palm Unity walkthrough" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : ''}
       </div>
 
@@ -189,7 +191,7 @@
       </div>`;
     $('#project').classList.remove('hidden');
 
-    $$('#project img[data-src]').forEach((img) => setImg(img, img.dataset.src));
+    $$('#project img[data-src]').forEach((img) => { if (img.dataset.srcset) img.srcset = img.dataset.srcset; setImg(img, img.dataset.src); });
     $$('#planFilter button').forEach((b) => (b.onclick = () => {
       $$('#planFilter button').forEach((x) => x.classList.toggle('on', x === b));
       $$('.plan').forEach((pl) => pl.classList.toggle('hidden', !!b.dataset.f && pl.dataset.config !== b.dataset.f));
@@ -202,7 +204,7 @@
     $$('[data-gal]').forEach((fig) => (fig.onclick = () => {
       const g = c.gallery[fig.dataset.gal];
       queue({ type: 'gallery_open', target: String(fig.dataset.gal) });
-      openLightbox(g.src, g.caption);
+      openLightbox(g.src, g.caption, g.alt);
     }));
     $('#brochureBtn')?.addEventListener('click', () => queue({ type: 'brochure_open', target: 'brochure' }));
     $('#visitCta').onclick = () => openVisit('site_visit');
@@ -258,9 +260,9 @@
   $$('[data-close]').forEach((b) => (b.onclick = closeAll));
   $('#scrim').onclick = closeAll;
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
-  function openLightbox(src, caption) {
+  function openLightbox(src, caption, alt) {
     const lb = $('#lightbox');
-    $('img', lb).src = src; $('p', lb).textContent = caption;
+    $('img', lb).src = src; $('img', lb).alt = alt || caption; $('p', lb).textContent = caption;
     $('img', lb).onerror = () => { $('img', lb).removeAttribute('src'); $('p', lb).textContent = `${caption} — image coming soon`; };
     lb.classList.remove('hidden');
   }
