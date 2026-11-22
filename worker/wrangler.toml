@@ -19,7 +19,7 @@ SITE_URL = "https://experiencethepalm.github.io/LMS/"
 # Comma-separated origins allowed to call this API (your GitHub Pages origin + local testing)
 ALLOWED_ORIGINS = "https://experiencethepalm.github.io,http://localhost:8080"
 # dev | wati | whatsapp | msg91   — keep "dev" until the Wati OTP template is approved
-OTP_PROVIDER = "dev"
+OTP_PROVIDER = "wati"
 WATI_TEMPLATE_NAME = "unity_otp"
 WATI_OTP_PARAM = "1"
 WA_TEMPLATE_NAME = "unity_otp"
