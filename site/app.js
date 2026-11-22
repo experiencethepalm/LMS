@@ -95,6 +95,29 @@
       .catch((ex) => { if (ex.status === 401) { store.del('unity_token'); token = null; } });
   }
 
+
+  // Line icons for amenities (matched by keyword, so new amenities still get a sensible icon)
+  const AMENITY_ICONS = [
+    [/fitness|gym/i, '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>'],
+    [/pool|swim/i, '<path d="M3 17c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0 3-1 4.5 0M3 20.5c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0 3-1 4.5 0M8 14V5.5a2 2 0 0 1 4 0M16 14V5.5a2 2 0 0 0-4 0M8 9h8"/>'],
+    [/sports|court/i, '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.3 3.8 5.1 3.8 8.5s-1.3 6.2-3.8 8.5M12 3.5C9.5 5.8 8.2 8.6 8.2 12s1.3 6.2 3.8 8.5"/>'],
+    [/garden walk|walk/i, '<path d="M8 20.5c-1.7 0-2.5-1.2-2.5-3s.8-3 2.5-3 2.5 1.3 2.5 3-.8 3-2.5 3ZM16 12.5c-1.7 0-2.5-1.2-2.5-3s.8-3 2.5-3 2.5 1.3 2.5 3-.8 3-2.5 3ZM7 11.5l1-1.8M17 4.5 16 6"/>'],
+    [/cinema|theatre|movie/i, '<rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="M3.5 9.5h17M8 5.5l-2 4M13 5.5l-2 4M18 5.5l-2 4"/>'],
+    [/games/i, '<rect x="3" y="8" width="18" height="9" rx="4.5"/><path d="M7.5 11v3M6 12.5h3M15.5 11.5h.01M17.5 13.5h.01"/>'],
+    [/recreation|lounge|club/i, '<path d="M4.5 18.5v-5a2 2 0 0 1 4 0v2h7v-2a2 2 0 0 1 4 0v5M8.5 13.5V9a3.5 3.5 0 0 1 7 0v4.5M4.5 18.5h15"/>'],
+    [/kid|play|child/i, '<path d="M4 20.5 9 4.5h6l5 16M9 4.5h6M12 10v6.5"/><path d="M10 16.5h4"/>'],
+    [/julla|jhula|swing/i, '<path d="M4 3.5h16M7.5 3.5v11M16.5 3.5v11M6 14.5h12v2.5H6z"/>'],
+    [/hall|banquet/i, '<path d="M12 3.5v3M7 6.5h10l-1.5 4h-7L7 6.5ZM8.5 10.5 7 14.5h10l-1.5-4M12 14.5v6M8.5 20.5h7"/>'],
+    [/sky garden|garden|park/i, '<path d="M12 21v-6"/><path d="M12 15c-3.6 0-6-2.4-6-5.6C6 6 8.7 3.5 12 3.5S18 6 18 9.4C18 12.6 15.6 15 12 15Z"/>'],
+    [/work|office|co-?work/i, '<rect x="4" y="5" width="16" height="10.5" rx="1.5"/><path d="M2.5 19h19M10 19l.5-3.5h3L14 19"/>'],
+    [/guest|suite|stay/i, '<path d="M3.5 18.5V7M3.5 14h17v4.5M20.5 14v-2.5a3 3 0 0 0-3-3h-7v5.5"/><circle cx="7" cy="11" r="1.8"/>'],
+  ];
+  const amenityIcon = (name) => {
+    const hit = AMENITY_ICONS.find(([re]) => re.test(name));
+    const path = hit ? hit[1] : '<path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.9L12 3.5Z"/>';
+    return `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
+  };
+
   // ---------- render unlocked page ----------
   const SECTIONS = [
     ['overview', 'Overview'], ['highlights', 'Highlights'], ['gallery', 'Gallery'], ['floorplans', 'Floor plans'],
@@ -160,7 +183,7 @@
 
       <div class="sec" id="amenities" data-track="amenities">
         <h2>Amenities</h2>
-        ${c.amenities.map((g) => `<div class="amen-group"><p class="eyebrow">${esc(g.group)}</p><div class="amen">${g.items.map((a) => `<span>${esc(a)}</span>`).join('')}</div></div>`).join('')}
+        ${c.amenities.map((g) => `<div class="amen-group"><p class="eyebrow">${esc(g.group)}</p><div class="amen">${g.items.map((a) => `<div class="amen-item"><span class="amen-ic">${amenityIcon(a)}</span><span class="amen-t">${esc(a)}</span></div>`).join('')}</div></div>`).join('')}
       </div>
 
       <div class="sec" id="specifications" data-track="specifications">
