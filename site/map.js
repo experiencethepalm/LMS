@@ -106,6 +106,8 @@
       map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: '© OpenStreetMap contributors' }));
       new maplibregl.Marker({ element: markerEl('um-home', 'unity', 'The Palm Unity'), anchor: 'bottom' }).setLngLat(home).addTo(map);
       await new Promise((r) => (map.loaded() ? r() : map.once('load', r)));
+      // keep the credits collapsed to an (i) button so they don't cover the map
+      mapEl.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show');
       map.addSource('route', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       map.addLayer({ id: 'route-casing', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#FFFFFF', 'line-width': 8 } });
       map.addLayer({ id: 'route', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': T.green, 'line-width': 4.5 } });
