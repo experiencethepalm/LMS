@@ -245,3 +245,12 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .um-pop b { display: block; }
 .um-pop span { color: var(--green); font-weight: 600; font-size: 12.5px; }
 .maplibregl-ctrl-attrib { font-size: 10px; }
+
+/* --- gallery viewer arrows --- */
+.lightbox .lb-nav { display: none; position: absolute; top: 50%; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; border: 0; background: rgba(255,255,255,.14); color: #fff; place-items: center; cursor: pointer; z-index: 2; }
+.lightbox .lb-nav:hover { background: rgba(255,255,255,.26); }
+.lightbox.has-nav .lb-nav { display: grid; }
+.lightbox .lb-prev { left: 12px; }
+.lightbox .lb-next { right: 12px; }
+.lightbox { user-select: none; }
+@media (max-width: 600px) { .lightbox .lb-nav { width: 40px; height: 40px; background: rgba(0,0,0,.35); } .lightbox .lb-prev { left: 6px; } .lightbox .lb-next { right: 6px; } }

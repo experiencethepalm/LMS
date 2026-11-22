@@ -6,7 +6,7 @@
   <title>Unity Leads · The Palm Group</title>
   <meta name="robots" content="noindex, nofollow" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=11" />
+  <link rel="stylesheet" href="../styles.css?v=12" />
   <style>
     body { padding-bottom: 0; }
     .shell { max-width: 1200px; margin: 0 auto; padding: 18px; }
@@ -115,7 +115,7 @@
   <div class="drawer hidden" id="drawer"></div>
   <div class="scrim hidden" id="scrim"></div>
 
-  <script src="../config.js?v=11"></script>
+  <script src="../config.js?v=12"></script>
   <script>
   (() => {
     const C = window.UNITY_CONFIG;
@@ -279,7 +279,7 @@
       const d = await api('/api/admin/salespeople');
       const base = d.siteUrl || location.origin + location.pathname.replace(/admin\/.*$/, '');
       $('#links').innerHTML = d.salespeople.map((s) => {
-        const link = `${base}?ref=${encodeURIComponent(s.code)}`;
+        const link = s.share_id ? `${base}?r=${encodeURIComponent(s.share_id)}` : `${base}?ref=${encodeURIComponent(s.code)}`;
         return `<div class="tl"><span><b>${esc(s.name)}</b> (${esc(s.code)})${s.active ? '' : ' — inactive'}</span></div>
           <div class="linkbox"><input readonly value="${esc(link)}" /><button class="btn ghost sm" data-copy="${esc(link)}">Copy</button></div>`;
       }).join('') || '<p class="small">No salespeople yet — add one below.</p>';

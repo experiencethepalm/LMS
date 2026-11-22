@@ -1079,9 +1079,5 @@
     ]
    }
   ]
- },
- "brochure": {
-  "url": "",
-  "note": "TBC — PDF link (e.g. assets/unity-brochure.pdf or a Cloudflare R2 URL)"
  }
 }

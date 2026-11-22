@@ -35,6 +35,11 @@ jobs:
       - name: Apply database schema (safe to repeat)
         run: npx wrangler d1 execute palm-unity-leads --remote --file=schema.sql
 
+      - name: Database migrations (safe to repeat)
+        run: |
+          npx wrangler d1 execute palm-unity-leads --remote --command "ALTER TABLE salespeople ADD COLUMN share_id TEXT" || echo "share_id already exists"
+          npx wrangler d1 execute palm-unity-leads --remote --command "CREATE UNIQUE INDEX IF NOT EXISTS idx_sales_share ON salespeople(share_id)"
+
       - name: Deploy Worker
         run: npx wrangler deploy
 

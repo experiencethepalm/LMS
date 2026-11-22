@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=11" />
+  <link rel="stylesheet" href="styles.css?v=12" />
 </head>
 <body>
   <header class="topbar">
@@ -63,7 +63,7 @@
 
       <div class="card gate-card" id="stepDetails">
         <h2>Verify to view the project</h2>
-        <p class="muted">Floor plans, payment plan, specifications and the brochure open as soon as you verify your WhatsApp number.</p>
+        <p class="muted">Floor plans, payment plan, specifications, gallery and location open as soon as you verify your WhatsApp number.</p>
         <form id="detailsForm" novalidate>
           <label>Full name<input name="name" autocomplete="name" placeholder="Your full name" required /></label>
           <label>WhatsApp number
@@ -165,11 +165,15 @@
     <div class="visit-done hidden" id="visitDone"><h3>Thank you!</h3><p class="muted">Our team will confirm on WhatsApp shortly.</p></div>
   </div>
 
-  <div class="lightbox hidden" id="lightbox"><button class="icon-btn" data-close="lightbox">✕</button><img alt="" /><p></p></div>
+  <div class="lightbox hidden" id="lightbox"><button class="icon-btn" data-close="lightbox" aria-label="Close">✕</button>
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous photo"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <img alt="" />
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Next photo"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+    <p></p></div>
   <div class="scrim hidden" id="scrim"></div>
 
-  <script src="config.js?v=11"></script>
-  <script src="map.js?v=11"></script>
-  <script src="app.js?v=11"></script>
+  <script src="config.js?v=12"></script>
+  <script src="map.js?v=12"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>

@@ -12,7 +12,9 @@
 
   // Salesperson attribution: ?ref=CODE is remembered on this device, so a forwarded link still credits them
   const params = new URLSearchParams(location.search);
-  if (params.get('ref')) store.set('unity_ref', params.get('ref').toUpperCase());
+  // Salesperson attribution: ?r=<share id> (older ?ref= links still work). Remembered on this device.
+  const incomingRef = params.get('r') || params.get('ref');
+  if (incomingRef) store.set('unity_ref', incomingRef.trim());
   const source = params.get('utm_source') ? [params.get('utm_source'), params.get('utm_campaign')].filter(Boolean).join('/') : document.referrer ? new URL(document.referrer).hostname : '';
   const ref = store.get('unity_ref') || '';
   let token = store.get('unity_token');
@@ -26,7 +28,7 @@
   ['#helpCall', '#barCall'].forEach((s) => ($(s).href = tel));
   ['#helpWa', '#barWa'].forEach((s) => ($(s).href = wa));
   $('#shareBtn').onclick = () => {
-    const url = location.origin + location.pathname + (ref ? `?ref=${encodeURIComponent(ref)}` : '');
+    const url = location.origin + location.pathname + (ref ? `?r=${encodeURIComponent(ref)}` : '');
     if (navigator.share) navigator.share({ title: 'The Palm Unity, Kudasan', url }).catch(() => {});
     else navigator.clipboard?.writeText(url).then(() => alertToast('Link copied'));
   };
@@ -122,7 +124,7 @@
   const SECTIONS = [
     ['overview', 'Overview'], ['highlights', 'Highlights'], ['gallery', 'Gallery'], ['floorplans', 'Floor plans'],
     ['payment', 'Payment plan'], ['amenities', 'Amenities'], ['specifications', 'Specifications'],
-    ['location', 'Location'], ['brochure', 'Brochure'],
+    ['location', 'Location'], ['visit', 'Visit'],
   ];
   const isTbc = (v) => v == null || v === '' || /^TBC/i.test(String(v));
   const val = (v, fallback = 'To be announced') => (isTbc(v) ? `<span class="tbc">${fallback}</span>` : esc(v));
@@ -206,9 +208,7 @@
         <p class="small">Distances and drive times are approximate, by road without traffic. <a href="${esc(c.location.mapsUrl)}" target="_blank" rel="noopener" data-cta="maps">Open in Google Maps</a></p>
       </div>
 
-      <div class="sec" id="brochure" data-track="brochure">
-        <div class="brochure"><div><h2>Brochure</h2><p class="muted">Everything about The Palm Unity in one place.</p></div>
-        ${c.brochure.url ? `<a class="btn primary sm" id="brochureBtn" href="${esc(c.brochure.url)}" target="_blank" rel="noopener">Read it here</a>` : '<span class="tbc">Coming soon</span>'}</div>
+      <div class="sec" id="visit" data-track="visit">
         <div class="visit-card">
           <p class="eyebrow" style="color:#E4D3B0">Visit us</p>
           <h3>See Zen Living for yourself</h3>
@@ -228,12 +228,7 @@
       queue({ type: 'floorplan_open', target: f.id });
       openLightbox(f.image, `${f.name} · ${f.config} · ${f.sbAreaSqYd} sq.yds`);
     }));
-    $$('[data-gal]').forEach((fig) => (fig.onclick = () => {
-      const g = c.gallery[fig.dataset.gal];
-      queue({ type: 'gallery_open', target: String(fig.dataset.gal) });
-      openLightbox(g.src, g.caption, g.alt);
-    }));
-    $('#brochureBtn')?.addEventListener('click', () => queue({ type: 'brochure_open', target: 'brochure' }));
+    $$('[data-gal]').forEach((fig) => (fig.onclick = () => openGallery(c.gallery, +fig.dataset.gal)));
     $('#visitCta').onclick = () => openVisit('site_visit');
     if (yt) watchVideoPlay();
     startTracking();
@@ -293,8 +288,39 @@
   $$('[data-close]').forEach((b) => (b.onclick = closeAll));
   $('#scrim').onclick = closeAll;
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
-  function openLightbox(src, caption, alt) {
+  // Gallery viewer: arrows, keyboard ← →, and swipe on phones
+  let gal = null;
+  function openGallery(items, i) {
+    gal = { items, i };
+    $('#lightbox').classList.add('has-nav');
+    showGal(0);
+  }
+  function showGal(step) {
+    if (!gal) return;
+    gal.i = (gal.i + step + gal.items.length) % gal.items.length;
+    const g = gal.items[gal.i];
+    queue({ type: 'gallery_open', target: String(gal.i) });
+    openLightbox(g.src, `${g.caption}  ·  ${gal.i + 1} / ${gal.items.length}`, g.alt, true);
+    const next = gal.items[(gal.i + 1) % gal.items.length];
+    new Image().src = next.src; // preload the next photo
+  }
+  $('#lbPrev').onclick = (e) => { e.stopPropagation(); showGal(-1); };
+  $('#lbNext').onclick = (e) => { e.stopPropagation(); showGal(1); };
+  document.addEventListener('keydown', (e) => {
+    if ($('#lightbox').classList.contains('hidden') || !gal) return;
+    if (e.key === 'ArrowLeft') showGal(-1);
+    if (e.key === 'ArrowRight') showGal(1);
+  });
+  let touchX = null;
+  $('#lightbox').addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+  $('#lightbox').addEventListener('touchend', (e) => {
+    if (touchX == null || !gal) return;
+    const dx = e.changedTouches[0].clientX - touchX; touchX = null;
+    if (Math.abs(dx) > 45) showGal(dx < 0 ? 1 : -1);
+  });
+  function openLightbox(src, caption, alt, fromGallery) {
     const lb = $('#lightbox');
+    if (!fromGallery) { gal = null; lb.classList.remove('has-nav'); }
     $('img', lb).src = src; $('img', lb).alt = alt || caption; $('p', lb).textContent = caption;
     $('img', lb).onerror = () => { $('img', lb).removeAttribute('src'); $('p', lb).textContent = `${caption} — image coming soon`; };
     lb.classList.remove('hidden');

@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS salespeople (
   name        TEXT NOT NULL,
   phone       TEXT,
   pin_hash    TEXT,                      -- dashboard login PIN (hashed)
+  share_id    TEXT,                      -- opaque id used in share links: ?r=share_id
   active      INTEGER NOT NULL DEFAULT 1,
   created_at  INTEGER NOT NULL
 );

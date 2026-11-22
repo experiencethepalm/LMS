@@ -93,7 +93,7 @@ async function otpStart(request, env) {
   const pending = JSON.stringify({
     name,
     profession: clean(body.profession, 80),
-    ref: clean(body.ref, 32).toUpperCase(),
+    ref: clean(body.ref, 32),
     source: clean(body.source, 80),
   });
   await env.DB.prepare('INSERT INTO otps (phone, code_hash, expires_at, created_at, ip, pending) VALUES (?,?,?,?,?,?)')
@@ -140,10 +140,24 @@ async function otpVerify(request, env) {
   return json({ ok: true, token, name: info.name, content });
 }
 
-async function validRef(env, code) {
-  if (!code) return null;
-  const sp = await env.DB.prepare('SELECT code FROM salespeople WHERE code=? AND active=1').bind(code).first();
+// Share links carry an opaque id (?r=k7m2qx) so buyers never see the salesperson's name.
+// Older ?ref=CODE links keep working.
+async function validRef(env, value) {
+  const v = String(value || '').trim();
+  if (!v) return null;
+  const sp = await env.DB.prepare('SELECT code FROM salespeople WHERE (share_id=? OR code=?) AND active=1')
+    .bind(v.toLowerCase(), v.toUpperCase()).first();
   return sp ? sp.code : null;
+}
+
+function newShareId() {
+  const abc = 'abcdefghjkmnpqrstuvwxyz23456789';
+  return [...crypto.getRandomValues(new Uint8Array(6))].map((b) => abc[b % abc.length]).join('');
+}
+
+async function ensureShareIds(env) {
+  const missing = (await env.DB.prepare('SELECT code FROM salespeople WHERE share_id IS NULL OR share_id = ?').bind('').all()).results;
+  for (const r of missing) await env.DB.prepare('UPDATE salespeople SET share_id=? WHERE code=?').bind(newShareId(), r.code).run();
 }
 
 async function buyerFrom(request, env, bodyToken) {
@@ -157,7 +171,7 @@ async function me(request, env) {
   const lead = await buyerFrom(request, env);
   if (!lead) return bad('Please verify to continue.', 401);
   const url = new URL(request.url);
-  const ref = await validRef(env, clean(url.searchParams.get('ref'), 32).toUpperCase());
+  const ref = await validRef(env, clean(url.searchParams.get('ref'), 32));
   const t = now();
   if (t - lead.last_seen > NEW_SESSION_GAP) {
     await env.DB.prepare('UPDATE leads SET sessions=sessions+1, last_seen=?, last_ref=COALESCE(?,last_ref) WHERE id=?').bind(t, ref, lead.id).run();
@@ -349,7 +363,8 @@ async function updateLead(request, env, admin, id) {
 }
 
 async function listSales(env, admin) {
-  const rows = (await env.DB.prepare('SELECT code, name, phone, active, created_at FROM salespeople ORDER BY name').all()).results;
+  await ensureShareIds(env);
+  const rows = (await env.DB.prepare('SELECT code, name, phone, active, share_id, created_at FROM salespeople ORDER BY name').all()).results;
   const visible = admin.role === 'owner' ? rows : rows.filter((r) => r.code === admin.code);
   return json({ salespeople: visible, siteUrl: env.SITE_URL || '' });
 }
@@ -366,7 +381,7 @@ async function upsertSales(request, env, admin) {
   if (existing) {
     await env.DB.prepare('UPDATE salespeople SET name=?, phone=?, pin_hash=?, active=? WHERE code=?').bind(clean(b.name), clean(b.phone, 20), pinHash, active, code).run();
   } else {
-    await env.DB.prepare('INSERT INTO salespeople (code, name, phone, pin_hash, active, created_at) VALUES (?,?,?,?,?,?)').bind(code, clean(b.name), clean(b.phone, 20), pinHash, active, now()).run();
+    await env.DB.prepare('INSERT INTO salespeople (code, name, phone, pin_hash, active, share_id, created_at) VALUES (?,?,?,?,?,?,?)').bind(code, clean(b.name), clean(b.phone, 20), pinHash, active, newShareId(), now()).run();
   }
   return json({ ok: true });
 }
