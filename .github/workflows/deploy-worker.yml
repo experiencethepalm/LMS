@@ -42,6 +42,8 @@ jobs:
         env:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          WATI_API_ENDPOINT: ${{ secrets.WATI_API_ENDPOINT }}
+          WATI_ACCESS_TOKEN: ${{ secrets.WATI_ACCESS_TOKEN }}
           WA_ACCESS_TOKEN: ${{ secrets.WA_ACCESS_TOKEN }}
           WA_PHONE_NUMBER_ID: ${{ secrets.WA_PHONE_NUMBER_ID }}
           MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
@@ -53,7 +55,7 @@ jobs:
             const crypto = require("crypto");
             const existing = JSON.parse(process.argv[1]).map((s) => s.name);
             const out = {};
-            for (const k of ["ADMIN_PASSWORD","ANTHROPIC_API_KEY","WA_ACCESS_TOKEN","WA_PHONE_NUMBER_ID","MSG91_AUTH_KEY","MSG91_TEMPLATE_ID","ALERT_WEBHOOK_URL"])
+            for (const k of ["ADMIN_PASSWORD","ANTHROPIC_API_KEY","WATI_API_ENDPOINT","WATI_ACCESS_TOKEN","WA_ACCESS_TOKEN","WA_PHONE_NUMBER_ID","MSG91_AUTH_KEY","MSG91_TEMPLATE_ID","ALERT_WEBHOOK_URL"])
               if (process.env[k]) out[k] = process.env[k];
             // Signing key is generated once and kept, so buyer and staff logins survive redeploys
             if (!existing.includes("TOKEN_SECRET")) out.TOKEN_SECRET = crypto.randomBytes(32).toString("hex");

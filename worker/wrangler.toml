@@ -18,8 +18,9 @@ database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create"
 SITE_URL = "https://experiencethepalm.github.io/LMS/"
 # Comma-separated origins allowed to call this API (your GitHub Pages origin + local testing)
 ALLOWED_ORIGINS = "https://experiencethepalm.github.io,http://localhost:8080"
-# dev | whatsapp | msg91   — keep "dev" until the WhatsApp template is approved
+# dev | wati | whatsapp | msg91   — keep "dev" until the Wati OTP template is approved
 OTP_PROVIDER = "dev"
+WATI_TEMPLATE_NAME = "unity_otp"
 WA_TEMPLATE_NAME = "unity_otp"
 WA_TEMPLATE_LANG = "en"
 AI_MODEL = "claude-haiku-5-5"
@@ -28,6 +29,7 @@ AI_MODEL = "claude-haiku-5-5"
 #   TOKEN_SECRET        long random string (signs logins)
 #   ADMIN_PASSWORD      owner dashboard password
 #   ANTHROPIC_API_KEY   for the AI assistant
+#   WATI_API_ENDPOINT, WATI_ACCESS_TOKEN     if OTP_PROVIDER = "wati"
 #   WA_ACCESS_TOKEN, WA_PHONE_NUMBER_ID      if OTP_PROVIDER = "whatsapp"
 #   MSG91_AUTH_KEY, MSG91_TEMPLATE_ID        if OTP_PROVIDER = "msg91"
 #   ALERT_WEBHOOK_URL   optional: Google Chat/Slack webhook for visit & callback alerts
