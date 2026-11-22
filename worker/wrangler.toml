@@ -10,7 +10,7 @@ fallthrough = true
 
 [[d1_databases]]
 binding = "DB"
-database_name = "palm-leads"
+database_name = "palm-unity-leads"
 database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create"
 
 [vars]

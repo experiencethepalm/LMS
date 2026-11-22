@@ -26,14 +26,14 @@ jobs:
 
       - name: Create the D1 database on first run and wire its ID
         run: |
-          get_id() { npx wrangler d1 list --json | node -e 'const l=JSON.parse(require("fs").readFileSync(0));const d=l.find(x=>x.name==="palm-leads");process.stdout.write(d?d.uuid:"")'; }
+          get_id() { npx wrangler d1 list --json | node -e 'const l=JSON.parse(require("fs").readFileSync(0));const d=l.find(x=>x.name==="palm-unity-leads");process.stdout.write(d?d.uuid:"")'; }
           ID=$(get_id)
-          if [ -z "$ID" ]; then npx wrangler d1 create palm-leads; ID=$(get_id); fi
+          if [ -z "$ID" ]; then npx wrangler d1 create palm-unity-leads --location apac; ID=$(get_id); fi
           echo "Database ID: $ID"
           sed -i "s/REPLACE_WITH_ID_FROM_wrangler_d1_create/$ID/" wrangler.toml
 
       - name: Apply database schema (safe to repeat)
-        run: npx wrangler d1 execute palm-leads --remote --file=schema.sql
+        run: npx wrangler d1 execute palm-unity-leads --remote --file=schema.sql
 
       - name: Deploy Worker
         run: npx wrangler deploy

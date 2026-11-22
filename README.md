@@ -31,7 +31,7 @@ You need: a GitHub account, a Cloudflare account, Node.js 18+ on your computer.
 cd worker
 npm install
 npx wrangler login                       # opens browser, sign in to Cloudflare
-npx wrangler d1 create palm-leads        # copy the database_id it prints into wrangler.toml
+npx wrangler d1 create palm-unity-leads        # copy the database_id it prints into wrangler.toml
 npm run db:remote                        # creates the tables
 npx wrangler secret put TOKEN_SECRET     # paste a long random string (e.g. from passwordsgenerator.net, 40+ chars)
 npx wrangler secret put ADMIN_PASSWORD   # owner dashboard password
