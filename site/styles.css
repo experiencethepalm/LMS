@@ -25,7 +25,7 @@ h3 { font-size: 21px; }
 .small { font-size: 13px; color: var(--muted); }
 .eyebrow { text-transform: uppercase; letter-spacing: .16em; font-size: 11px; color: var(--sand); margin: 0 0 4px; font-weight: 600; }
 
-.topbar { position: sticky; top: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: rgba(246,243,238,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.topbar { position: sticky; top: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--bg); border-bottom: 1px solid var(--line); }
 .brand { letter-spacing: .22em; font-size: 13px; }
 .brand b { color: var(--green); }
 .icon-btn { background: none; border: 0; color: var(--ink); cursor: pointer; padding: 6px; font-size: 18px; }
@@ -200,7 +200,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .ph.missing::after { z-index: 1; }
 
 /* --- location map --- */
-.umap { position: relative; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); margin: 14px 0 6px; background: #F3EEE6; }
+.umap { position: relative; isolation: isolate; transform: translateZ(0); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); margin: 14px 0 6px; background: #F3EEE6; }
 .umap-canvas { height: 380px; }
 @media (min-width: 760px) { .umap-canvas { height: 460px; } }
 .map-fallback { display: grid; place-items: center; height: 100%; color: var(--muted); font-size: 14px; }

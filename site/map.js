@@ -108,6 +108,11 @@
       await new Promise((r) => (map.loaded() ? r() : map.once('load', r)));
       // keep the credits collapsed to an (i) button so they don't cover the map
       mapEl.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show');
+      // Some PCs without GPU acceleration leave stale patches on the map after scrolling; repaint when scrolling stops
+      let st;
+      const repaint = () => { clearTimeout(st); st = setTimeout(() => map.triggerRepaint(), 150); };
+      window.addEventListener('scroll', repaint, { passive: true });
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) map.triggerRepaint(); });
       map.addSource('route', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       map.addLayer({ id: 'route-casing', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#FFFFFF', 'line-width': 8 } });
       map.addLayer({ id: 'route', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': T.green, 'line-width': 4.5 } });
