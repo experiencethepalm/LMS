@@ -5,7 +5,7 @@ After editing, redeploy the Worker (`npx wrangler deploy`).
 
 ## Project
 - Name: The Palm Unity, by The Palm Group (Gandhinagar-based developer).
-- Location: Kudasan, Gandhinagar, Gujarat. Google Maps: https://maps.app.goo.gl/v7so8DxPx3hQxj836
+- Location: Unity Road, Sargasan (Kudasan area), Gandhinagar, Gujarat. Google Maps: https://maps.app.goo.gl/kN5LdKjsfY3Ja9o47
 - Theme: "Zen Living". Taglines: "Crafted for Exclusive Community" and "Rising Above Kudasan, Rooted in Zen Living".
 - RERA: registered under GujRERA. RERA No: PR/GJ/GANDHINAGAR/GANDHINAGAR/Gandhinagar Municipal Corporation/RAA17286/210826/311232
 - Possession: December 2030.
@@ -35,3 +35,21 @@ The Work Lounge, The Fitness Studio, The Pool Deck, Guest Suites, Kid's Play Zon
 
 ## Phase 2
 - A commercial building is planned as a later phase after the residential building. Details are not yet public.
+
+## Connectivity (approx. drive from Unity, by road, without traffic)
+- Nearest metro station: Dholakuva Circle: about 4.1 km, ~6 min
+- Infocity IT Park: about 5.2 km, ~8 min
+- GIFT City: about 10.9 km, ~16 min
+- Mahatma Mandir: about 9.8 km, ~13 min
+- Gandhinagar Capital Railway Station: about 10.7 km, ~15 min
+- SG Highway (Vaishnodevi Circle): about 15.6 km, ~17 min
+- Ahmedabad Airport (SVPI): about 17.4 km, ~26 min
+
+## Around Unity (approx. drive distance)
+- Restaurants & cafés: Kansar Garden Restaurant (2.0 km); Urban Dosa House (2.8 km); Starbucks (3.0 km); Rasam Thal (3.0 km); Upper Deck (4.8 km); McDonald's (5.0 km)
+- Hospitals: Vachhani Hospital (2.7 km); Life Apollo Hospitals, Infocity (4.9 km); SMVS Hospital (4.9 km); Sanjivani Heart & Medical Hospital (5.5 km); Aashka Multispeciality Hospital (5.7 km); Civil Hospital, Sector 12 (7.0 km); Apollo Hospitals, Bhat (10.1 km)
+- Schools & colleges: School of Achiever (2.0 km); DA-IICT (3.2 km); Swaminarayan Dham International School (4.6 km); Pandit Deendayal Energy University (PDEU) (8.2 km); Gujarat National Law University (GNLU) (8.5 km)
+- Shopping: Super Mall, Infocity (4.4 km); Sarthak Mall (5.2 km); B-Mart Supermarket (5.5 km); Agora Mall, Bhat (9.4 km)
+- Gardens & parks: Indroda Nature Park (6.2 km); Swarnim Park (8.6 km); Punit Van (9.3 km); Sarita Udyan (9.5 km)
+- Temples & heritage: Adalaj Stepwell (4.8 km); Dada Bhagwan Trimandir, Adalaj (5.5 km); Swaminarayan Akshardham (10.4 km)
+- Distances are approximate; say the sales team can confirm exact travel times.

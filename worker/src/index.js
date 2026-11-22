@@ -10,7 +10,7 @@ const ADMIN_TTL = 12 * 3600;
 const OTP_TTL = 600;             // code valid 10 minutes
 const NEW_SESSION_GAP = 30 * 60; // a return after 30 min counts as a new visit
 const STATUSES = ['new', 'contacted', 'visit_booked', 'visited', 'negotiating', 'booked', 'lost'];
-const EVENT_TYPES = ['dwell', 'floorplan_open', 'brochure_open', 'gallery_open', 'walkthrough_play', 'cta'];
+const EVENT_TYPES = ['dwell', 'floorplan_open', 'brochure_open', 'gallery_open', 'walkthrough_play', 'cta', 'map'];
 
 export default {
   async fetch(request, env, ctx) {
@@ -324,9 +324,12 @@ async function leadDetail(env, admin, id) {
 function openingLine(lead, s, chats, requests) {
   const first = lead.name.split(' ')[0];
   const topSection = Object.entries(s.dwell).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const PLACE = { gift: 'GIFT City', airport: 'the airport', infocity: 'Infocity', mahatma: 'Mahatma Mandir', railway: 'the railway station', vaishnodevi: 'SG Highway', metro: 'the metro' };
+  const checked = [...new Set(s.places || [])].map((id) => PLACE[id]).filter(Boolean);
   const lastQ = [...chats].reverse().find((c) => c.role === 'user')?.content;
   if (requests.some((r) => r.kind === 'site_visit')) return `Hi ${first}, this is from The Palm Unity — calling to confirm your site visit. Which day suits you best?`;
   if (lastQ) return `Hi ${first}, this is from The Palm Unity. I saw you asked "${lastQ.slice(0, 80)}" — happy to take you through that properly.`;
+  if (checked.length) return `Hi ${first}, this is from The Palm Unity. I noticed you checked the commute to ${checked.slice(0, 2).join(' and ')} — Unity is well placed for that. Would a quick site visit this week help?`;
   if (topSection === 'floorplans') return `Hi ${first}, this is from The Palm Unity. You were looking at our floor plans — shall I share the layouts that are still available on your preferred floor?`;
   if (topSection === 'payment') return `Hi ${first}, this is from The Palm Unity. You were checking the payment plan — I can share the full cost sheet for the home you liked.`;
   if (topSection === 'location') return `Hi ${first}, this is from The Palm Unity. You were exploring the location — would a quick site visit this week help?`;

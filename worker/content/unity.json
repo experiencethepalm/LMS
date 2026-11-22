@@ -1,278 +1,1087 @@
 {
-  "_note": "Gated content: served only to verified visitors by the Worker. Anything marked TBC must be filled in before launch. Do NOT add Skyvillas, penthouses or floors above 16 until released.",
-  "project": {
-    "name": "The Palm Unity",
-    "tagline": "Rising Above Kudasan, Rooted in Zen Living",
-    "location": "Kudasan, Gandhinagar",
-    "developer": "The Palm Group",
-    "type": "Residential apartments",
-    "possession": "December 2030",
-    "rera": "PR/GJ/GANDHINAGAR/GANDHINAGAR/Gandhinagar Municipal Corporation/RAA17286/210826/311232",
-    "about": "The Palm Unity is a Zen Living address by The Palm Group in Kudasan, Gandhinagar — spacious 3 and 4 BHK homes crafted for an exclusive community, with sky bridges linking the towers, a resort-style pool deck and The Sky Hall on the 20th floor."
+ "_note": "Gated content: served only to verified visitors by the Worker. Anything marked TBC must be filled in before launch. Do NOT add Skyvillas, penthouses or floors above 16 until released.",
+ "project": {
+  "name": "The Palm Unity",
+  "tagline": "Rising Above Kudasan, Rooted in Zen Living",
+  "location": "Kudasan, Gandhinagar",
+  "developer": "The Palm Group",
+  "type": "Residential apartments",
+  "possession": "December 2030",
+  "rera": "PR/GJ/GANDHINAGAR/GANDHINAGAR/Gandhinagar Municipal Corporation/RAA17286/210826/311232",
+  "about": "The Palm Unity is a Zen Living address by The Palm Group in Kudasan, Gandhinagar — spacious 3 and 4 BHK homes crafted for an exclusive community, with sky bridges linking the towers, a resort-style pool deck and The Sky Hall on the 20th floor."
+ },
+ "highlights": [
+  "Spacious 3 & 4 BHK homes from 314 to 463 sq.yds super built-up",
+  "Sky bridges connecting every tower, above a resort-style pool deck",
+  "Cantilevered balconies that project beyond the facade for open views",
+  "3 basement levels of parking — the ground floor stays for people",
+  "Covered porte-cochère with pick-up & drop-off zone and valet parking",
+  "The Sky Hall — a banquet hall on the 20th floor"
+ ],
+ "gallery": [
+  {
+   "src": "assets/img/the-palm-unity-kudasan-gandhinagar-elevation.webp",
+   "thumb": "assets/img/the-palm-unity-kudasan-gandhinagar-elevation-800.webp",
+   "w": 1920,
+   "h": 1923,
+   "alt": "Front elevation of The Palm Unity residential towers in Kudasan, Gandhinagar at dusk",
+   "caption": "Elevation"
   },
-  "highlights": [
-    "Spacious 3 & 4 BHK homes from 314 to 463 sq.yds super built-up",
-    "Sky bridges connecting every tower, above a resort-style pool deck",
-    "Cantilevered balconies that project beyond the facade for open views",
-    "3 basement levels of parking — the ground floor stays for people",
-    "Covered porte-cochère with pick-up & drop-off zone and valet parking",
-    "The Sky Hall — a banquet hall on the 20th floor"
-  ],
-  "gallery": [
-    {
-      "src": "assets/img/the-palm-unity-kudasan-gandhinagar-elevation.webp",
-      "thumb": "assets/img/the-palm-unity-kudasan-gandhinagar-elevation-800.webp",
-      "w": 1920,
-      "h": 1923,
-      "alt": "Front elevation of The Palm Unity residential towers in Kudasan, Gandhinagar at dusk",
-      "caption": "Elevation"
-    },
-    {
-      "src": "assets/img/the-palm-unity-tower-low-angle-view.webp",
-      "thumb": "assets/img/the-palm-unity-tower-low-angle-view-800.webp",
-      "w": 1920,
-      "h": 1920,
-      "alt": "Low-angle view of The Palm Unity tower with lit balconies against the evening sky",
-      "caption": "The towers"
-    },
-    {
-      "src": "assets/img/the-palm-unity-cantilevered-balconies.webp",
-      "thumb": "assets/img/the-palm-unity-cantilevered-balconies-800.webp",
-      "w": 1920,
-      "h": 1080,
-      "alt": "Close-up of The Palm Unity facade showing cantilevered balconies with glass railings",
-      "caption": "Cantilevered balconies"
-    },
-    {
-      "src": "assets/img/the-palm-unity-entrance-signage-water-feature.webp",
-      "thumb": "assets/img/the-palm-unity-entrance-signage-water-feature-800.webp",
-      "w": 1920,
-      "h": 1080,
-      "alt": "The Palm Unity entrance with illuminated signage and water feature, Kudasan",
-      "caption": "Entrance"
-    },
-    {
-      "src": "assets/img/the-palm-unity-entrance-lobby.webp",
-      "thumb": "assets/img/the-palm-unity-entrance-lobby-800.webp",
-      "w": 1920,
-      "h": 1080,
-      "alt": "Landscaped entrance lobby of The Palm Unity with lantern lighting and lattice screens",
-      "caption": "Entrance lobby"
-    },
-    {
-      "src": "assets/img/the-palm-unity-porte-cochere-drop-off.webp",
-      "thumb": "assets/img/the-palm-unity-porte-cochere-drop-off-800.webp",
-      "w": 1920,
-      "h": 1080,
-      "alt": "Covered porte-cochere and drop-off zone at The Palm Unity, Gandhinagar",
-      "caption": "Porte-cochère & drop-off"
-    },
-    {
-      "src": "assets/img/the-palm-unity-pool-deck-lounge.webp",
-      "thumb": "assets/img/the-palm-unity-pool-deck-lounge-800.webp",
-      "w": 1920,
-      "h": 1080,
-      "alt": "The Pool Deck and lounge at The Palm Unity, surrounded by landscaped gardens",
-      "caption": "The Pool Deck"
-    },
-    {
-      "src": "assets/img/the-palm-unity-pool-deck-elevated-walkway.webp",
-      "thumb": "assets/img/the-palm-unity-pool-deck-elevated-walkway-800.webp",
-      "w": 1920,
-      "h": 1080,
-      "alt": "Pool deck with elevated walkway above at The Palm Unity, Kudasan",
-      "caption": "Pool deck & walkway"
-    },
-    {
-      "src": "assets/img/the-palm-unity-sky-garden-terrace-lawn.webp",
-      "thumb": "assets/img/the-palm-unity-sky-garden-terrace-lawn-800.webp",
-      "w": 1920,
-      "h": 1080,
-      "alt": "The Sky Garden terrace lawn with seating and lanterns at The Palm Unity",
-      "caption": "The Sky Garden"
-    },
-    {
-      "src": "assets/img/the-palm-unity-sky-garden-gazebo.webp",
-      "thumb": "assets/img/the-palm-unity-sky-garden-gazebo-800.webp",
-      "w": 1920,
-      "h": 1080,
-      "alt": "Gazebo lounge in The Sky Garden at The Palm Unity, Gandhinagar",
-      "caption": "Sky Garden gazebo"
-    }
-  ],
-  "walkthrough": {
-    "youtubeId": "",
-    "note": "TBC — add YouTube video ID (unlisted is fine)"
+  {
+   "src": "assets/img/the-palm-unity-tower-low-angle-view.webp",
+   "thumb": "assets/img/the-palm-unity-tower-low-angle-view-800.webp",
+   "w": 1920,
+   "h": 1920,
+   "alt": "Low-angle view of The Palm Unity tower with lit balconies against the evening sky",
+   "caption": "The towers"
   },
-  "floorplans": [
-    {
-      "id": "pure",
-      "name": "Pure",
-      "config": "3 BHK",
-      "sbAreaSqYd": 314,
-      "parking": 2,
-      "image": "assets/img/plan-pure.jpg"
-    },
-    {
-      "id": "bliss",
-      "name": "Bliss",
-      "config": "3 BHK",
-      "sbAreaSqYd": 350,
-      "parking": 2,
-      "image": "assets/img/plan-bliss.jpg"
-    },
-    {
-      "id": "zeal",
-      "name": "Zeal",
-      "config": "4 BHK",
-      "sbAreaSqYd": 429,
-      "parking": 3,
-      "image": "assets/img/plan-zeal.jpg"
-    },
-    {
-      "id": "nova",
-      "name": "Nova",
-      "config": "4 BHK",
-      "sbAreaSqYd": 463,
-      "parking": 3,
-      "image": "assets/img/plan-nova.jpg"
-    }
-  ],
-  "paymentPlan": {
-    "note": "TBC — replace with the approved milestone schedule",
-    "milestones": [
-      {
-        "stage": "Booking",
-        "percent": null
-      },
-      {
-        "stage": "Construction milestones",
-        "percent": null
-      },
-      {
-        "stage": "Possession",
-        "percent": null
-      }
-    ]
+  {
+   "src": "assets/img/the-palm-unity-cantilevered-balconies.webp",
+   "thumb": "assets/img/the-palm-unity-cantilevered-balconies-800.webp",
+   "w": 1920,
+   "h": 1080,
+   "alt": "Close-up of The Palm Unity facade showing cantilevered balconies with glass railings",
+   "caption": "Cantilevered balconies"
   },
-  "amenities": [
-    {
-      "group": "Wellness & Fitness",
-      "items": [
-        "The Fitness Studio",
-        "The Pool Deck",
-        "Outdoor Sports Court",
-        "Garden Walk"
-      ]
-    },
-    {
-      "group": "Leisure",
-      "items": [
-        "Cinema Room",
-        "Indoor Games Room",
-        "Recreation Room",
-        "Kid's Play Zone",
-        "The Julla Deck"
-      ]
-    },
-    {
-      "group": "Community & Work",
-      "items": [
-        "The Sky Hall",
-        "The Sky Garden",
-        "The Work Lounge",
-        "Guest Suites"
-      ]
-    }
-  ],
-  "specifications": [
-    {
-      "item": "Structure",
-      "detail": "TBC"
-    },
-    {
-      "item": "Flooring",
-      "detail": "TBC"
-    },
-    {
-      "item": "Kitchen",
-      "detail": "TBC"
-    },
-    {
-      "item": "Doors & windows",
-      "detail": "TBC"
-    },
-    {
-      "item": "Bathrooms",
-      "detail": "TBC"
-    },
-    {
-      "item": "Electrical",
-      "detail": "TBC"
-    },
-    {
-      "item": "Elevators",
-      "detail": "TBC"
-    }
-  ],
-  "location": {
-    "mapsUrl": "https://maps.app.goo.gl/v7so8DxPx3hQxj836",
-    "embedQuery": "The Palm Unity Kudasan Gandhinagar",
-    "landmarks": [
-      {
-        "group": "Business hubs",
-        "places": [
-          {
-            "name": "GIFT City",
-            "km": null,
-            "mins": null
-          },
-          {
-            "name": "Infocity",
-            "km": null,
-            "mins": null
-          }
-        ]
-      },
-      {
-        "group": "Education",
-        "places": [
-          {
-            "name": "TBC",
-            "km": null,
-            "mins": null
-          }
-        ]
-      },
-      {
-        "group": "Hospitals",
-        "places": [
-          {
-            "name": "TBC",
-            "km": null,
-            "mins": null
-          }
-        ]
-      },
-      {
-        "group": "Connectivity",
-        "places": [
-          {
-            "name": "Ahmedabad Airport",
-            "km": null,
-            "mins": null
-          },
-          {
-            "name": "Nearest metro station (TBC)",
-            "km": null,
-            "mins": null
-          }
-        ]
-      }
-    ]
+  {
+   "src": "assets/img/the-palm-unity-entrance-signage-water-feature.webp",
+   "thumb": "assets/img/the-palm-unity-entrance-signage-water-feature-800.webp",
+   "w": 1920,
+   "h": 1080,
+   "alt": "The Palm Unity entrance with illuminated signage and water feature, Kudasan",
+   "caption": "Entrance"
   },
-  "brochure": {
-    "url": "",
-    "note": "TBC — PDF link (e.g. assets/unity-brochure.pdf or a Cloudflare R2 URL)"
+  {
+   "src": "assets/img/the-palm-unity-entrance-lobby.webp",
+   "thumb": "assets/img/the-palm-unity-entrance-lobby-800.webp",
+   "w": 1920,
+   "h": 1080,
+   "alt": "Landscaped entrance lobby of The Palm Unity with lantern lighting and lattice screens",
+   "caption": "Entrance lobby"
+  },
+  {
+   "src": "assets/img/the-palm-unity-porte-cochere-drop-off.webp",
+   "thumb": "assets/img/the-palm-unity-porte-cochere-drop-off-800.webp",
+   "w": 1920,
+   "h": 1080,
+   "alt": "Covered porte-cochere and drop-off zone at The Palm Unity, Gandhinagar",
+   "caption": "Porte-cochère & drop-off"
+  },
+  {
+   "src": "assets/img/the-palm-unity-pool-deck-lounge.webp",
+   "thumb": "assets/img/the-palm-unity-pool-deck-lounge-800.webp",
+   "w": 1920,
+   "h": 1080,
+   "alt": "The Pool Deck and lounge at The Palm Unity, surrounded by landscaped gardens",
+   "caption": "The Pool Deck"
+  },
+  {
+   "src": "assets/img/the-palm-unity-pool-deck-elevated-walkway.webp",
+   "thumb": "assets/img/the-palm-unity-pool-deck-elevated-walkway-800.webp",
+   "w": 1920,
+   "h": 1080,
+   "alt": "Pool deck with elevated walkway above at The Palm Unity, Kudasan",
+   "caption": "Pool deck & walkway"
+  },
+  {
+   "src": "assets/img/the-palm-unity-sky-garden-terrace-lawn.webp",
+   "thumb": "assets/img/the-palm-unity-sky-garden-terrace-lawn-800.webp",
+   "w": 1920,
+   "h": 1080,
+   "alt": "The Sky Garden terrace lawn with seating and lanterns at The Palm Unity",
+   "caption": "The Sky Garden"
+  },
+  {
+   "src": "assets/img/the-palm-unity-sky-garden-gazebo.webp",
+   "thumb": "assets/img/the-palm-unity-sky-garden-gazebo-800.webp",
+   "w": 1920,
+   "h": 1080,
+   "alt": "Gazebo lounge in The Sky Garden at The Palm Unity, Gandhinagar",
+   "caption": "Sky Garden gazebo"
   }
+ ],
+ "walkthrough": {
+  "youtubeId": "",
+  "note": "TBC — add YouTube video ID (unlisted is fine)"
+ },
+ "floorplans": [
+  {
+   "id": "pure",
+   "name": "Pure",
+   "config": "3 BHK",
+   "sbAreaSqYd": 314,
+   "parking": 2,
+   "image": "assets/img/plan-pure.jpg"
+  },
+  {
+   "id": "bliss",
+   "name": "Bliss",
+   "config": "3 BHK",
+   "sbAreaSqYd": 350,
+   "parking": 2,
+   "image": "assets/img/plan-bliss.jpg"
+  },
+  {
+   "id": "zeal",
+   "name": "Zeal",
+   "config": "4 BHK",
+   "sbAreaSqYd": 429,
+   "parking": 3,
+   "image": "assets/img/plan-zeal.jpg"
+  },
+  {
+   "id": "nova",
+   "name": "Nova",
+   "config": "4 BHK",
+   "sbAreaSqYd": 463,
+   "parking": 3,
+   "image": "assets/img/plan-nova.jpg"
+  }
+ ],
+ "paymentPlan": {
+  "note": "TBC — replace with the approved milestone schedule",
+  "milestones": [
+   {
+    "stage": "Booking",
+    "percent": null
+   },
+   {
+    "stage": "Construction milestones",
+    "percent": null
+   },
+   {
+    "stage": "Possession",
+    "percent": null
+   }
+  ]
+ },
+ "amenities": [
+  {
+   "group": "Wellness & Fitness",
+   "items": [
+    "The Fitness Studio",
+    "The Pool Deck",
+    "Outdoor Sports Court",
+    "Garden Walk"
+   ]
+  },
+  {
+   "group": "Leisure",
+   "items": [
+    "Cinema Room",
+    "Indoor Games Room",
+    "Recreation Room",
+    "Kid's Play Zone",
+    "The Julla Deck"
+   ]
+  },
+  {
+   "group": "Community & Work",
+   "items": [
+    "The Sky Hall",
+    "The Sky Garden",
+    "The Work Lounge",
+    "Guest Suites"
+   ]
+  }
+ ],
+ "specifications": [
+  {
+   "item": "Structure",
+   "detail": "TBC"
+  },
+  {
+   "item": "Flooring",
+   "detail": "TBC"
+  },
+  {
+   "item": "Kitchen",
+   "detail": "TBC"
+  },
+  {
+   "item": "Doors & windows",
+   "detail": "TBC"
+  },
+  {
+   "item": "Bathrooms",
+   "detail": "TBC"
+  },
+  {
+   "item": "Electrical",
+   "detail": "TBC"
+  },
+  {
+   "item": "Elevators",
+   "detail": "TBC"
+  }
+ ],
+ "location": {
+  "_note": "Road distance/time from Unity are approximate (OpenStreetMap + OSRM, no traffic) and can be edited by hand. km/mins are shown on the page; route is the line drawn on the map.",
+  "mapsUrl": "https://maps.app.goo.gl/kN5LdKjsfY3Ja9o47",
+  "unity": {
+   "lat": 23.1757547,
+   "lng": 72.6175672
+  },
+  "keyPlaces": [
+   {
+    "id": "metro",
+    "name": "Nearest Metro: Dholakuva Circle",
+    "short": "Metro",
+    "icon": "metro",
+    "lat": 23.18594,
+    "lng": 72.64332,
+    "km": 4.14,
+    "mins": 6.4,
+    "route": [
+     [
+      72.6175672,
+      23.1757547
+     ],
+     [
+      72.6175,
+      23.17546
+     ],
+     [
+      72.61664,
+      23.17256
+     ],
+     [
+      72.61656,
+      23.17147
+     ],
+     [
+      72.61966,
+      23.17243
+     ],
+     [
+      72.62194,
+      23.17262
+     ],
+     [
+      72.62302,
+      23.17256
+     ],
+     [
+      72.62377,
+      23.17374
+     ],
+     [
+      72.62432,
+      23.17408
+     ],
+     [
+      72.63725,
+      23.17863
+     ],
+     [
+      72.63735,
+      23.17957
+     ],
+     [
+      72.63778,
+      23.17966
+     ],
+     [
+      72.63838,
+      23.18587
+     ],
+     [
+      72.64332,
+      23.18602
+     ],
+     [
+      72.64332,
+      23.18594
+     ]
+    ]
+   },
+   {
+    "id": "infocity",
+    "name": "Infocity IT Park",
+    "short": "Infocity",
+    "icon": "office",
+    "lat": 23.19331,
+    "lng": 72.63489,
+    "km": 5.21,
+    "mins": 8.1,
+    "route": [
+     [
+      72.6175672,
+      23.1757547
+     ],
+     [
+      72.6175,
+      23.17546
+     ],
+     [
+      72.61664,
+      23.17256
+     ],
+     [
+      72.61656,
+      23.17147
+     ],
+     [
+      72.61966,
+      23.17243
+     ],
+     [
+      72.62194,
+      23.17262
+     ],
+     [
+      72.62302,
+      23.17256
+     ],
+     [
+      72.62377,
+      23.17374
+     ],
+     [
+      72.62432,
+      23.17408
+     ],
+     [
+      72.63725,
+      23.17863
+     ],
+     [
+      72.63735,
+      23.17957
+     ],
+     [
+      72.63778,
+      23.17966
+     ],
+     [
+      72.63945,
+      23.1947
+     ],
+     [
+      72.63893,
+      23.19418
+     ],
+     [
+      72.6388,
+      23.19304
+     ],
+     [
+      72.6349,
+      23.19341
+     ],
+     [
+      72.63489,
+      23.19331
+     ]
+    ]
+   },
+   {
+    "id": "gift",
+    "name": "GIFT City",
+    "short": "GIFT City",
+    "icon": "office",
+    "lat": 23.16291,
+    "lng": 72.68869,
+    "km": 10.91,
+    "mins": 15.6,
+    "route": [
+     [
+      72.6175672,
+      23.1757547
+     ],
+     [
+      72.6175,
+      23.17546
+     ],
+     [
+      72.61656,
+      23.17147
+     ],
+     [
+      72.61966,
+      23.17243
+     ],
+     [
+      72.62302,
+      23.17256
+     ],
+     [
+      72.62432,
+      23.17408
+     ],
+     [
+      72.63725,
+      23.17863
+     ],
+     [
+      72.63735,
+      23.17957
+     ],
+     [
+      72.63778,
+      23.17966
+     ],
+     [
+      72.63851,
+      23.18595
+     ],
+     [
+      72.64811,
+      23.18615
+     ],
+     [
+      72.65288,
+      23.18511
+     ],
+     [
+      72.66254,
+      23.18625
+     ],
+     [
+      72.66424,
+      23.18612
+     ],
+     [
+      72.67455,
+      23.18329
+     ],
+     [
+      72.67364,
+      23.17335
+     ],
+     [
+      72.67368,
+      23.1696
+     ],
+     [
+      72.67427,
+      23.16666
+     ],
+     [
+      72.67572,
+      23.16532
+     ],
+     [
+      72.67576,
+      23.16478
+     ],
+     [
+      72.67885,
+      23.16435
+     ],
+     [
+      72.68734,
+      23.16242
+     ],
+     [
+      72.68835,
+      23.16319
+     ],
+     [
+      72.68869,
+      23.16291
+     ]
+    ]
+   },
+   {
+    "id": "mahatma",
+    "name": "Mahatma Mandir",
+    "short": "Mahatma Mandir",
+    "icon": "landmark",
+    "lat": 23.23251,
+    "lng": 72.63116,
+    "km": 9.76,
+    "mins": 13.1,
+    "route": [
+     [
+      72.6175672,
+      23.1757547
+     ],
+     [
+      72.6175,
+      23.17546
+     ],
+     [
+      72.61656,
+      23.17147
+     ],
+     [
+      72.61966,
+      23.17243
+     ],
+     [
+      72.62302,
+      23.17256
+     ],
+     [
+      72.62394,
+      23.1739
+     ],
+     [
+      72.62851,
+      23.17556
+     ],
+     [
+      72.62951,
+      23.18532
+     ],
+     [
+      72.62219,
+      23.18513
+     ],
+     [
+      72.61798,
+      23.18661
+     ],
+     [
+      72.61555,
+      23.19274
+     ],
+     [
+      72.61393,
+      23.20061
+     ],
+     [
+      72.61586,
+      23.20514
+     ],
+     [
+      72.63186,
+      23.23077
+     ],
+     [
+      72.63051,
+      23.23191
+     ],
+     [
+      72.63116,
+      23.23251
+     ]
+    ]
+   },
+   {
+    "id": "railway",
+    "name": "Gandhinagar Capital Railway Station",
+    "short": "Railway Station",
+    "icon": "train",
+    "lat": 23.23484,
+    "lng": 72.63033,
+    "km": 10.69,
+    "mins": 15,
+    "route": [
+     [
+      72.6175672,
+      23.1757547
+     ],
+     [
+      72.6175,
+      23.17546
+     ],
+     [
+      72.61656,
+      23.17147
+     ],
+     [
+      72.61966,
+      23.17243
+     ],
+     [
+      72.62302,
+      23.17256
+     ],
+     [
+      72.62394,
+      23.1739
+     ],
+     [
+      72.62851,
+      23.17556
+     ],
+     [
+      72.62951,
+      23.18532
+     ],
+     [
+      72.62219,
+      23.18513
+     ],
+     [
+      72.61798,
+      23.18661
+     ],
+     [
+      72.61555,
+      23.19274
+     ],
+     [
+      72.61393,
+      23.20061
+     ],
+     [
+      72.61586,
+      23.20514
+     ],
+     [
+      72.63397,
+      23.23458
+     ],
+     [
+      72.63296,
+      23.23589
+     ],
+     [
+      72.6304,
+      23.2348
+     ],
+     [
+      72.63033,
+      23.23484
+     ]
+    ]
+   },
+   {
+    "id": "vaishnodevi",
+    "name": "SG Highway (Vaishnodevi Circle)",
+    "short": "SG Highway",
+    "icon": "road",
+    "lat": 23.13609,
+    "lng": 72.54257,
+    "km": 15.55,
+    "mins": 17.4,
+    "route": [
+     [
+      72.6175672,
+      23.1757547
+     ],
+     [
+      72.6175,
+      23.17546
+     ],
+     [
+      72.61656,
+      23.17147
+     ],
+     [
+      72.60832,
+      23.16906
+     ],
+     [
+      72.59302,
+      23.16704
+     ],
+     [
+      72.58828,
+      23.1673
+     ],
+     [
+      72.58297,
+      23.17063
+     ],
+     [
+      72.57586,
+      23.17144
+     ],
+     [
+      72.55662,
+      23.16036
+     ],
+     [
+      72.54564,
+      23.14379
+     ],
+     [
+      72.54269,
+      23.13596
+     ],
+     [
+      72.53649,
+      23.13647
+     ],
+     [
+      72.52968,
+      23.13524
+     ],
+     [
+      72.52599,
+      23.13377
+     ],
+     [
+      72.52608,
+      23.12726
+     ],
+     [
+      72.53294,
+      23.1274
+     ],
+     [
+      72.53912,
+      23.12439
+     ],
+     [
+      72.54253,
+      23.1361
+     ],
+     [
+      72.54257,
+      23.13609
+     ]
+    ]
+   },
+   {
+    "id": "airport",
+    "name": "Ahmedabad Airport (SVPI)",
+    "short": "Airport",
+    "icon": "plane",
+    "lat": 23.07593,
+    "lng": 72.63056,
+    "km": 17.4,
+    "mins": 25.6,
+    "route": [
+     [
+      72.6175672,
+      23.1757547
+     ],
+     [
+      72.6175,
+      23.17546
+     ],
+     [
+      72.61656,
+      23.17147
+     ],
+     [
+      72.60989,
+      23.16946
+     ],
+     [
+      72.6124,
+      23.16629
+     ],
+     [
+      72.61483,
+      23.15729
+     ],
+     [
+      72.6107,
+      23.15079
+     ],
+     [
+      72.60731,
+      23.1494
+     ],
+     [
+      72.63326,
+      23.13379
+     ],
+     [
+      72.62995,
+      23.10237
+     ],
+     [
+      72.63024,
+      23.08589
+     ],
+     [
+      72.62197,
+      23.08547
+     ],
+     [
+      72.62005,
+      23.08297
+     ],
+     [
+      72.61653,
+      23.08143
+     ],
+     [
+      72.62286,
+      23.07316
+     ],
+     [
+      72.621,
+      23.07023
+     ],
+     [
+      72.62237,
+      23.0693
+     ],
+     [
+      72.62493,
+      23.07152
+     ],
+     [
+      72.62332,
+      23.07309
+     ],
+     [
+      72.62637,
+      23.07601
+     ],
+     [
+      72.62907,
+      23.07728
+     ],
+     [
+      72.63012,
+      23.07634
+     ],
+     [
+      72.63056,
+      23.07593
+     ]
+    ]
+   }
+  ],
+  "categories": [
+   {
+    "id": "food",
+    "label": "Restaurants & cafés",
+    "icon": "food",
+    "places": [
+     {
+      "name": "Kansar Garden Restaurant",
+      "lat": 23.17519,
+      "lng": 72.62839,
+      "km": 2.04,
+      "mins": 3.9
+     },
+     {
+      "name": "Urban Dosa House",
+      "lat": 23.18466,
+      "lng": 72.6293,
+      "km": 2.83,
+      "mins": 4.9
+     },
+     {
+      "name": "Rasam Thal",
+      "lat": 23.18498,
+      "lng": 72.63124,
+      "km": 3.05,
+      "mins": 5.2
+     },
+     {
+      "name": "Starbucks",
+      "lat": 23.18496,
+      "lng": 72.63041,
+      "km": 2.97,
+      "mins": 5
+     },
+     {
+      "name": "McDonald's",
+      "lat": 23.19251,
+      "lng": 72.61642,
+      "km": 4.99,
+      "mins": 7.7
+     },
+     {
+      "name": "Upper Deck",
+      "lat": 23.19186,
+      "lng": 72.61665,
+      "km": 4.76,
+      "mins": 7.3
+     }
+    ]
+   },
+   {
+    "id": "hospital",
+    "label": "Hospitals",
+    "icon": "hospital",
+    "places": [
+     {
+      "name": "Aashka Multispeciality Hospital",
+      "lat": 23.18579,
+      "lng": 72.62179,
+      "km": 5.66,
+      "mins": 8.3
+     },
+     {
+      "name": "SMVS Hospital",
+      "lat": 23.17745,
+      "lng": 72.64101,
+      "km": 4.91,
+      "mins": 8
+     },
+     {
+      "name": "Vachhani Hospital",
+      "lat": 23.17941,
+      "lng": 72.63409,
+      "km": 2.69,
+      "mins": 4.9
+     },
+     {
+      "name": "Life Apollo Hospitals, Infocity",
+      "lat": 23.1926,
+      "lng": 72.63855,
+      "km": 4.89,
+      "mins": 7.4
+     },
+     {
+      "name": "Sanjivani Heart & Medical Hospital",
+      "lat": 23.19249,
+      "lng": 72.61329,
+      "km": 5.5,
+      "mins": 8.8
+     },
+     {
+      "name": "Civil Hospital, Sector 12",
+      "lat": 23.21966,
+      "lng": 72.64185,
+      "km": 6.99,
+      "mins": 10.1
+     },
+     {
+      "name": "Apollo Hospitals, Bhat",
+      "lat": 23.10981,
+      "lng": 72.62611,
+      "km": 10.13,
+      "mins": 13.8
+     }
+    ]
+   },
+   {
+    "id": "school",
+    "label": "Schools & colleges",
+    "icon": "school",
+    "places": [
+     {
+      "name": "School of Achiever",
+      "lat": 23.17055,
+      "lng": 72.62865,
+      "km": 2.04,
+      "mins": 4.4
+     },
+     {
+      "name": "Swaminarayan Dham International School",
+      "lat": 23.18065,
+      "lng": 72.64228,
+      "km": 4.64,
+      "mins": 7.6
+     },
+     {
+      "name": "DA-IICT",
+      "lat": 23.18841,
+      "lng": 72.62797,
+      "km": 3.23,
+      "mins": 5.4
+     },
+     {
+      "name": "Pandit Deendayal Energy University (PDEU)",
+      "lat": 23.15635,
+      "lng": 72.66528,
+      "km": 8.16,
+      "mins": 14
+     },
+     {
+      "name": "Gujarat National Law University (GNLU)",
+      "lat": 23.15131,
+      "lng": 72.65994,
+      "km": 8.51,
+      "mins": 15.3
+     }
+    ]
+   },
+   {
+    "id": "shopping",
+    "label": "Shopping",
+    "icon": "shopping",
+    "places": [
+     {
+      "name": "Sarthak Mall",
+      "lat": 23.1952,
+      "lng": 72.61461,
+      "km": 5.15,
+      "mins": 7.6
+     },
+     {
+      "name": "B-Mart Supermarket",
+      "lat": 23.19254,
+      "lng": 72.61365,
+      "km": 5.47,
+      "mins": 8.7
+     },
+     {
+      "name": "Super Mall, Infocity",
+      "lat": 23.19614,
+      "lng": 72.63367,
+      "km": 4.39,
+      "mins": 7.8
+     },
+     {
+      "name": "Agora Mall, Bhat",
+      "lat": 23.11859,
+      "lng": 72.62461,
+      "km": 9.38,
+      "mins": 13.5
+     }
+    ]
+   },
+   {
+    "id": "garden",
+    "label": "Gardens & parks",
+    "icon": "garden",
+    "places": [
+     {
+      "name": "Indroda Nature Park",
+      "lat": 23.19315,
+      "lng": 72.65033,
+      "km": 6.25,
+      "mins": 11.4
+     },
+     {
+      "name": "Sarita Udyan",
+      "lat": 23.20263,
+      "lng": 72.65982,
+      "km": 9.54,
+      "mins": 10.3
+     },
+     {
+      "name": "Punit Van",
+      "lat": 23.21692,
+      "lng": 72.66763,
+      "km": 9.26,
+      "mins": 10.6
+     },
+     {
+      "name": "Swarnim Park",
+      "lat": 23.22215,
+      "lng": 72.65198,
+      "km": 8.56,
+      "mins": 12.7
+     }
+    ]
+   },
+   {
+    "id": "worship",
+    "label": "Temples & heritage",
+    "icon": "worship",
+    "places": [
+     {
+      "name": "Swaminarayan Akshardham",
+      "lat": 23.2294,
+      "lng": 72.67408,
+      "km": 10.4,
+      "mins": 11.2
+     },
+     {
+      "name": "Dada Bhagwan Trimandir, Adalaj",
+      "lat": 23.17848,
+      "lng": 72.57213,
+      "km": 5.53,
+      "mins": 7.3
+     },
+     {
+      "name": "Adalaj Stepwell",
+      "lat": 23.16714,
+      "lng": 72.58014,
+      "km": 4.82,
+      "mins": 7.6
+     }
+    ]
+   }
+  ]
+ },
+ "brochure": {
+  "url": "",
+  "note": "TBC — PDF link (e.g. assets/unity-brochure.pdf or a Cloudflare R2 URL)"
+ }
 }

@@ -28,6 +28,7 @@ export function scoreLead(lead, agg, chatCount, requests) {
   add('Floor plans opened', Math.min(plansOpened * 5 + Math.max(count('floorplan_open') - plansOpened, 0) * 2, 15));
   add('Brochure opened', Math.min(count('brochure_open') * 8, 12));
   add('Walkthrough played', Math.min(count('walkthrough_play') * 4, 6));
+  add('Checked commute & nearby places on the map', Math.min(rows('map').length * 2, 8));
   add('Questions asked to AI', Math.min(chatCount * 3, 12));
   add('Return visits', Math.min(((lead.sessions || 1) - 1) * 6, 18));
   add('Tapped Call / WhatsApp', Math.min((count('cta', 'call') + count('cta', 'whatsapp')) * 6, 12));
@@ -45,5 +46,6 @@ export function scoreLead(lead, agg, chatCount, requests) {
 
   score = Math.max(0, Math.min(100, score));
   const priority = score >= 70 ? 'P0' : score >= 50 ? 'P1' : score >= 30 ? 'P2' : score >= 12 ? 'P3' : 'P4';
-  return { score, priority, parts, dwell };
+  const places = rows('map').filter((r) => (r.target || '').startsWith('place:')).map((r) => r.target.slice(6));
+  return { score, priority, parts, dwell, places };
 }

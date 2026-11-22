@@ -171,12 +171,16 @@
       <div class="sec" id="location" data-track="location">
         <h2>Location</h2>
         <p class="tagline">${esc(p.tagline)}</p>
-        <div class="map"><iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map" src="https://maps.google.com/maps?q=${encodeURIComponent(c.location.embedQuery)}&z=14&output=embed"></iframe></div>
-        <a class="pill" href="${esc(c.location.mapsUrl)}" target="_blank" rel="noopener" data-cta="maps">Open in Google Maps</a>
-        ${c.location.landmarks.map((g) => {
-          const places = g.places.filter((pl) => !isTbc(pl.name));
-          return places.length ? `<div class="lm-group"><h4>${esc(g.group)}</h4>${places.map((pl) => `<div class="lm"><span>${esc(pl.name)}</span><span>${pl.km != null ? `${pl.km} km` : ''}${pl.mins != null ? ` · ${pl.mins} mins` : ''}</span></div>`).join('')}</div>` : '';
-        }).join('')}
+        <div class="umap" id="unityMap">
+          <div class="umap-canvas" data-map></div>
+          <div class="umap-card hidden" data-card></div>
+        </div>
+        <p class="eyebrow umap-h">Connectivity · tap to see the drive</p>
+        <div class="kp-grid">${c.location.keyPlaces.map((k) => `<button class="kp" data-place="${esc(k.id)}"><span class="kp-ic">${window.UnityMap ? UnityMap.svg(k.icon, 18) : ''}</span><span class="kp-t"><b>${esc(k.name)}</b><span class="kp-meta">Tap for distance</span></span></button>`).join('')}</div>
+        <p class="eyebrow umap-h">Around Unity · show on map</p>
+        <div class="chipsrow cat-row">${c.location.categories.map((k) => `<button data-cat="${esc(k.id)}">${window.UnityMap ? UnityMap.svg(k.icon, 15) : ''}${esc(k.label)}</button>`).join('')}</div>
+        <div class="lm-list" data-list></div>
+        <p class="small">Distances and drive times are approximate, by road without traffic. <a href="${esc(c.location.mapsUrl)}" target="_blank" rel="noopener" data-cta="maps">Open in Google Maps</a></p>
       </div>
 
       <div class="sec" id="brochure" data-track="brochure">
@@ -210,6 +214,12 @@
     $('#visitCta').onclick = () => openVisit('site_visit');
     if (yt) watchVideoPlay();
     startTracking();
+    const mapRoot = $('#unityMap');
+    if (mapRoot && window.UnityMap) {
+      const go = () => UnityMap.init(mapRoot.closest('.sec'), c.location, { onEvent: (t) => queue({ type: 'map', target: t }) });
+      const io = new IntersectionObserver((en) => { if (en.some((e) => e.isIntersecting)) { io.disconnect(); go(); } }, { rootMargin: '600px' });
+      io.observe(mapRoot);
+    }
   }
 
   // ---------- tracking ----------

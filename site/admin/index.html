@@ -6,7 +6,7 @@
   <title>Unity Leads · The Palm Group</title>
   <meta name="robots" content="noindex, nofollow" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=6" />
+  <link rel="stylesheet" href="../styles.css?v=7" />
   <style>
     body { padding-bottom: 0; }
     .shell { max-width: 1200px; margin: 0 auto; padding: 18px; }
@@ -115,7 +115,7 @@
   <div class="drawer hidden" id="drawer"></div>
   <div class="scrim hidden" id="scrim"></div>
 
-  <script src="../config.js?v=6"></script>
+  <script src="../config.js?v=7"></script>
   <script>
   (() => {
     const C = window.UNITY_CONFIG;
@@ -214,7 +214,7 @@
       const d = await api(`/api/admin/leads/${id}`);
       const l = d.lead;
       const maxDwell = Math.max(1, ...Object.values(d.dwell));
-      const tlLabel = (e) => ({ session_start: 'Opened the page', floorplan_open: `Opened floor plan: ${e.target}`, brochure_open: 'Opened the brochure', gallery_open: 'Viewed a photo', walkthrough_play: 'Played the walkthrough', cta: `Tapped ${e.target}` }[e.type] || e.type);
+      const tlLabel = (e) => ({ session_start: 'Opened the page', floorplan_open: `Opened floor plan: ${e.target}`, brochure_open: 'Opened the brochure', gallery_open: 'Viewed a photo', walkthrough_play: 'Played the walkthrough', cta: `Tapped ${e.target}`, map: (e.target || '').startsWith('place:') ? `Checked commute to ${e.target.slice(6)}` : `Viewed nearby ${(e.target || '').slice(4)} on map` }[e.type] || e.type);
       const wa = `https://wa.me/91${l.phone}?text=${encodeURIComponent(d.openingLine)}`;
       $('#drawer').innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:start">
