@@ -6,7 +6,7 @@
   <title>Unity Leads · The Palm Group</title>
   <meta name="robots" content="noindex, nofollow" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=14" />
+  <link rel="stylesheet" href="../styles.css?v=15" />
   <style>
     body { padding-bottom: 0; }
     .shell { max-width: 1200px; margin: 0 auto; padding: 18px; }
@@ -28,6 +28,9 @@
     .P0 { background: #B3261E; color: #fff; } .P1 { background: #E8833A; color: #fff; } .P2 { background: #F2D48A; } .P3 { background: #E4E8E2; } .P4 { background: #F1F1EF; color: #888; }
     .bar { height: 6px; background: var(--line); border-radius: 9px; width: 70px; display: inline-block; vertical-align: middle; margin-left: 6px; overflow: hidden; }
     .bar i { display: block; height: 100%; background: var(--green); }
+    .tag-share { background: #DCE8DE !important; color: #2F4A3A !important; }
+    .tag-via { background: #EEE !important; color: #555 !important; }
+    .net a { color: var(--green); font-weight: 600; }
     .tag { font-size: 11px; background: var(--sand-soft); color: #7A5B23; padding: 2px 8px; border-radius: 99px; margin-right: 4px; white-space: nowrap; }
     .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100%); background: var(--bg); z-index: 60; overflow-y: auto; box-shadow: -10px 0 40px rgba(0,0,0,.15); padding: 20px; }
     .drawer h2 { margin-bottom: 0; }
@@ -115,7 +118,7 @@
   <div class="drawer hidden" id="drawer"></div>
   <div class="scrim hidden" id="scrim"></div>
 
-  <script src="../config.js?v=14"></script>
+  <script src="../config.js?v=15"></script>
   <script>
   (() => {
     const C = window.UNITY_CONFIG;
@@ -191,12 +194,13 @@
         ['Hot (P0–P1)', leads.filter((l) => ['P0', 'P1'].includes(l.priority)).length],
         ['Open requests', leads.reduce((s, l) => s + l.openRequests.length, 0)],
         ['Visits booked', leads.filter((l) => ['visit_booked', 'visited', 'negotiating', 'booked'].includes(l.status)).length],
+        ['Came via family/friends', leads.filter((l) => l.referred_by).length],
       ].map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join('');
       $('#leadRows').innerHTML = rows.map((l) => `
         <tr class="row" data-id="${l.id}">
           <td><span class="pri ${l.priority}">${l.priority}</span><span class="bar"><i style="width:${l.score}%"></i></span></td>
           <td><b>${esc(l.name)}</b><br><span class="small">+91 ${esc(l.phone)}${l.profession ? ' · ' + esc(l.profession) : ''}${role === 'owner' && l.first_ref ? ' · ' + esc(l.first_ref) : ''}</span></td>
-          <td class="hide-m">${l.openRequests.map((r) => `<span class="tag">${r === 'site_visit' ? 'Wants visit' : 'Callback'}</span>`).join('')}${l.sessions > 1 ? `<span class="tag">${l.sessions} visits</span>` : ''}${l.questions ? `<span class="tag">${l.questions} questions</span>` : ''}</td>
+          <td class="hide-m">${l.openRequests.map((r) => `<span class="tag">${r === 'site_visit' ? 'Wants visit' : 'Callback'}</span>`).join('')}${l.sessions > 1 ? `<span class="tag">${l.sessions} visits</span>` : ''}${l.questions ? `<span class="tag">${l.questions} questions</span>` : ''}${l.referrals ? `<span class="tag tag-share">Brought ${l.referrals}</span>` : l.link_opens ? `<span class="tag tag-share">Shared · ${l.link_opens} opened</span>` : ''}${l.referred_by_name ? `<span class="tag tag-via">via ${esc(l.referred_by_name)}</span>` : ''}</td>
           <td class="hide-m">${STATUSES[l.status] || l.status}</td>
           <td class="hide-m small">${ago(l.last_seen)}</td>
         </tr>`).join('') || `<tr><td colspan="5" class="small" style="text-align:center;padding:30px">No leads yet.</td></tr>`;
@@ -214,7 +218,7 @@
       const d = await api(`/api/admin/leads/${id}`);
       const l = d.lead;
       const maxDwell = Math.max(1, ...Object.values(d.dwell));
-      const tlLabel = (e) => ({ session_start: 'Opened the page', floorplan_open: `Opened floor plan: ${e.target}`, brochure_open: 'Opened the brochure', gallery_open: 'Viewed a photo', walkthrough_play: 'Played the walkthrough', cta: `Tapped ${e.target}`, map: (e.target || '').startsWith('place:') ? `Checked commute to ${e.target.slice(6)}` : `Viewed nearby ${(e.target || '').slice(4)} on map` }[e.type] || e.type);
+      const tlLabel = (e) => ({ arrived_via: `Received the link from ${e.target}`, share_open: 'Someone opened the link they shared (not verified yet)', share_open_verified: `${e.target} opened the link they shared`, referral_verified: `${e.target} verified via their link`, session_start: (e.target || '').startsWith('lead:') ? 'Opened the page (from a shared link)' : 'Opened the page', floorplan_open: `Opened floor plan: ${e.target}`, brochure_open: 'Opened the brochure', gallery_open: 'Viewed a photo', walkthrough_play: 'Played the walkthrough', cta: e.target === 'share' ? 'Tapped Share' : `Tapped ${e.target}`, map: (e.target || '').startsWith('place:') ? `Checked commute to ${e.target.slice(6)}` : `Viewed nearby ${(e.target || '').slice(4)} on map` }[e.type] || e.type);
       const wa = `https://wa.me/91${l.phone}?text=${encodeURIComponent(d.openingLine)}`;
       $('#drawer').innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:start">
@@ -237,7 +241,12 @@
         <div class="box"><h4>Why this score</h4>${d.parts.map((p) => `<div class="tl"><span>${esc(p.label)}</span><span>${p.pts > 0 ? '+' : ''}${p.pts}</span></div>`).join('') || '<p class="small">Only verified so far.</p>'}</div>
         <div class="box"><h4>Time spent by section</h4>${Object.entries(d.dwell).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="dwell-row"><span>${SECTION_NAMES[k] || esc(k)}</span><span class="bar"><i style="width:${(v / maxDwell) * 100}%"></i></span><span>${v >= 60 ? Math.round(v / 60) + ' min' : v + ' s'}</span></div>`).join('') || '<p class="small">No browsing recorded yet.</p>'}</div>
         ${d.chats.length ? `<div class="box"><h4>Questions to the assistant</h4><div class="chatbox">${d.chats.map((c) => `<div class="msg ${c.role}">${esc(c.content)}</div>`).join('')}</div></div>` : ''}
-        <div class="box"><h4>Activity</h4>${d.timeline.slice(0, 40).map((e) => `<div class="tl"><span>${esc(tlLabel(e))}</span><span>${when(e.ts)}</span></div>`).join('')}</div>
+        ${(d.network.referrer || d.network.opens || d.network.referees.length) ? `<div class="box net"><h4>Family & friends</h4>
+          ${d.network.referrer ? `<div class="tl"><span>Came via</span><span>${d.network.referrer.open ? `<a href="#" data-lead="${d.network.referrer.id}">${esc(d.network.referrer.name)}</a>` : esc(d.network.referrer.name)}</span></div>` : ''}
+          ${d.network.opens ? `<div class="tl"><span>Their shared link was opened</span><span>${d.network.opens} ${d.network.opens === 1 ? 'person' : 'people'}${d.network.unverifiedOpens ? ` · ${d.network.unverifiedOpens} not verified yet` : ''}</span></div>` : ''}
+          ${d.network.referees.map((r) => `<div class="tl"><span>${r.open ? `<a href="#" data-lead="${r.id}">${esc(r.name)}</a>` : esc(r.name)} verified</span><span>${STATUSES[r.status] || r.status} · ${when(r.created_at)}</span></div>`).join('')}
+        </div>` : ''}
+        <div class="box"><h4>Journey</h4>${d.timeline.slice(0, 40).map((e) => `<div class="tl"><span>${esc(tlLabel(e))}</span><span>${when(e.ts)}</span></div>`).join('')}</div>
         <div class="box"><h4>Follow-up</h4>
           <form id="leadForm" style="display:grid;gap:10px">
             <label>Status<select name="status">${Object.entries(STATUSES).map(([k, v]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
@@ -248,6 +257,7 @@
         </div>`;
       $('#drawer').classList.remove('hidden'); $('#scrim').classList.remove('hidden');
       $('#closeDrawer').onclick = closeDrawer;
+      $$('#drawer [data-lead]').forEach((a) => (a.onclick = (e) => { e.preventDefault(); openLead(a.dataset.lead); }));
       $('#leadForm').onsubmit = async (e) => {
         e.preventDefault(); const f = e.target;
         const body = { status: f.elements.status.value, notes: f.elements.notes.value };

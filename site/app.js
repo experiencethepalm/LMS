@@ -10,11 +10,18 @@
     del: (k) => { try { localStorage.removeItem(k); } catch {} },
   };
 
-  // Salesperson attribution: ?ref=CODE is remembered on this device, so a forwarded link still credits them
+  // Attribution. ?r=<share id> belongs to a salesperson or to a buyer who forwarded the page
+  // (older ?ref= links still work). Remembered on this device so forwards keep their credit.
   const params = new URLSearchParams(location.search);
-  // Salesperson attribution: ?r=<share id> (older ?ref= links still work). Remembered on this device.
-  const incomingRef = params.get('r') || params.get('ref');
-  if (incomingRef) store.set('unity_ref', incomingRef.trim());
+  const incomingRef = (params.get('r') || params.get('ref') || '').trim();
+  const myShareId = store.get('unity_me');
+  if (incomingRef && incomingRef !== myShareId) store.set('unity_ref', incomingRef);
+  // Random id for this browser, so an open of a shared link can be matched to the person once they verify
+  let device = store.get('unity_dev');
+  if (!device) { device = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)).replace(/-/g, '').slice(0, 24); store.set('unity_dev', device); }
+  if (incomingRef && incomingRef !== myShareId) {
+    fetch(C.API_BASE + '/api/open', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ref: incomingRef, device }), keepalive: true }).catch(() => {});
+  }
   const source = params.get('utm_source') ? [params.get('utm_source'), params.get('utm_campaign')].filter(Boolean).join('/') : document.referrer ? new URL(document.referrer).hostname : '';
   const ref = store.get('unity_ref') || '';
   let token = store.get('unity_token');
@@ -27,11 +34,19 @@
   const wa = `https://wa.me/${C.SALES_WHATSAPP}?text=${encodeURIComponent(C.WHATSAPP_TEXT)}`;
   ['#helpCall', '#barCall'].forEach((s) => ($(s).href = tel));
   ['#helpWa', '#barWa'].forEach((s) => ($(s).href = wa));
-  $('#shareBtn').onclick = () => {
-    const url = location.origin + location.pathname + (ref ? `?r=${encodeURIComponent(ref)}` : '');
-    if (navigator.share) navigator.share({ title: 'The Palm Unity, Kudasan', url }).catch(() => {});
-    else navigator.clipboard?.writeText(url).then(() => alertToast('Link copied'));
+  // Verified buyers share their own link, so the dashboard can show who they brought in
+  const shareUrl = () => {
+    const id = store.get('unity_me') || ref;
+    return location.origin + location.pathname + (id ? `?r=${encodeURIComponent(id)}` : '');
   };
+  const sharePage = () => {
+    if (token) queue({ type: 'cta', target: 'share' });
+    const url = shareUrl();
+    const text = 'Have a look at The Palm Unity — 3 & 4 BHK Zen Living homes in Kudasan, Gandhinagar';
+    if (navigator.share) navigator.share({ title: 'The Palm Unity', text, url }).catch(() => {});
+    else window.open(`https://wa.me/?text=${encodeURIComponent(`${text}: ${url}`)}`, '_blank', 'noopener');
+  };
+  $('#shareBtn').onclick = sharePage;
 
   function setImg(img, src) {
     const box = img.closest('.ph');
@@ -64,7 +79,7 @@
     if (!f.elements.consent.checked) return (err.textContent = 'Please tick the consent box to continue.');
     btn.disabled = true; btn.textContent = 'Sending…';
     try {
-      const r = await api('/api/otp/start', { method: 'POST', body: JSON.stringify({ name: f.elements.name.value, phone, profession: f.elements.profession.value, consent: true, ref, source }) });
+      const r = await api('/api/otp/start', { method: 'POST', body: JSON.stringify({ name: f.elements.name.value, phone, profession: f.elements.profession.value, consent: true, ref, source, device }) });
       $('#stepDetails').classList.add('hidden');
       $('#stepCode').classList.remove('hidden');
       $('#codeSentTo').textContent = `We sent a code on ${r.channel === 'sms' ? 'SMS' : 'WhatsApp'} to +91 ${phone.slice(0, 5)} ${phone.slice(5)}.`;
@@ -82,7 +97,7 @@
     try {
       const r = await api('/api/otp/verify', { method: 'POST', body: JSON.stringify({ phone, code: e.target.elements.code.value }) });
       token = r.token; store.set('unity_token', token);
-      unlock(r.content, r.name);
+      unlock(r.content, r.name, r.shareId);
     } catch (ex) { err.textContent = ex.message; }
     btn.disabled = false; btn.textContent = 'Verify & open';
   });
@@ -93,7 +108,7 @@
   // Returning visitor
   if (token) {
     api(`/api/me${ref ? `?ref=${encodeURIComponent(ref)}` : ''}`)
-      .then((r) => unlock(r.content, r.name))
+      .then((r) => unlock(r.content, r.name, r.shareId))
       .catch((ex) => { if (ex.status === 401) { store.del('unity_token'); token = null; } });
   }
 
@@ -129,7 +144,12 @@
   const isTbc = (v) => v == null || v === '' || /^TBC/i.test(String(v));
   const val = (v, fallback = 'To be announced') => (isTbc(v) ? `<span class="tbc">${fallback}</span>` : esc(v));
 
-  function unlock(c, name) {
+  function unlock(c, name, shareId) {
+    if (shareId) {
+      store.set('unity_me', shareId);
+      // The address bar now carries this buyer's own link, so copy/paste forwards are credited to them
+      try { history.replaceState(null, '', `${location.pathname}?r=${encodeURIComponent(shareId)}${location.hash}`); } catch {}
+    }
     $('#gate').classList.add('hidden');
     $('#actionbar').classList.remove('hidden');
     $('#heroBadge').textContent = `✓ Verified${name ? ` · Welcome, ${name.split(' ')[0]}` : ''}`;
@@ -215,6 +235,10 @@
           <p>Walk the site and sample homes with our team. Pick a slot — or call / WhatsApp for the same day.</p>
           <button class="btn sm" id="visitCta">Book a site visit</button>
         </div>
+        <div class="share-card">
+          <div><h3>Deciding with family?</h3><p class="muted">Send Unity to them on WhatsApp — they'll see everything you see.</p></div>
+          <button class="btn primary sm" id="shareFamily"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/></svg> Share with family</button>
+        </div>
       </div>`;
     $('#project').classList.remove('hidden');
 
@@ -230,6 +254,7 @@
     }));
     $$('[data-gal]').forEach((fig) => (fig.onclick = () => openGallery(c.gallery, +fig.dataset.gal)));
     $('#visitCta').onclick = () => openVisit('site_visit');
+    $('#shareFamily').onclick = sharePage;
     if (yt) watchVideoPlay();
     startTracking();
     const mapRoot = $('#unityMap');

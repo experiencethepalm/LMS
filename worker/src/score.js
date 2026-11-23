@@ -32,6 +32,10 @@ export function scoreLead(lead, agg, chatCount, requests) {
   add('Questions asked to AI', Math.min(chatCount * 3, 12));
   add('Return visits', Math.min(((lead.sessions || 1) - 1) * 6, 18));
   add('Tapped Call / WhatsApp', Math.min((count('cta', 'call') + count('cta', 'whatsapp')) * 6, 12));
+  // Sharing Unity with family/friends is one of the strongest buying signals
+  add('Shared the link', Math.min(count('cta', 'share') * 4, 8));
+  add('Family/friends opened their link', Math.min((lead.link_opens || 0) * 3, 9));
+  add('Family/friends verified via their link', Math.min((lead.referrals || 0) * 8, 16));
   if (requests.some((r) => r.kind === 'site_visit')) add('Requested a site visit', 25);
   if (requests.some((r) => r.kind === 'callback')) add('Requested a callback', 15);
 

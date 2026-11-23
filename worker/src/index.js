@@ -50,6 +50,7 @@ async function route(request, env, ctx) {
   if (p === '/api/otp/start' && m === 'POST') return otpStart(request, env);
   if (p === '/api/otp/verify' && m === 'POST') return otpVerify(request, env);
   if (p === '/api/me' && m === 'GET') return me(request, env);
+  if (p === '/api/open' && m === 'POST') return linkOpen(request, env);
   if (p === '/api/track' && m === 'POST') return track(request, env);
   if (p === '/api/chat' && m === 'POST') return chat(request, env);
   if (p === '/api/request' && m === 'POST') return buyerRequest(request, env, ctx);
@@ -94,6 +95,7 @@ async function otpStart(request, env) {
     name,
     profession: clean(body.profession, 80),
     ref: clean(body.ref, 32),
+    device: clean(body.device, 40),
     source: clean(body.source, 80),
   });
   await env.DB.prepare('INSERT INTO otps (phone, code_hash, expires_at, created_at, ip, pending) VALUES (?,?,?,?,?,?)')
@@ -120,24 +122,28 @@ async function otpVerify(request, env) {
   await env.DB.prepare('UPDATE otps SET expires_at=0 WHERE rowid=?').bind(row.rowid).run();
 
   const info = JSON.parse(row.pending || '{}');
-  const ref = await validRef(env, info.ref);
+  const via = await resolveRef(env, info.ref);          // { sales, leadId } — salesperson link or another buyer's link
+  const ref = via.sales || null;
   const existing = await env.DB.prepare('SELECT * FROM leads WHERE phone=?').bind(phone).first();
   let leadId;
   if (existing) {
     leadId = existing.id;
+    const referrer = !existing.referred_by && via.leadId && via.leadId !== leadId ? via.leadId : null;
     await env.DB.prepare(
-      `UPDATE leads SET name=?, profession=COALESCE(NULLIF(?,''),profession), last_ref=COALESCE(?,last_ref), first_ref=COALESCE(first_ref,?), last_seen=?, sessions=sessions+1 WHERE id=?`
-    ).bind(info.name, info.profession || '', ref, ref, t, leadId).run();
+      `UPDATE leads SET name=?, profession=COALESCE(NULLIF(?,''),profession), last_ref=COALESCE(?,last_ref), first_ref=COALESCE(first_ref,?), referred_by=COALESCE(referred_by,?), share_id=COALESCE(share_id,?), last_seen=?, sessions=sessions+1 WHERE id=?`
+    ).bind(info.name, info.profession || '', ref, ref, referrer, newShareId(), t, leadId).run();
   } else {
     const r = await env.DB.prepare(
-      'INSERT INTO leads (phone, name, profession, first_ref, last_ref, source, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?)'
-    ).bind(phone, info.name, info.profession || null, ref, ref, info.source || null, t, t).run();
+      'INSERT INTO leads (phone, name, profession, first_ref, last_ref, source, referred_by, share_id, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?,?,?)'
+    ).bind(phone, info.name, info.profession || null, ref, ref, via.leadId ? 'shared by a buyer' : info.source || null, via.leadId || null, newShareId(), t, t).run();
     leadId = r.meta.last_row_id;
   }
-  await logEvents(env, leadId, [{ type: 'session_start', target: ref || '' }]);
+  if (info.device) await env.DB.prepare('UPDATE link_opens SET verified_lead=? WHERE device=? AND verified_lead IS NULL').bind(leadId, info.device).run();
+  await logEvents(env, leadId, [{ type: 'session_start', target: via.leadId ? `lead:${via.leadId}` : ref || '' }]);
+  const mine = await env.DB.prepare('SELECT share_id FROM leads WHERE id=?').bind(leadId).first();
 
   const token = await signToken({ sub: leadId, role: 'buyer' }, env.TOKEN_SECRET, BUYER_TTL);
-  return json({ ok: true, token, name: info.name, content });
+  return json({ ok: true, token, name: info.name, shareId: mine.share_id, content });
 }
 
 // Share links carry an opaque id (?r=k7m2qx) so buyers never see the salesperson's name.
@@ -148,6 +154,36 @@ async function validRef(env, value) {
   const sp = await env.DB.prepare('SELECT code FROM salespeople WHERE (share_id=? OR code=?) AND active=1')
     .bind(v.toLowerCase(), v.toUpperCase()).first();
   return sp ? sp.code : null;
+}
+
+// A share id can belong to a salesperson or to a verified buyer who forwarded the page.
+// A buyer's link keeps crediting the salesperson who brought that buyer in.
+async function resolveRef(env, value) {
+  const v = String(value || '').trim();
+  if (!v) return {};
+  const sales = await validRef(env, v);
+  if (sales) return { sales };
+  const ld = await env.DB.prepare('SELECT id, first_ref FROM leads WHERE share_id=?').bind(v.toLowerCase()).first();
+  return ld ? { sales: ld.first_ref || null, leadId: ld.id } : {};
+}
+
+// Logged when anyone opens a shared link (before they verify), so the dashboard can show reach
+async function linkOpen(request, env) {
+  const body = await readJson(request);
+  const ref = clean(body.ref, 32), device = clean(body.device, 40);
+  if (!ref || !device) return json({ ok: true });
+  const via = await resolveRef(env, ref);
+  if (!via.sales && !via.leadId) return json({ ok: true });
+  const t = now();
+  const ip = request.headers.get('cf-connecting-ip') || 'local';
+  const same = await env.DB.prepare('SELECT 1 FROM link_opens WHERE device=? AND ref=? AND ts>?').bind(device, ref, t - 1800).first();
+  if (same) return json({ ok: true });                       // same person reopening within 30 min
+  const flood = await env.DB.prepare('SELECT COUNT(*) n FROM link_opens WHERE ip=? AND ts>?').bind(ip, t - 3600).first();
+  if (flood.n >= 60) return json({ ok: true });              // ignore floods from one network
+  const known = await env.DB.prepare('SELECT verified_lead FROM link_opens WHERE device=? AND verified_lead IS NOT NULL LIMIT 1').bind(device).first();
+  await env.DB.prepare('INSERT INTO link_opens (ref, sales_code, by_lead, device, ip, ts, verified_lead) VALUES (?,?,?,?,?,?,?)')
+    .bind(ref, via.sales || null, via.leadId || null, device, ip, t, known?.verified_lead || null).run();
+  return json({ ok: true });
 }
 
 function newShareId() {
@@ -171,7 +207,8 @@ async function me(request, env) {
   const lead = await buyerFrom(request, env);
   if (!lead) return bad('Please verify to continue.', 401);
   const url = new URL(request.url);
-  const ref = await validRef(env, clean(url.searchParams.get('ref'), 32));
+  const ref = (await resolveRef(env, clean(url.searchParams.get('ref'), 32))).sales || null;
+  if (!lead.share_id) { lead.share_id = newShareId(); await env.DB.prepare('UPDATE leads SET share_id=? WHERE id=?').bind(lead.share_id, lead.id).run(); }
   const t = now();
   if (t - lead.last_seen > NEW_SESSION_GAP) {
     await env.DB.prepare('UPDATE leads SET sessions=sessions+1, last_seen=?, last_ref=COALESCE(?,last_ref) WHERE id=?').bind(t, ref, lead.id).run();
@@ -179,7 +216,7 @@ async function me(request, env) {
   } else {
     await env.DB.prepare('UPDATE leads SET last_seen=? WHERE id=?').bind(t, lead.id).run();
   }
-  return json({ ok: true, name: lead.name, content });
+  return json({ ok: true, name: lead.name, shareId: lead.share_id, content });
 }
 
 // ---------- Buyer: tracking, chat, requests ----------
@@ -292,7 +329,12 @@ async function listLeads(env, admin, url) {
   if (admin.role === 'owner' && ref === 'none') { where = 'WHERE l.first_ref IS NULL'; args = []; }
   else if (admin.role === 'owner' && ref) { where = 'WHERE l.first_ref = ?'; args = [ref]; }
 
-  const leads = (await env.DB.prepare(`SELECT l.* FROM leads l ${where} ORDER BY l.last_seen DESC LIMIT 2000`).bind(...args).all()).results;
+  const leads = (await env.DB.prepare(
+    `SELECT l.*, rb.name AS referred_by_name,
+       (SELECT COUNT(*) FROM leads x WHERE x.referred_by = l.id) AS referrals,
+       (SELECT COUNT(DISTINCT o.device) FROM link_opens o WHERE o.by_lead = l.id) AS link_opens
+     FROM leads l LEFT JOIN leads rb ON rb.id = l.referred_by ${where} ORDER BY l.last_seen DESC LIMIT 2000`
+  ).bind(...args).all()).results;
   if (!leads.length) return json({ leads: [] });
   // Subquery keeps bound parameters small (D1 allows max 100 per query)
   const inScope = `lead_id IN (SELECT l.id FROM leads l ${where})`;
@@ -330,8 +372,29 @@ async function leadDetail(env, admin, id) {
   const timeline = (await env.DB.prepare("SELECT type, target, value, ts FROM events WHERE lead_id=? AND type!='dwell' ORDER BY ts DESC LIMIT 200").bind(id).all()).results;
   const chats = (await env.DB.prepare('SELECT role, content, ts FROM chats WHERE lead_id=? ORDER BY ts, id').bind(id).all()).results;
   const requests = (await env.DB.prepare('SELECT * FROM requests WHERE lead_id=? ORDER BY created_at DESC').bind(id).all()).results;
+  const referrer = lead.referred_by ? await env.DB.prepare('SELECT id, name, first_ref FROM leads WHERE id=?').bind(lead.referred_by).first() : null;
+  const referees = (await env.DB.prepare('SELECT id, name, status, created_at, first_ref FROM leads WHERE referred_by=? ORDER BY created_at').bind(id).all()).results;
+  const opens = (await env.DB.prepare(
+    `SELECT o.ts, o.device, o.verified_lead, v.name AS verified_name FROM link_opens o LEFT JOIN leads v ON v.id = o.verified_lead
+     WHERE o.by_lead=? ORDER BY o.ts DESC LIMIT 200`).bind(id).all()).results;
+  lead.referrals = referees.length;
+  lead.link_opens = new Set(opens.map((o) => o.device)).size;
+  const canOpen = (l) => admin.role === 'owner' || l.first_ref === admin.code;
+  const network = {
+    referrer: referrer ? { id: referrer.id, name: referrer.name, open: canOpen(referrer) } : null,
+    referees: referees.map((r) => ({ id: r.id, name: r.name, status: r.status, created_at: r.created_at, open: canOpen(r) })),
+    opens: lead.link_opens,
+    unverifiedOpens: new Set(opens.filter((o) => !o.verified_lead).map((o) => o.device)).size,
+  };
+  // One journey: own activity + how they arrived + what happened with the links they shared
+  const journey = [
+    ...timeline.map((e) => ({ ...e })),
+    ...(referrer ? [{ type: 'arrived_via', target: referrer.name, ts: lead.created_at }] : []),
+    ...opens.map((o) => ({ type: o.verified_lead ? 'share_open_verified' : 'share_open', target: o.verified_name || '', ts: o.ts })),
+    ...referees.map((r) => ({ type: 'referral_verified', target: r.name, ts: r.created_at })),
+  ].sort((a, b) => b.ts - a.ts).slice(0, 250);
   const s = scoreLead(lead, agg, chats.filter((c) => c.role === 'user').length, requests);
-  return json({ lead, ...s, timeline, chats, requests, openingLine: openingLine(lead, s, chats, requests) });
+  return json({ lead, ...s, timeline: journey, network, chats, requests, openingLine: openingLine(lead, s, chats, requests) });
 }
 
 // A suggested first line for the sales call, based on what the buyer looked at
@@ -341,6 +404,7 @@ function openingLine(lead, s, chats, requests) {
   const PLACE = { gift: 'GIFT City', airport: 'the airport', infocity: 'Infocity', mahatma: 'Mahatma Mandir', railway: 'the railway station', vaishnodevi: 'SG Highway', metro: 'the metro' };
   const checked = [...new Set(s.places || [])].map((id) => PLACE[id]).filter(Boolean);
   const lastQ = [...chats].reverse().find((c) => c.role === 'user')?.content;
+  if (lead.referrals > 0) return `Hi ${first}, this is from The Palm Unity — thank you for sharing Unity with your family and friends! Would you like to plan a site visit together with them?`;
   if (requests.some((r) => r.kind === 'site_visit')) return `Hi ${first}, this is from The Palm Unity — calling to confirm your site visit. Which day suits you best?`;
   if (lastQ) return `Hi ${first}, this is from The Palm Unity. I saw you asked "${lastQ.slice(0, 80)}" — happy to take you through that properly.`;
   if (checked.length) return `Hi ${first}, this is from The Palm Unity. I noticed you checked the commute to ${checked.slice(0, 2).join(' and ')} — Unity is well placed for that. Would a quick site visit this week help?`;
@@ -404,7 +468,7 @@ async function markRequest(env, admin, id) {
 async function exportCsv(env, admin) {
   const fake = new URL('https://x/api/admin/leads');
   const { leads } = await (await listLeads(env, admin, fake)).json();
-  const cols = ['id', 'name', 'phone', 'profession', 'first_ref', 'source', 'status', 'score', 'priority', 'sessions', 'questions', 'created_at', 'last_seen', 'notes'];
+  const cols = ['id', 'name', 'phone', 'profession', 'first_ref', 'referred_by_name', 'referrals', 'link_opens', 'source', 'status', 'score', 'priority', 'sessions', 'questions', 'created_at', 'last_seen', 'notes'];
   const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
   const iso = (t) => (t ? new Date(t * 1000).toISOString() : '');
   const lines = [cols.join(',')].concat(

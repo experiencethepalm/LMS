@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS leads (
   created_at  INTEGER NOT NULL,
   last_seen   INTEGER NOT NULL,
   sessions    INTEGER NOT NULL DEFAULT 1,
+  referred_by INTEGER,                   -- lead id of the buyer whose link they opened
+  share_id    TEXT,                      -- this buyer's own share id (?r=...) for forwarding to family
   status      TEXT NOT NULL DEFAULT 'new',   -- new | contacted | visit_booked | visited | negotiating | booked | lost
   notes       TEXT
 );
@@ -68,3 +70,17 @@ CREATE TABLE IF NOT EXISTS requests (
   handled         INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_requests_lead ON requests(lead_id);
+
+-- Every open of a shared link (before or after verification), for referral reach
+CREATE TABLE IF NOT EXISTS link_opens (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  ref           TEXT NOT NULL,           -- share id used
+  sales_code    TEXT,                    -- salesperson credited
+  by_lead       INTEGER,                 -- buyer who shared it (null = salesperson's own link)
+  device        TEXT,                    -- random per-browser id
+  ip            TEXT,
+  ts            INTEGER NOT NULL,
+  verified_lead INTEGER                  -- filled in once that device verifies
+);
+CREATE INDEX IF NOT EXISTS idx_opens_by ON link_opens(by_lead, ts);
+CREATE INDEX IF NOT EXISTS idx_opens_device ON link_opens(device);
