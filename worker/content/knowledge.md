@@ -13,10 +13,15 @@ After editing, redeploy the Worker (`npx wrangler deploy`).
 ## Homes currently offered
 - 3 BHK — "Pure" (314 sq.yds super built-up) and "Bliss" (350 sq.yds). 2 allocated parkings.
 - 4 BHK — "Zeal" (429 sq.yds) and "Nova" (463 sq.yds). 3 allocated parkings.
+- Penthouses — 3 BHK Penthouse "Bliss Penthouse" (395 sq.yds); 4 BHK Penthouses "Zeal Penthouse" (456 sq.yds) and "Nova Penthouse" (522 sq.yds). Parking for penthouses: the sales team confirms.
 - In the 3 BHK block, some homes are garden-facing and some road-facing; availability varies by floor — the sales team confirms specific units.
 
 ## Distinctive features
-- Sky bridges connect every tower, running above a resort-style pool deck.
+- A single exclusive 20-storey tower on a rare dual-road frontage (24 m and 36 m wide roads) — uninterrupted light, air and views.
+- Kudasan's only 20-storey address and its tallest residential building.
+- Four Sky Bridges connect a landscaped Terrace Garden and The Sky Hall on the upper levels.
+- Largest foyers in the segment: 1,885 sq. ft. per floor, open on all sides for natural ventilation, with Jullas (swings) and seating for 12–14 people.
+- Every apartment has two separate entries: a main entrance and a dedicated service entry for deliveries and staff.
 - Cantilevered balconies project outward from the facade (not recessed) for open, uninterrupted views.
 - 3 basement levels of parking, so the ground floor is kept for people and landscaping.
 - Covered porte-cochère with a dedicated pick-up & drop-off zone and valet parking.

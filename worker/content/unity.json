@@ -1,5 +1,5 @@
 {
- "_note": "Gated content: served only to verified visitors by the Worker. Anything marked TBC must be filled in before launch. Do NOT add Skyvillas, penthouses or floors above 16 until released.",
+ "_note": "Gated content: served only to verified visitors by the Worker. Anything marked TBC must be filled in before launch. Do NOT add Skyvillas until released.",
  "project": {
   "name": "The Palm Unity",
   "tagline": "Rising Above Kudasan, Rooted in Zen Living",
@@ -8,15 +8,33 @@
   "type": "Residential apartments",
   "possession": "December 2030",
   "rera": "PR/GJ/GANDHINAGAR/GANDHINAGAR/Gandhinagar Municipal Corporation/RAA17286/210826/311232",
-  "about": "The Palm Unity is a Zen Living address by The Palm Group in Kudasan, Gandhinagar — spacious 3 and 4 BHK homes crafted for an exclusive community, with sky bridges linking the towers, a resort-style pool deck and The Sky Hall on the 20th floor."
+  "about": "The Palm Unity is a Zen Living address by The Palm Group in Kudasan, Gandhinagar — a single exclusive 20-storey tower on a dual-road frontage, with spacious 3 & 4 BHK homes and penthouses, four Sky Bridges, a Terrace Garden and The Sky Hall high above the city."
  },
  "highlights": [
-  "Spacious 3 & 4 BHK homes from 314 to 463 sq.yds super built-up",
-  "Sky bridges connecting every tower, above a resort-style pool deck",
-  "Cantilevered balconies that project beyond the facade for open views",
-  "3 basement levels of parking — the ground floor stays for people",
-  "Covered porte-cochère with pick-up & drop-off zone and valet parking",
-  "The Sky Hall — a banquet hall on the 20th floor"
+  {
+   "title": "One Address. Two Roads. Zero Compromise.",
+   "text": "A single exclusive tower rising on a rare dual-road frontage — 24 m and 36 m wide — giving every home uninterrupted light, air and views most single towers can't offer."
+  },
+  {
+   "title": "Ground Floor, Reserved for Living — Not Parking.",
+   "text": "Three levels of basement parking mean the ground floor belongs entirely to residents, not vehicles — the first step into Unity is a lobby, not a parking lane."
+  },
+  {
+   "title": "Where the Sky Becomes Common Ground.",
+   "text": "Four Sky Bridges connect a landscaped Terrace Garden and The Sky Hall — turning the upper levels into Unity's real social address, high above the city."
+  },
+  {
+   "title": "Kudasan's Only 20-Storey Address.",
+   "text": "Standing 20 storeys tall, The Palm Unity isn't just Kudasan's tallest residential building — it's the only one built at this scale, anywhere in the neighbourhood."
+  },
+  {
+   "title": "The Largest Foyers in the Segment.",
+   "text": "At 1,885 sq. ft. per floor, Unity's foyers are open on all sides for natural ventilation — fitted with Jullas and seating benches for 12–14 people, turning every floor's entrance into a gathering space, not just a hallway."
+  },
+  {
+   "title": "Two Doors, Twice the Convenience.",
+   "text": "Every apartment at Unity opens through two separate entries — a main entrance and a dedicated service entry — so daily deliveries, staff and everyday convenience never have to pass through your main door."
+  }
  ],
  "gallery": [
   {
@@ -24,7 +42,7 @@
    "thumb": "assets/img/the-palm-unity-kudasan-gandhinagar-elevation-800.webp",
    "w": 1920,
    "h": 1923,
-   "alt": "Front elevation of The Palm Unity residential towers in Kudasan, Gandhinagar at dusk",
+   "alt": "Front elevation of The Palm Unity residential tower in Kudasan, Gandhinagar at dusk",
    "caption": "Elevation"
   },
   {
@@ -33,7 +51,7 @@
    "w": 1920,
    "h": 1920,
    "alt": "Low-angle view of The Palm Unity tower with lit balconies against the evening sky",
-   "caption": "The towers"
+   "caption": "The tower"
   },
   {
    "src": "assets/img/the-palm-unity-cantilevered-balconies.webp",
@@ -136,6 +154,27 @@
    "sbAreaSqYd": 463,
    "parking": 3,
    "image": "assets/img/plan-nova.jpg"
+  },
+  {
+   "id": "bliss-ph",
+   "name": "Bliss Penthouse",
+   "config": "3 BHK Penthouse",
+   "sbAreaSqYd": 395,
+   "image": "assets/img/plan-bliss-penthouse.jpg"
+  },
+  {
+   "id": "zeal-ph",
+   "name": "Zeal Penthouse",
+   "config": "4 BHK Penthouse",
+   "sbAreaSqYd": 456,
+   "image": "assets/img/plan-zeal-penthouse.jpg"
+  },
+  {
+   "id": "nova-ph",
+   "name": "Nova Penthouse",
+   "config": "4 BHK Penthouse",
+   "sbAreaSqYd": 522,
+   "image": "assets/img/plan-nova-penthouse.jpg"
   }
  ],
  "paymentPlan": {

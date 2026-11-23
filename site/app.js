@@ -167,7 +167,7 @@
         <div class="facts">
           <div class="fact"><span>Type</span><b>${esc(p.type)}</b></div>
           <div class="fact"><span>Possession</span><b>${val(p.possession)}</b></div>
-          <div class="fact"><span>Homes</span><b>${esc(plansByConfig.join(' · '))}</b></div>
+          <div class="fact"><span>Homes</span><b>3 & 4 BHK · Penthouses</b></div>
           <div class="fact"><span>Developer</span><b>${esc(p.developer)}</b></div>
           <div class="fact wide"><span>RERA</span><b>${val(p.rera, 'Registered · number shared on request')}</b></div>
         </div>
@@ -175,7 +175,7 @@
 
       <div class="sec" id="highlights" data-track="highlights">
         <h2>Highlights</h2>
-        <ul class="hl">${c.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>
+        <ol class="hl2">${c.highlights.map((h, i) => typeof h === 'string' ? `<li><p>${esc(h)}</p></li>` : `<li><span class="hl-n">${String(i + 1).padStart(2, '0')}</span><div><h3>${esc(h.title)}</h3><p>${esc(h.text)}</p></div></li>`).join('')}</ol>
       </div>
 
       <div class="sec" id="gallery" data-track="gallery">
@@ -186,13 +186,13 @@
 
       <div class="sec" id="floorplans" data-track="floorplans">
         <h2>Floor plans</h2>
-        <div class="chipsrow" id="planFilter"><button class="on" data-f="">All</button>${plansByConfig.map((x) => `<button data-f="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+        <div class="chipsrow" id="planFilter">${plansByConfig.map((x, i) => `<button data-f="${esc(x)}"${i === 0 ? ' class="on"' : ''}>${esc(x)}</button>`).join('')}</div>
         <div class="plans">${c.floorplans.map((f) => `
-          <button class="plan" data-plan="${esc(f.id)}" data-config="${esc(f.config)}">
+          <button class="plan${f.config === plansByConfig[0] ? '' : ' hidden'}" data-plan="${esc(f.id)}" data-config="${esc(f.config)}">
             <div class="ph" data-label="${esc(f.name)} plan"><img alt="${esc(f.name)} floor plan" data-src="${esc(f.image)}" loading="lazy" /></div>
             <div class="body"><small>${esc(f.config)}</small><b>${esc(f.name)}</b>
               <small>${f.sbAreaSqYd} sq.yds super built-up · ≈ ${(f.sbAreaSqYd * 9).toLocaleString('en-IN')} sq.ft</small>
-              <small>${f.parking} allocated parkings</small></div>
+              ${f.parking ? `<small>${f.parking} allocated parkings</small>` : ''}</div>
           </button>`).join('')}</div>
       </div>
 
@@ -245,7 +245,7 @@
     $$('#project img[data-src]').forEach((img) => { if (img.dataset.srcset) img.srcset = img.dataset.srcset; setImg(img, img.dataset.src); });
     $$('#planFilter button').forEach((b) => (b.onclick = () => {
       $$('#planFilter button').forEach((x) => x.classList.toggle('on', x === b));
-      $$('.plan').forEach((pl) => pl.classList.toggle('hidden', !!b.dataset.f && pl.dataset.config !== b.dataset.f));
+      $$('.plan').forEach((pl) => pl.classList.toggle('hidden', pl.dataset.config !== b.dataset.f));
     }));
     $$('.plan').forEach((b) => (b.onclick = () => {
       const f = c.floorplans.find((x) => x.id === b.dataset.plan);
@@ -282,16 +282,31 @@
     for (const [id, since] of visible) { dwell[id] = (dwell[id] || 0) + (t - since) / 1000; visible.set(id, t); }
     for (const [id, secs] of Object.entries(dwell)) if (secs >= 1) { pending.push({ type: 'dwell', target: id, value: Math.round(secs) }); delete dwell[id]; }
   }
+  // Highlight the current section in the sticky menu and slide the menu so it stays in view
+  let navActive = null;
+  function setActiveNav(id) {
+    if (id === navActive) return;
+    navActive = id;
+    const nav = $('.secnav');
+    if (!nav) return;
+    let on = null;
+    $$('a', nav).forEach((a) => { const hit = a.dataset.nav === id; a.classList.toggle('on', hit); if (hit) on = a; });
+    if (on) nav.scrollTo({ left: on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2, behavior: 'smooth' });
+  }
   function startTracking() {
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
         const id = e.target.dataset.track;
         if (e.isIntersecting && document.visibilityState === 'visible') { if (!visible.has(id)) visible.set(id, Date.now()); }
         else if (visible.has(id)) { dwell[id] = (dwell[id] || 0) + (Date.now() - visible.get(id)) / 1000; visible.delete(id); }
-        if (e.isIntersecting) $$('.secnav a').forEach((a) => a.classList.toggle('on', a.dataset.nav === id));
       }
     }, { threshold: 0.35 });
     $$('[data-track]').forEach((s) => io.observe(s));
+    // Menu follows the section crossing the middle of the screen (works for tall sections too)
+    const navIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) setActiveNav(e.target.dataset.track); });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    $$('[data-track]').forEach((s) => navIO.observe(s));
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') { flush(true); visible.clear(); }
     });

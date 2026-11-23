@@ -261,3 +261,12 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .share-card p { margin: 0; font-size: 14px; }
 .share-card .btn { display: inline-flex; gap: 8px; align-items: center; white-space: nowrap; }
 @media (max-width: 520px) { .share-card { flex-direction: column; align-items: stretch; text-align: left; } }
+
+/* --- highlights --- */
+.hl2 { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 12px; }
+.hl2 li { display: flex; gap: 16px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
+.hl-n { font-family: var(--serif); font-size: 30px; line-height: 1; color: var(--sand); flex: none; min-width: 38px; }
+.hl2 h3 { font-size: 21px; margin: 2px 0 6px; color: var(--green); }
+.hl2 p { margin: 0; color: #4A524C; font-size: 14.5px; }
+@media (min-width: 760px) { .hl2 { grid-template-columns: 1fr 1fr; } }
+.secnav { scroll-behavior: smooth; }
