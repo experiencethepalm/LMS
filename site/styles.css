@@ -280,3 +280,4 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .hl-art.photo { padding: 0; background: none; }
 .hl-art.photo img { max-height: none; object-fit: cover; aspect-ratio: 16 / 9; display: block; }
 @media (min-width: 760px) { .hl2 li.has-art .hl-art.photo img { height: 100%; aspect-ratio: auto; } }
+.hl-art.photo img { object-position: left center; }
