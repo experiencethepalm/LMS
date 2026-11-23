@@ -175,7 +175,7 @@
 
       <div class="sec" id="highlights" data-track="highlights">
         <h2>Highlights</h2>
-        <ol class="hl2">${c.highlights.map((h, i) => typeof h === 'string' ? `<li><p>${esc(h)}</p></li>` : `<li><span class="hl-n">${String(i + 1).padStart(2, '0')}</span><div><h3>${esc(h.title)}</h3><p>${esc(h.text)}</p></div></li>`).join('')}</ol>
+        <ol class="hl2">${c.highlights.map((h, i) => typeof h === 'string' ? `<li><p>${esc(h)}</p></li>` : `<li class="${h.image ? 'has-art' : ''}">${h.image ? `<figure class="hl-art"><img src="${esc(h.image.src)}" alt="${esc(h.image.alt)}" width="${h.image.w}" height="${h.image.h}" loading="lazy" decoding="async" /></figure>` : ''}<div class="hl-body"><span class="hl-n">${String(i + 1).padStart(2, '0')}</span><div><h3>${esc(h.title)}</h3><p>${esc(h.text)}</p></div></div></li>`).join('')}</ol>
       </div>
 
       <div class="sec" id="gallery" data-track="gallery">

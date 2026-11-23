@@ -13,7 +13,13 @@
  "highlights": [
   {
    "title": "One Address. Two Roads. Zero Compromise.",
-   "text": "A single exclusive tower rising on a rare dual-road frontage — 24 m and 36 m wide — giving every home uninterrupted light, air and views most single towers can't offer."
+   "text": "A single exclusive tower rising on a rare dual-road frontage — 24 m and 36 m wide — giving every home uninterrupted light, air and views most single towers can't offer.",
+   "image": {
+    "src": "assets/img/highlight-one-address-two-roads.png",
+    "alt": "Line drawing of The Palm Unity tower on a corner plot between a 36 m and a 24 m wide road",
+    "w": 773,
+    "h": 754
+   }
   },
   {
    "title": "Ground Floor, Reserved for Living — Not Parking.",
@@ -33,7 +39,13 @@
   },
   {
    "title": "Two Doors, Twice the Convenience.",
-   "text": "Every apartment at Unity opens through two separate entries — a main entrance and a dedicated service entry — so daily deliveries, staff and everyday convenience never have to pass through your main door."
+   "text": "Every apartment at Unity opens through two separate entries — a main entrance and a dedicated service entry — so daily deliveries, staff and everyday convenience never have to pass through your main door.",
+   "image": {
+    "src": "assets/img/highlight-two-doors-one-home.png",
+    "alt": "Line drawing of a Unity foyer showing the main entrance and a separate service entry",
+    "w": 810,
+    "h": 372
+   }
   }
  ],
  "gallery": [
