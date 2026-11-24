@@ -69,3 +69,14 @@ The Work Lounge, The Fitness Studio, The Pool Deck, Guest Suites, Kid's Play Zon
 - Nova Penthouse (4 BHK): vestibule 10'4" × 5'5"; living + dining 28'0" × 20'4"; balcony 18'9" × 5'0"; puja; kitchen 14'0" × 12'2"; storage; wash & service area 16'11" × 5'6"; master bedroom 1 + walk-in 20'4" × 11'3"; toilet 10'0" × 6'4"; master bedroom 2 17'0" × 12'1"; toilet 8'3" × 5'9"; master bedroom 3 15'0" × 12'0"; toilet 8'8" × 5'5"; master bedroom 4 13'0" × 11'0"; toilet 7'2" × 6'0"; open terrace with jhula 35'4" × 14'9".
 - Toilets: every bedroom in Bliss, Zeal and Nova (and their penthouses) has an attached toilet; Pure has two attached toilets plus a common toilet.
 - Penthouses are the top-floor versions of Bliss, Zeal and Nova with a private open terrace; Zeal and Nova Penthouse terraces have a jhula.
+
+## Specifications (from the brochure)
+- Wall finish: Internal: smooth-finish mala plaster with putty; External: double-coat sand-faced plaster or texture finish.
+- Flooring: Vitrified tile flooring in all rooms.
+- Kitchen: Polished natural granite platform with sink; Glazed tile dado above the platform up to lintel level.
+- Doors: Decorative main door with a lock from a reputed company; Internal laminated flush doors.
+- Windows: Aluminium-section sliding windows with glass and stone jambs.
+- Toilets: Ceramic tile flooring in all toilets; Glazed tile dado.
+- Plumbing: Concealed plumbing with good-quality UPVC and CPVC pipes; C.P. fittings and sanitary ware of a reputed brand.
+- Electrification: Meter, MCB and ELCB tripper; Concealed wiring with adequate points and quality fittings.
+- Paint: Exterior acrylic paint; Internal walls in putty finish.

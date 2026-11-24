@@ -14,6 +14,8 @@ database_name = "palm-unity-leads"
 database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create"
 
 [vars]
+# Super admin(s) who can always sign in to the dashboard (comma-separated mobile numbers)
+SUPER_ADMIN_PHONES = "7434006001"
 # Where the project page is hosted (used for salesperson share links)
 SITE_URL = "https://unity.thepalm.in/"
 # Comma-separated origins allowed to call this API (your GitHub Pages origin + local testing)

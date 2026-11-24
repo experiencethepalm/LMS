@@ -206,7 +206,7 @@
 
       <div class="sec" id="specifications" data-track="specifications">
         <h2>Specifications</h2>
-        <table class="specs">${c.specifications.map((s) => `<tr><td>${esc(s.item)}</td><td>${val(s.detail, 'Details coming soon')}</td></tr>`).join('')}</table>
+        <table class="specs">${c.specifications.map((s) => `<tr><td>${esc(s.item)}</td><td>${Array.isArray(s.detail) ? `<ul class="spec-list">${s.detail.map((d) => `<li>${esc(d)}</li>`).join('')}</ul>` : val(s.detail, 'Details coming soon')}</td></tr>`).join('')}</table>
       </div>
 
       <div class="sec" id="location" data-track="location">

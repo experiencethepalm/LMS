@@ -63,8 +63,16 @@ async function staffOtpStart(request, env) {
   const phone = normalisePhone(b.phone);
   if (!phone) return bad('Please enter a valid 10-digit mobile number.');
   let user = await env.DB.prepare('SELECT * FROM salespeople WHERE phone=? AND active=1').bind(phone).first();
-  // First super admin is bootstrapped from the SUPER_ADMIN_PHONE secret
-  const owners = String(env.SUPER_ADMIN_PHONE || '').split(',').map(normalisePhone).filter(Boolean);
+  // Owner numbers (SUPER_ADMIN_PHONES in wrangler.toml, or the SUPER_ADMIN_PHONE secret) are always super admins
+  const owners = [env.SUPER_ADMIN_PHONE, env.SUPER_ADMIN_PHONES].filter(Boolean).join(',').split(',').map(normalisePhone).filter(Boolean);
+  if (owners.includes(phone)) {
+    // An owner number is always a super admin, even if it was added earlier with another role
+    const existing = await env.DB.prepare('SELECT * FROM salespeople WHERE phone=?').bind(phone).first();
+    if (existing && (existing.role !== 'super_admin' || !existing.active)) {
+      await env.DB.prepare("UPDATE salespeople SET role='super_admin', active=1 WHERE code=?").bind(existing.code).run();
+    }
+    if (existing) user = await env.DB.prepare('SELECT * FROM salespeople WHERE code=?').bind(existing.code).first();
+  }
   if (!user && owners.includes(phone)) {
     const code = `SA${phone.slice(-4)}${Math.floor(Math.random() * 90 + 10)}`;
     await env.DB.prepare("INSERT INTO salespeople (code, name, phone, role, active, share_id, created_by, created_at) VALUES (?,?,?,'super_admin',1,?,?,?)")

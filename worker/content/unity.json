@@ -782,32 +782,65 @@
  ],
  "specifications": [
   {
-   "item": "Structure",
-   "detail": "TBC"
+   "item": "Wall finish",
+   "detail": [
+    "Internal: smooth-finish mala plaster with putty",
+    "External: double-coat sand-faced plaster or texture finish"
+   ]
   },
   {
    "item": "Flooring",
-   "detail": "TBC"
+   "detail": [
+    "Vitrified tile flooring in all rooms"
+   ]
   },
   {
    "item": "Kitchen",
-   "detail": "TBC"
+   "detail": [
+    "Polished natural granite platform with sink",
+    "Glazed tile dado above the platform up to lintel level"
+   ]
   },
   {
-   "item": "Doors & windows",
-   "detail": "TBC"
+   "item": "Doors",
+   "detail": [
+    "Decorative main door with a lock from a reputed company",
+    "Internal laminated flush doors"
+   ]
   },
   {
-   "item": "Bathrooms",
-   "detail": "TBC"
+   "item": "Windows",
+   "detail": [
+    "Aluminium-section sliding windows with glass and stone jambs"
+   ]
   },
   {
-   "item": "Electrical",
-   "detail": "TBC"
+   "item": "Toilets",
+   "detail": [
+    "Ceramic tile flooring in all toilets",
+    "Glazed tile dado"
+   ]
   },
   {
-   "item": "Elevators",
-   "detail": "TBC"
+   "item": "Plumbing",
+   "detail": [
+    "Concealed plumbing with good-quality UPVC and CPVC pipes",
+    "C.P. fittings and sanitary ware of a reputed brand"
+   ]
+  },
+  {
+   "item": "Electrification",
+   "detail": [
+    "Meter, MCB and ELCB tripper",
+    "Concealed wiring with adequate points and quality fittings"
+   ]
+  },
+  {
+   "item": "Paint",
+   "detail": [
+    "Exterior acrylic paint",
+    "Internal walls in putty finish"
+   ]
   }
  ],
  "location": {
