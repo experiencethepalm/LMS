@@ -13,7 +13,7 @@ After editing, redeploy the Worker (`npx wrangler deploy`).
 ## Homes currently offered
 - 3 BHK — "Pure" (314 sq.yds super built-up) and "Bliss" (350 sq.yds). 2 allocated parkings.
 - 4 BHK — "Zeal" (429 sq.yds) and "Nova" (463 sq.yds). 3 allocated parkings.
-- Penthouses — 3 BHK Penthouse "Bliss Penthouse" (395 sq.yds); 4 BHK Penthouses "Zeal Penthouse" (456 sq.yds) and "Nova Penthouse" (522 sq.yds). Parking for penthouses: the sales team confirms.
+- Penthouses — 3 BHK Penthouse "Bliss Penthouse" (395 sq.yds); 4 BHK Penthouses "Zeal Penthouse" (456 sq.yds) and "Nova Penthouse" (522 sq.yds). Bliss Penthouse has 2 allocated parkings; Zeal and Nova Penthouses have 3 allocated parkings.
 - In the 3 BHK block, some homes are garden-facing and some road-facing; availability varies by floor — the sales team confirms specific units.
 
 ## Distinctive features
@@ -59,10 +59,13 @@ The Work Lounge, The Fitness Studio, The Pool Deck, Guest Suites, Kid's Play Zon
 - Temples & heritage: Adalaj Stepwell (4.8 km); Dada Bhagwan Trimandir, Adalaj (5.5 km); Swaminarayan Akshardham (10.4 km)
 - Distances are approximate; say the sales team can confirm exact travel times.
 
-## Room sizes by unit plan (from the brochure; internal dimensions)
-- Pure (3 BHK): vestibule 5'0" × 8'6"; living + dining 15'1" × 22'2"; balcony 16'3" × 5'0"; kitchen 13'6" × 8'2"; wash & service 7'0" × 9'1"; common toilet 6'1" × 4'0"; master bedroom 1 11'0" × 15'0" (toilet 7'4" × 5'0"); master bedroom 2 11'1" × 15'0" (toilet 7'5" × 5'0"); bedroom 3 10'0" × 13'11". Puja and storage included.
-- Bliss (3 BHK): vestibule 5'5" × 10'4"; living + dining 24'0" × 20'4"; balcony 18'9" × 5'0"; kitchen 10'1" × 12'2"; wash & service 16'11" × 5'6"; master bedroom 1 17'0" × 12'1" (toilet 5'9" × 8'3"); master bedroom 2 15'0" × 12'0" (toilet 8'8" × 5'5"); master bedroom 3 11'0" × 13'0" (toilet 5'9" × 7'2"). Puja and storage included.
-- Zeal (4 BHK): vestibule 5'5" × 10'4"; living + dining 24'0" × 20'4"; balcony 18'9" × 5'0"; kitchen 10'1" × 12'2"; wash & service 16'11" × 5'6"; master bedroom 1 11'0" × 15'0" (toilet 7'4" × 5'0"); master bedroom 2 17'0" × 12'1" (toilet 5'9" × 8'3"); master bedroom 3 15'0" × 12'0" (toilet 8'8" × 5'5"); master bedroom 4 11'0" × 13'0" (toilet 6'0" × 7'2"). Puja and storage included.
-- Nova (4 BHK): vestibule 5'5" × 10'4"; living + dining 28'0" × 20'4"; balcony 18'9" × 5'0"; kitchen 14'0" × 12'2"; wash & service 16'11" × 5'6"; master bedroom 1 with walk-in wardrobe 11'3" × 20'4" (toilet 6'4" × 10'0"); master bedroom 2 17'0" × 12'1" (toilet 5'9" × 8'3"); master bedroom 3 15'0" × 12'0" (toilet 8'8" × 5'5"); master bedroom 4 11'0" × 13'0" (toilet 6'0" × 7'2"). Puja and storage included.
-- Every bedroom in Bliss, Zeal and Nova has an attached toilet; Pure has two attached toilets plus a common toilet.
-- Penthouse plans are not published yet; the sales team shares them on request.
+## Room sizes by unit plan (internal dimensions, larger side first)
+- Pure (3 BHK): vestibule 8'6" × 5'0"; living + dining 22'2" × 15'1"; balcony 16'3" × 5'0"; puja; kitchen 13'6" × 8'2"; storage; wash & service area 9'1" × 7'0"; common toilet 6'1" × 4'0"; master bedroom 1 15'0" × 11'0"; toilet 7'4" × 5'0"; master bedroom 2 15'0" × 11'1"; toilet 7'5" × 5'0"; bedroom 3 13'11" × 10'0".
+- Bliss (3 BHK): vestibule 10'4" × 5'5"; living + dining 24'0" × 20'4"; balcony 18'9" × 5'0"; puja; kitchen 12'2" × 10'1"; storage; wash & service area 16'11" × 5'6"; master bedroom 1 17'0" × 12'1"; toilet 8'3" × 5'9"; master bedroom 2 15'0" × 12'0"; toilet 8'8" × 5'5"; master bedroom 3 13'0" × 11'0"; toilet 7'2" × 5'9".
+- Zeal (4 BHK): vestibule 10'4" × 5'5"; living + dining 24'0" × 20'4"; balcony 18'9" × 5'0"; puja; kitchen 12'2" × 10'1"; storage; wash & service area 16'11" × 5'6"; master bedroom 1 15'0" × 11'0"; toilet 7'4" × 5'0"; master bedroom 2 17'0" × 12'1"; toilet 8'3" × 5'9"; master bedroom 3 15'0" × 12'0"; toilet 8'8" × 5'5"; master bedroom 4 13'0" × 11'0"; toilet 7'2" × 6'0".
+- Nova (4 BHK): vestibule 10'4" × 5'5"; living + dining 28'0" × 20'4"; balcony 18'9" × 5'0"; puja; kitchen 14'0" × 12'2"; storage; wash & service area 16'11" × 5'6"; master bedroom 1 + walk-in 20'4" × 11'3"; toilet 10'0" × 6'4"; master bedroom 2 17'0" × 12'1"; toilet 8'3" × 5'9"; master bedroom 3 15'0" × 12'0"; toilet 8'8" × 5'5"; master bedroom 4 13'0" × 11'0"; toilet 7'2" × 6'0".
+- Bliss Penthouse (3 BHK): vestibule 10'4" × 5'5"; living + dining 24'0" × 20'4"; balcony 18'9" × 5'0"; puja; kitchen 12'2" × 10'1"; storage; wash & service area 16'11" × 5'6"; master bedroom 1 17'0" × 12'1"; toilet 8'3" × 5'9"; master bedroom 2 15'0" × 12'0"; toilet 8'8" × 5'5"; master bedroom 3 13'0" × 11'0"; toilet 7'2" × 5'9"; open terrace 16'4" × 12'3".
+- Zeal Penthouse (4 BHK): vestibule 10'4" × 5'5"; living + dining 24'0" × 20'4"; balcony 18'9" × 5'0"; puja; kitchen 12'2" × 10'1"; storage; wash & service area 16'11" × 5'6"; master bedroom 1 15'0" × 11'0"; toilet 7'4" × 5'0"; master bedroom 2 17'0" × 12'1"; toilet 8'3" × 5'9"; master bedroom 3 15'0" × 12'0"; toilet 8'8" × 5'5"; master bedroom 4 13'0" × 11'0"; toilet 7'2" × 6'0"; open terrace with jhula 22'8" × 10'5".
+- Nova Penthouse (4 BHK): vestibule 10'4" × 5'5"; living + dining 28'0" × 20'4"; balcony 18'9" × 5'0"; puja; kitchen 14'0" × 12'2"; storage; wash & service area 16'11" × 5'6"; master bedroom 1 + walk-in 20'4" × 11'3"; toilet 10'0" × 6'4"; master bedroom 2 17'0" × 12'1"; toilet 8'3" × 5'9"; master bedroom 3 15'0" × 12'0"; toilet 8'8" × 5'5"; master bedroom 4 13'0" × 11'0"; toilet 7'2" × 6'0"; open terrace with jhula 35'4" × 14'9".
+- Toilets: every bedroom in Bliss, Zeal and Nova (and their penthouses) has an attached toilet; Pure has two attached toilets plus a common toilet.
+- Penthouses are the top-floor versions of Bliss, Zeal and Nova with a private open terrace; Zeal and Nova Penthouse terraces have a jhula.

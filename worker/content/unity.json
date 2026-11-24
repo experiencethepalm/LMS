@@ -145,12 +145,12 @@
     {
      "n": "01",
      "room": "Vestibule",
-     "size": "5'0\" × 8'6\""
+     "size": "8'6\" × 5'0\""
     },
     {
      "n": "02",
      "room": "Living + dining",
-     "size": "15'1\" × 22'2\""
+     "size": "22'2\" × 15'1\""
     },
     {
      "n": "03",
@@ -175,7 +175,7 @@
     {
      "n": "07",
      "room": "Wash & service area",
-     "size": "7'0\" × 9'1\""
+     "size": "9'1\" × 7'0\""
     },
     {
      "n": "08",
@@ -185,7 +185,7 @@
     {
      "n": "09",
      "room": "Master bedroom 1",
-     "size": "11'0\" × 15'0\""
+     "size": "15'0\" × 11'0\""
     },
     {
      "n": "09 A",
@@ -195,7 +195,7 @@
     {
      "n": "10",
      "room": "Master bedroom 2",
-     "size": "11'1\" × 15'0\""
+     "size": "15'0\" × 11'1\""
     },
     {
      "n": "10 A",
@@ -205,7 +205,7 @@
     {
      "n": "11",
      "room": "Bedroom 3",
-     "size": "10'0\" × 13'11\""
+     "size": "13'11\" × 10'0\""
     }
    ]
   },
@@ -223,7 +223,7 @@
     {
      "n": "01",
      "room": "Vestibule",
-     "size": "5'5\" × 10'4\""
+     "size": "10'4\" × 5'5\""
     },
     {
      "n": "02",
@@ -243,7 +243,7 @@
     {
      "n": "05",
      "room": "Kitchen",
-     "size": "10'1\" × 12'2\""
+     "size": "12'2\" × 10'1\""
     },
     {
      "n": "06",
@@ -263,7 +263,7 @@
     {
      "n": "08 A",
      "room": "Toilet",
-     "size": "5'9\" × 8'3\""
+     "size": "8'3\" × 5'9\""
     },
     {
      "n": "09",
@@ -278,12 +278,12 @@
     {
      "n": "10",
      "room": "Master bedroom 3",
-     "size": "11'0\" × 13'0\""
+     "size": "13'0\" × 11'0\""
     },
     {
      "n": "10 A",
      "room": "Toilet",
-     "size": "5'9\" × 7'2\""
+     "size": "7'2\" × 5'9\""
     }
    ]
   },
@@ -301,7 +301,7 @@
     {
      "n": "01",
      "room": "Vestibule",
-     "size": "5'5\" × 10'4\""
+     "size": "10'4\" × 5'5\""
     },
     {
      "n": "02",
@@ -321,7 +321,7 @@
     {
      "n": "05",
      "room": "Kitchen",
-     "size": "10'1\" × 12'2\""
+     "size": "12'2\" × 10'1\""
     },
     {
      "n": "06",
@@ -336,7 +336,7 @@
     {
      "n": "08",
      "room": "Master bedroom 1",
-     "size": "11'0\" × 15'0\""
+     "size": "15'0\" × 11'0\""
     },
     {
      "n": "08 A",
@@ -351,7 +351,7 @@
     {
      "n": "09 A",
      "room": "Toilet",
-     "size": "5'9\" × 8'3\""
+     "size": "8'3\" × 5'9\""
     },
     {
      "n": "10",
@@ -366,12 +366,12 @@
     {
      "n": "11",
      "room": "Master bedroom 4",
-     "size": "11'0\" × 13'0\""
+     "size": "13'0\" × 11'0\""
     },
     {
      "n": "11 A",
      "room": "Toilet",
-     "size": "6'0\" × 7'2\""
+     "size": "7'2\" × 6'0\""
     }
    ]
   },
@@ -389,7 +389,7 @@
     {
      "n": "01",
      "room": "Vestibule",
-     "size": "5'5\" × 10'4\""
+     "size": "10'4\" × 5'5\""
     },
     {
      "n": "02",
@@ -424,12 +424,12 @@
     {
      "n": "08",
      "room": "Master bedroom 1 + walk-in",
-     "size": "11'3\" × 20'4\""
+     "size": "20'4\" × 11'3\""
     },
     {
      "n": "08 A",
      "room": "Toilet",
-     "size": "6'4\" × 10'0\""
+     "size": "10'0\" × 6'4\""
     },
     {
      "n": "09",
@@ -439,7 +439,7 @@
     {
      "n": "09 A",
      "room": "Toilet",
-     "size": "5'9\" × 8'3\""
+     "size": "8'3\" × 5'9\""
     },
     {
      "n": "10",
@@ -454,12 +454,12 @@
     {
      "n": "11",
      "room": "Master bedroom 4",
-     "size": "11'0\" × 13'0\""
+     "size": "13'0\" × 11'0\""
     },
     {
      "n": "11 A",
      "room": "Toilet",
-     "size": "6'0\" × 7'2\""
+     "size": "7'2\" × 6'0\""
     }
    ]
   },
@@ -468,33 +468,269 @@
    "name": "Bliss Penthouse",
    "config": "3 BHK Penthouse",
    "sbAreaSqYd": 395,
-   "image": "assets/img/the-palm-unity-bliss-unit-plan.png",
+   "image": "assets/img/the-palm-unity-bliss-penthouse-unit-plan.png",
    "w": 1800,
-   "h": 1980,
+   "h": 2261,
    "alt": "3 BHK Penthouse Bliss Penthouse unit plan, The Palm Unity, Kudasan, Gandhinagar",
-   "planNote": "Typical-floor Bliss layout shown. The penthouse plan is shared on request."
+   "rooms": [
+    {
+     "n": "01",
+     "room": "Vestibule",
+     "size": "10'4\" × 5'5\""
+    },
+    {
+     "n": "02",
+     "room": "Living + dining",
+     "size": "24'0\" × 20'4\""
+    },
+    {
+     "n": "03",
+     "room": "Balcony",
+     "size": "18'9\" × 5'0\""
+    },
+    {
+     "n": "04",
+     "room": "Puja",
+     "size": ""
+    },
+    {
+     "n": "05",
+     "room": "Kitchen",
+     "size": "12'2\" × 10'1\""
+    },
+    {
+     "n": "06",
+     "room": "Storage",
+     "size": ""
+    },
+    {
+     "n": "07",
+     "room": "Wash & service area",
+     "size": "16'11\" × 5'6\""
+    },
+    {
+     "n": "08",
+     "room": "Master bedroom 1",
+     "size": "17'0\" × 12'1\""
+    },
+    {
+     "n": "08 A",
+     "room": "Toilet",
+     "size": "8'3\" × 5'9\""
+    },
+    {
+     "n": "09",
+     "room": "Master bedroom 2",
+     "size": "15'0\" × 12'0\""
+    },
+    {
+     "n": "09 A",
+     "room": "Toilet",
+     "size": "8'8\" × 5'5\""
+    },
+    {
+     "n": "10",
+     "room": "Master bedroom 3",
+     "size": "13'0\" × 11'0\""
+    },
+    {
+     "n": "10 A",
+     "room": "Toilet",
+     "size": "7'2\" × 5'9\""
+    },
+    {
+     "n": "11",
+     "room": "Open terrace",
+     "size": "16'4\" × 12'3\""
+    }
+   ],
+   "parking": 2
   },
   {
    "id": "zeal-ph",
    "name": "Zeal Penthouse",
    "config": "4 BHK Penthouse",
    "sbAreaSqYd": 456,
-   "image": "assets/img/the-palm-unity-zeal-unit-plan.png",
+   "image": "assets/img/the-palm-unity-zeal-penthouse-unit-plan.png",
    "w": 1800,
-   "h": 1567,
+   "h": 1309,
    "alt": "4 BHK Penthouse Zeal Penthouse unit plan, The Palm Unity, Kudasan, Gandhinagar",
-   "planNote": "Typical-floor Zeal layout shown. The penthouse plan is shared on request."
+   "rooms": [
+    {
+     "n": "01",
+     "room": "Vestibule",
+     "size": "10'4\" × 5'5\""
+    },
+    {
+     "n": "02",
+     "room": "Living + dining",
+     "size": "24'0\" × 20'4\""
+    },
+    {
+     "n": "03",
+     "room": "Balcony",
+     "size": "18'9\" × 5'0\""
+    },
+    {
+     "n": "04",
+     "room": "Puja",
+     "size": ""
+    },
+    {
+     "n": "05",
+     "room": "Kitchen",
+     "size": "12'2\" × 10'1\""
+    },
+    {
+     "n": "06",
+     "room": "Storage",
+     "size": ""
+    },
+    {
+     "n": "07",
+     "room": "Wash & service area",
+     "size": "16'11\" × 5'6\""
+    },
+    {
+     "n": "08",
+     "room": "Master bedroom 1",
+     "size": "15'0\" × 11'0\""
+    },
+    {
+     "n": "08 A",
+     "room": "Toilet",
+     "size": "7'4\" × 5'0\""
+    },
+    {
+     "n": "09",
+     "room": "Master bedroom 2",
+     "size": "17'0\" × 12'1\""
+    },
+    {
+     "n": "09 A",
+     "room": "Toilet",
+     "size": "8'3\" × 5'9\""
+    },
+    {
+     "n": "10",
+     "room": "Master bedroom 3",
+     "size": "15'0\" × 12'0\""
+    },
+    {
+     "n": "10 A",
+     "room": "Toilet",
+     "size": "8'8\" × 5'5\""
+    },
+    {
+     "n": "11",
+     "room": "Master bedroom 4",
+     "size": "13'0\" × 11'0\""
+    },
+    {
+     "n": "11 A",
+     "room": "Toilet",
+     "size": "7'2\" × 6'0\""
+    },
+    {
+     "n": "12",
+     "room": "Open terrace with jhula",
+     "size": "22'8\" × 10'5\""
+    }
+   ],
+   "parking": 3
   },
   {
    "id": "nova-ph",
    "name": "Nova Penthouse",
    "config": "4 BHK Penthouse",
    "sbAreaSqYd": 522,
-   "image": "assets/img/the-palm-unity-nova-unit-plan.png",
+   "image": "assets/img/the-palm-unity-nova-penthouse-unit-plan.png",
    "w": 1800,
-   "h": 1456,
+   "h": 1150,
    "alt": "4 BHK Penthouse Nova Penthouse unit plan, The Palm Unity, Kudasan, Gandhinagar",
-   "planNote": "Typical-floor Nova layout shown. The penthouse plan is shared on request."
+   "rooms": [
+    {
+     "n": "01",
+     "room": "Vestibule",
+     "size": "10'4\" × 5'5\""
+    },
+    {
+     "n": "02",
+     "room": "Living + dining",
+     "size": "28'0\" × 20'4\""
+    },
+    {
+     "n": "03",
+     "room": "Balcony",
+     "size": "18'9\" × 5'0\""
+    },
+    {
+     "n": "04",
+     "room": "Puja",
+     "size": ""
+    },
+    {
+     "n": "05",
+     "room": "Kitchen",
+     "size": "14'0\" × 12'2\""
+    },
+    {
+     "n": "06",
+     "room": "Storage",
+     "size": ""
+    },
+    {
+     "n": "07",
+     "room": "Wash & service area",
+     "size": "16'11\" × 5'6\""
+    },
+    {
+     "n": "08",
+     "room": "Master bedroom 1 + walk-in",
+     "size": "20'4\" × 11'3\""
+    },
+    {
+     "n": "08 A",
+     "room": "Toilet",
+     "size": "10'0\" × 6'4\""
+    },
+    {
+     "n": "09",
+     "room": "Master bedroom 2",
+     "size": "17'0\" × 12'1\""
+    },
+    {
+     "n": "09 A",
+     "room": "Toilet",
+     "size": "8'3\" × 5'9\""
+    },
+    {
+     "n": "10",
+     "room": "Master bedroom 3",
+     "size": "15'0\" × 12'0\""
+    },
+    {
+     "n": "10 A",
+     "room": "Toilet",
+     "size": "8'8\" × 5'5\""
+    },
+    {
+     "n": "11",
+     "room": "Master bedroom 4",
+     "size": "13'0\" × 11'0\""
+    },
+    {
+     "n": "11 A",
+     "room": "Toilet",
+     "size": "7'2\" × 6'0\""
+    },
+    {
+     "n": "12",
+     "room": "Open terrace with jhula",
+     "size": "35'4\" × 14'9\""
+    }
+   ],
+   "parking": 3
   }
  ],
  "paymentPlan": {
