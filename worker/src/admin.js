@@ -9,6 +9,7 @@
 import { json, bad, now, sha256, signToken, verifyToken, bearer, normalisePhone, clean, sixDigitCode, readJson, newShareId } from './lib.js';
 import { sendOtp } from './otp.js';
 import { scoreLead } from './score.js';
+import knowledge from '../content/knowledge.md';
 
 const STAFF_TTL = 7 * 86400;
 const OTP_TTL = 600;
@@ -42,6 +43,8 @@ export async function adminRoute(request, env, url, p, m) {
   if (p === '/api/admin/users' && m === 'POST') return saveUser(request, env, me);
   const um = p.match(/^\/api\/admin\/users\/([A-Z0-9]+)$/);
   if (um && m === 'GET') return userDetail(env, me, um[1]);
+  if (um && m === 'DELETE') return isSuper ? deleteUser(env, me, um[1]) : bad('Only super admins can delete users.', 403);
+  if (p === '/api/admin/knowledge' && m === 'GET') return isSuper ? json({ knowledge }) : bad('Only super admins can see this.', 403);
   if (p === '/api/admin/requests' && m === 'GET') return listRequests(env);
   const rm = p.match(/^\/api\/admin\/requests\/(\d+)$/);
   if (rm && m === 'PATCH') return markRequest(env, me, Number(rm[1]));
@@ -446,5 +449,28 @@ async function deleteLead(env, me, id) {
     env.DB.prepare('DELETE FROM leads WHERE id=?').bind(id),
   ]);
   await log(env, me, 'lead_delete', 'lead', id, `deleted client ${lead.name} (+91 ${lead.phone})`);
+  return json({ ok: true });
+}
+
+// Super admin only: remove a team member or channel partner. Their clients stay; open follow-ups move to the super admin.
+async function deleteUser(env, me, code) {
+  const u = await env.DB.prepare('SELECT * FROM salespeople WHERE code=?').bind(code).first();
+  if (!u) return bad('User not found.', 404);
+  if (u.code === me.code) return bad("You can't delete your own account.");
+  const owners = [env.SUPER_ADMIN_PHONE, env.SUPER_ADMIN_PHONES].filter(Boolean).join(',').split(',').map(normalisePhone).filter(Boolean);
+  if (owners.includes(u.phone)) return bad('This is an owner number and always stays a super admin.');
+  if (u.role === 'super_admin') {
+    const n = await env.DB.prepare("SELECT COUNT(*) n FROM salespeople WHERE role='super_admin' AND active=1 AND code != ?").bind(code).first();
+    if (!n.n) return bad('At least one super admin must remain.');
+  }
+  await env.DB.batch([
+    env.DB.prepare('UPDATE leads SET assigned_to=NULL WHERE assigned_to=?').bind(code),
+    env.DB.prepare("UPDATE followups SET assigned_to=? WHERE assigned_to=? AND status='open'").bind(me.code, code),
+    env.DB.prepare('DELETE FROM followups WHERE partner_code=?').bind(code),
+    env.DB.prepare('UPDATE salespeople SET created_by=? WHERE created_by=?').bind(me.code, code),
+    env.DB.prepare("DELETE FROM otps WHERE phone=? AND purpose='staff'").bind(u.phone || ''),
+    env.DB.prepare('DELETE FROM salespeople WHERE code=?').bind(code),
+  ]);
+  await log(env, me, 'user_delete', 'user', code, `deleted ${u.role === 'channel_partner' ? 'channel partner' : u.role === 'sales' ? 'sales user' : 'super admin'} ${u.name}${u.phone ? ` (+91 ${u.phone})` : ''}`);
   return json({ ok: true });
 }

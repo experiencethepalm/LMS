@@ -1,0 +1,17 @@
+{
+  "name": "The Palm Unity — Sales",
+  "short_name": "Unity Sales",
+  "description": "Clients, channel partners and follow-ups for The Palm Unity sales team.",
+  "id": "/admin/",
+  "start_url": "/admin/?source=app",
+  "scope": "/admin/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F3EE",
+  "theme_color": "#2F4A3A",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

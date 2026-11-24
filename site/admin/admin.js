@@ -84,14 +84,14 @@
 
   function renderTabs() {
     const tabs = [['followups', 'Follow-ups'], ['clients', 'Clients'], ['partners', 'Channel partners'], ['requests', 'Visit & callback requests']];
-    if (isSuper()) tabs.push(['team', 'Team & roles'], ['activity', 'Team activity']);
+    if (isSuper()) tabs.push(['team', 'Team & roles'], ['activity', 'Team activity'], ['knowledge', 'AI knowledge']);
     $('#mainTabs').innerHTML = tabs.map(([k, v]) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}">${v}${k === 'followups' ? '<span class="count hidden" id="fuCount"></span>' : ''}</button>`).join('');
     $$('#mainTabs button').forEach((b) => (b.onclick = () => show(b.dataset.tab)));
   }
   function show(t) {
     tab = t;
     $$('#mainTabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === t));
-    ({ followups: viewFollowups, clients: viewClients, partners: viewPartners, requests: viewRequests, team: viewTeam, activity: viewActivity }[t] || viewFollowups)();
+    ({ followups: viewFollowups, clients: viewClients, partners: viewPartners, requests: viewRequests, team: viewTeam, activity: viewActivity, knowledge: viewKnowledge }[t] || viewFollowups)();
   }
 
   // ---------- Follow-ups ----------
@@ -370,9 +370,22 @@
       <div class="box"><h4>Clients ${u.role === 'channel_partner' ? 'brought in' : 'from their link'} (${d.clients.length})</h4>${d.clients.map((c) => `<div class="tl"><span><a class="lnk" data-lead="${c.id}">${esc(c.name)}</a> · +91 ${esc(c.phone)}</span><span>${STATUSES[c.status] || c.status} · ${ago(c.last_seen)}</span></div>`).join('') || '<p class="small" style="margin:0">No verified clients yet.</p>'}</div>
       ${d.assigned.length ? `<div class="box"><h4>Assigned clients (${d.assigned.length})</h4>${d.assigned.map((c) => `<div class="tl"><span><a class="lnk" data-lead="${c.id}">${esc(c.name)}</a></span><span>${STATUSES[c.status] || c.status} · ${ago(c.last_seen)}</span></div>`).join('')}</div>` : ''}
       ${u.role !== 'channel_partner' && d.followups.length ? `<div class="box"><h4>Their follow-ups</h4>${d.followups.slice(0, 40).map((f) => `<div class="tl"><span>${KINDS[f.kind] || f.kind} · ${esc(f.lead_name || '')} ${f.status === 'open' ? (f.due_at < t ? '<span class="tag tag-red">Overdue</span>' : '') : `<span class="tag">${f.status}</span>`}</span><span>${when(f.due_at)}</span></div>`).join('')}</div>` : ''}
-      ${d.activity.length ? `<div class="box feed"><h4>Activity</h4>${d.activity.map((a) => `<div class="tl"><span><b>${esc(a.user_name || '')}</b> ${esc(a.detail || a.action)}</span><span>${when(a.ts)}</span></div>`).join('')}</div>` : ''}`);
+      ${d.activity.length ? `<div class="box feed"><h4>Activity</h4>${d.activity.map((a) => `<div class="tl"><span><b>${esc(a.user_name || '')}</b> ${esc(a.detail || a.action)}</span><span>${when(a.ts)}</span></div>`).join('')}</div>` : ''}
+      ${isSuper() && u.code !== me.code ? `<div class="box danger"><h4>Delete ${u.role === 'channel_partner' ? 'channel partner' : 'user'}</h4><p class="small" style="margin:0 0 10px">Removes ${esc(u.name)}'s login and share link. Their clients stay in the system and become unassigned; their open follow-ups move to you. This can't be undone.</p>
+        <div id="delUBox"><button class="btn danger sm" id="delUser">Delete ${esc(u.name)}</button></div></div>` : ''}`);
     bindCopy($('#drawer'));
     const reopen = () => openUser(code);
+    if ($('#delUser')) $('#delUser').onclick = () => {
+      $('#delUBox').innerHTML = `<p class="small" style="margin:0 0 8px">Type <b>DELETE</b> to confirm.</p><div class="btnrow"><input id="delUTxt" autocomplete="off" style="max-width:160px"><button class="btn danger sm" id="delUGo" disabled>Delete permanently</button><button class="btn ghost sm" id="delUNo">Keep</button></div>`;
+      $('#delUTxt').focus();
+      $('#delUTxt').oninput = (e) => ($('#delUGo').disabled = e.target.value.trim().toUpperCase() !== 'DELETE');
+      $('#delUNo').onclick = reopen;
+      $('#delUGo').onclick = async () => {
+        $('#delUGo').disabled = true;
+        try { await api(`/api/admin/users/${code}`, { method: 'DELETE' }); toast(`${u.name} deleted`); closeDrawer(); await loadTeam(); if (['team', 'partners'].includes(tab)) show(tab); }
+        catch (ex) { toast(ex.message); $('#delUGo').disabled = false; }
+      };
+    };
     if ($('#uFus')) bindFuCards($('#uFus'), reopen);
     if ($('#addFuU')) $('#addFuU').onclick = () => openNewFollowup($('#fuNewU'), { partner_code: u.code, after: reopen });
     if ($('#editU')) $('#editU').onclick = () => userForm($('#editBox'), u, () => { reopen(); if (tab === 'partners' || tab === 'team') show(tab); });
@@ -425,6 +438,28 @@
     $('#aUser').onchange = load; load();
   }
 
+  // ---------- AI knowledge (super admin) ----------
+  function md(text) {
+    const out = []; let list = false;
+    const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/(https?:\/\/[^\s)]+)/g, '<a class="lnk" href="$1" target="_blank" rel="noopener">$1</a>');
+    for (const line of text.split('\n')) {
+      const li = line.match(/^\s*[-*] (.*)/);
+      if (li) { if (!list) { out.push('<ul>'); list = true; } out.push(`<li>${inline(li[1])}</li>`); continue; }
+      if (list) { out.push('</ul>'); list = false; }
+      const h = line.match(/^(#{1,3}) (.*)/);
+      if (h) out.push(`<h${h[1].length + 1}>${inline(h[2])}</h${h[1].length + 1}>`);
+      else if (line.trim()) out.push(`<p>${inline(line)}</p>`);
+    }
+    if (list) out.push('</ul>');
+    return out.join('');
+  }
+  async function viewKnowledge() {
+    $('#view').innerHTML = '<p class="empty">Loading…</p>';
+    const d = await api('/api/admin/knowledge');
+    const body = d.knowledge.replace(/^# .*\n/, '').replace(/^\s*Edit this file[\s\S]*?\n\n/, '');
+    $('#view').innerHTML = `<div class="box kn"><p class="small" style="margin:0 0 6px">This is everything the “Ask Unity” assistant knows. It answers only from this text; anything else it refers to the sales team. To add or change something, send the update to whoever maintains the page.</p>${md(body)}</div>`;
+  }
+
   // ---------- Drawer ----------
   function drawer(html) {
     $('#drawer').innerHTML = html; $('#drawer').classList.remove('hidden'); $('#scrim').classList.remove('hidden'); $('#drawer').scrollTop = 0;
@@ -435,6 +470,28 @@
   function closeDrawer() { $('#drawer').classList.add('hidden'); $('#scrim').classList.add('hidden'); if (tab === 'followups') loadFollowups(); }
   $('#scrim').onclick = closeDrawer;
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
+  // ---------- Install as a phone app ----------
+  let installEvt = null;
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isMobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent) || isIOS;
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; $('#installBtn').classList.remove('hidden'); });
+  window.addEventListener('appinstalled', () => { $('#installBtn').classList.add('hidden'); toast('Unity Sales added to your home screen'); });
+  if (!standalone && isMobile) $('#installBtn').classList.remove('hidden');
+  function installSheet() {
+    const steps = isIOS
+      ? '<li>Tap the <b>Share</b> button in Safari (square with an arrow).</li><li>Scroll and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>. The Unity Sales icon appears on your home screen.</li>'
+      : '<li>Tap the <b>⋮</b> menu in Chrome (top right).</li><li>Tap <b>Add to Home screen</b> or <b>Install app</b>.</li><li>Tap <b>Install</b>. The Unity Sales icon appears on your home screen.</li>';
+    const d = document.createElement('div'); d.className = 'install-sheet';
+    d.innerHTML = `<img class="app-ic" src="icons/apple-touch-icon.png" alt=""><h3>Add Unity Sales to your phone</h3><p class="small" style="margin:0">Open the dashboard from your home screen like an app.</p><ol>${steps}</ol><button class="btn primary sm" data-x>Got it</button>`;
+    document.body.appendChild(d); $('[data-x]', d).onclick = () => d.remove();
+  }
+  $('#installBtn').onclick = async () => {
+    if (installEvt) { installEvt.prompt(); const r = await installEvt.userChoice; installEvt = null; if (r.outcome === 'accepted') $('#installBtn').classList.add('hidden'); return; }
+    installSheet();
+  };
 
   if (token) start();
 })();

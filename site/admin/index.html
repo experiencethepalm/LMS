@@ -6,8 +6,15 @@
   <title>Unity Dashboard · The Palm Group</title>
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#F6F3EE" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Unity Sales" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=21" />
+  <link rel="stylesheet" href="../styles.css?v=22" />
   <style>
     body { padding-bottom: 0; }
     .shell { max-width: 1240px; margin: 0 auto; padding: 18px; }
@@ -85,10 +92,17 @@
     .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 99px; z-index: 99; font-size: 14px; }
     @media (max-width: 720px) { .hide-m { display: none; } .grid2 { grid-template-columns: 1fr; } .fu { grid-template-columns: 34px 1fr; } .fu-when { grid-column: 2; text-align: left; } }
   .btn.danger{background:#B3261E;color:#fff;border-color:#B3261E}.btn.danger:disabled{opacity:.45}.box.danger{border-color:#F0C9C5}
+.top-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.install-sheet{position:fixed;inset:auto 0 0 0;z-index:80;background:var(--card);border-top:1px solid var(--line);border-radius:18px 18px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.12)}
+.install-sheet h3{margin:0 0 8px;font-family:var(--serif);font-size:26px}
+.install-sheet ol{margin:8px 0 14px;padding-left:20px}.install-sheet li{margin:6px 0}
+.install-sheet .app-ic{width:56px;height:56px;border-radius:14px;float:right;margin-left:12px}
+.kn h2{font-family:var(--serif);font-size:24px;margin:22px 0 6px}.kn h3{font-size:16px;margin:16px 0 4px}.kn ul{margin:0 0 6px;padding-left:20px}.kn li{margin:4px 0;font-size:14px;overflow-wrap:anywhere}.kn p{font-size:14px;margin:6px 0}
+@media (display-mode: standalone){#installBtn{display:none!important}}
 </style>
 </head>
 <body>
-  <header class="topbar"><span class="brand">THE PALM <b>UNITY</b> · DASHBOARD</span><span id="who" class="small"></span></header>
+  <header class="topbar"><span class="brand">THE PALM <b>UNITY</b> · DASHBOARD</span><span class="top-right"><button class="btn ghost xs hidden" id="installBtn">Install app</button><span id="who" class="small"></span></span></header>
 
   <div class="login card" id="loginView">
     <h2>Sign in</h2>
@@ -118,7 +132,7 @@
   <div class="drawer hidden" id="drawer"></div>
   <div class="scrim hidden" id="scrim"></div>
 
-  <script src="../config.js?v=21"></script>
-  <script src="admin.js?v=21"></script>
+  <script src="../config.js?v=22"></script>
+  <script src="admin.js?v=22"></script>
 </body>
 </html>
