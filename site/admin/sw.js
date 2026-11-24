@@ -1,6 +1,6 @@
 /* The Palm Unity sales app — keeps the dashboard shell available; data always comes live from the API */
-const CACHE = 'unity-sales-v3';
-const SHELL = ['./', './index.html', './admin.js?v=24', '../config.js?v=24', './icons/icon-192.png'];
+const CACHE = 'unity-sales-v4';
+const SHELL = ['./', './index.html', './admin.js?v=25', '../config.js?v=25', './icons/icon-192.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).catch(() => {})); self.skipWaiting(); });
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k))))); self.clients.claim(); });
 self.addEventListener('fetch', (e) => {

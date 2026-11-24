@@ -32,6 +32,8 @@ export async function adminRoute(request, env, url, p, m) {
   if (p === '/api/admin/me' && m === 'GET') return json({ user: publicUser(me), siteUrl: env.SITE_URL || '' });
   if (p === '/api/admin/leads' && m === 'GET') return listLeads(env, me, url);
   const lm = p.match(/^\/api\/admin\/leads\/(\d+)$/);
+  const lpm = p.match(/^\/api\/admin\/leads\/(\d+)\/partner$/);
+  if (lpm && m === 'POST') return leadToPartner(request, env, me, Number(lpm[1]));
   if (lm && m === 'GET') return leadDetail(env, me, Number(lm[1]));
   if (lm && m === 'PATCH') return updateLead(request, env, me, Number(lm[1]));
   if (lm && m === 'DELETE') return isSuper ? deleteLead(env, me, Number(lm[1])) : bad('Only super admins can delete clients.', 403);
@@ -393,6 +395,7 @@ async function userDetail(env, me, code) {
   u.role = u.role || 'sales';
   if (me.role !== 'super_admin' && u.role !== 'channel_partner' && u.code !== me.code) return bad('Only super admins can see team members’ activity.', 403);
   const clients = (await env.DB.prepare('SELECT id, name, phone, status, created_at, last_seen, sessions FROM leads WHERE first_ref=? ORDER BY created_at DESC LIMIT 500').bind(code).all()).results;
+  u.client_record = u.phone ? await env.DB.prepare('SELECT id, name, created_at FROM leads WHERE phone=?').bind(u.phone).first() : null;
   const assigned = u.role === 'channel_partner' ? [] : (await env.DB.prepare('SELECT id, name, status, last_seen FROM leads WHERE assigned_to=? ORDER BY last_seen DESC LIMIT 500').bind(code).all()).results;
   const opens = (await env.DB.prepare("SELECT COUNT(DISTINCT device) n, COUNT(DISTINCT CASE WHEN verified_lead IS NULL THEN device END) u FROM link_opens WHERE sales_code=? AND by_lead IS NULL").bind(code).first());
   const followups = (await env.DB.prepare(
@@ -401,7 +404,7 @@ async function userDetail(env, me, code) {
   const activity = (await env.DB.prepare(
     `SELECT s.*, x.name AS user_name FROM staff_activity s LEFT JOIN salespeople x ON x.code = s.user_code
      WHERE s.user_code=? OR (s.target_type IN ('partner','user') AND s.target_id=?) ORDER BY s.ts DESC LIMIT 200`).bind(code, code).all()).results;
-  return json({ user: { ...publicUser(u), created_by_name: u.created_by_name }, clients, assigned, opens: opens.n, unverifiedOpens: opens.u, followups, activity, siteUrl: env.SITE_URL || '' });
+  return json({ user: { ...publicUser(u), created_by_name: u.created_by_name, client_record: u.client_record }, clients, assigned, opens: opens.n, unverifiedOpens: opens.u, followups, activity, siteUrl: env.SITE_URL || '' });
 }
 
 // ---------- Requests, activity, export ----------
@@ -482,4 +485,24 @@ async function deleteUser(env, me, code) {
   ]);
   await log(env, me, 'user_delete', 'user', code, `deleted ${u.role === 'channel_partner' ? 'channel partner' : u.role === 'sales' ? 'sales user' : 'super admin'} ${u.name}${u.phone ? ` (+91 ${u.phone})` : ''}`);
   return json({ ok: true });
+}
+
+// Turn a client into a channel partner: they get a CP account (tracked share link) and leave the client list.
+async function leadToPartner(request, env, me, id) {
+  const lead = await env.DB.prepare('SELECT id, name, phone FROM leads WHERE id=?').bind(id).first();
+  if (!lead) return bad('Client not found', 404);
+  const b = await readJson(request);
+  const existing = await env.DB.prepare('SELECT code, name, role FROM salespeople WHERE phone=?').bind(lead.phone).first();
+  if (existing) return bad(`This number already belongs to ${existing.name} (${(existing.role || 'sales').replace('_', ' ')}).`);
+  const company = clean(b.company, 120) || null;
+  let code;
+  for (let i = 0; i < 5; i++) {
+    code = 'CP' + newShareId().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+    if (!(await env.DB.prepare('SELECT 1 FROM salespeople WHERE code=?').bind(code).first())) break;
+  }
+  await env.DB.prepare("INSERT INTO salespeople (code, name, phone, role, company, active, share_id, created_by, created_at) VALUES (?,?,?,'channel_partner',?,1,?,?,?)")
+    .bind(code, lead.name, lead.phone, company, newShareId(), me.code, now()).run();
+  await env.DB.prepare('UPDATE leads SET internal=0 WHERE id=?').bind(id).run();
+  await log(env, me, 'user_add', 'user', code, `Marked client ${lead.name} as channel partner${company ? ` (${company})` : ''}`);
+  return json({ ok: true, code });
 }

@@ -299,6 +299,8 @@
           <label>Notes<textarea name="notes" rows="3">${esc(l.notes || '')}</textarea></label>
           <div class="btnrow"><button class="btn primary sm">Save</button>${l.is_internal ? '' : '<button type="button" class="btn ghost sm" id="toInternal">Mark as team / test entry</button>'}</div>
         </form></div>
+      ${l.staff_match ? '' : `<div class="box"><h4>Channel partner?</h4><p class="small" style="margin:0 0 10px">If ${esc(l.name)} is a broker or agent, make them a channel partner. They get their own tracked share link, move to the Channel partners list and leave the client list.</p>
+        <div id="cpBox"><button class="btn ghost sm" id="toCp">Mark as channel partner</button></div></div>`}
       ${(d.network.referrer || d.network.opens || d.network.referees.length) ? `<div class="box"><h4>Family & friends</h4>
         ${d.network.referrer ? `<div class="tl"><span>Came via</span><span><a class="lnk" data-lead="${d.network.referrer.id}">${esc(d.network.referrer.name)}</a></span></div>` : ''}
         ${d.network.opens ? `<div class="tl"><span>Their shared link was opened</span><span>${d.network.opens} ${d.network.opens === 1 ? 'person' : 'people'}${d.network.unverifiedOpens ? ` · ${d.network.unverifiedOpens} not verified yet` : ''}</span></div>` : ''}
@@ -331,6 +333,17 @@
       v ? closeDrawer() : reopen();
     };
     if ($('#toInternal')) $('#toInternal').onclick = () => setInternal(true);
+    if ($('#toCp')) $('#toCp').onclick = () => {
+      $('#cpBox').innerHTML = `<form class="form" id="cpForm"><label>Firm / company (optional)<input name="company" placeholder="e.g. Shree Realty"></label><p class="error"></p><div class="btnrow"><button class="btn primary sm">Make channel partner</button><button type="button" class="btn ghost sm" id="cpNo">Cancel</button></div></form>`;
+      $('#cpNo').onclick = reopen;
+      $('#cpForm').onsubmit = async (e) => {
+        e.preventDefault();
+        try {
+          const r = await api(`/api/admin/leads/${id}/partner`, { method: 'POST', body: JSON.stringify({ company: e.target.elements.company.value }) });
+          toast(`${l.name} is now a channel partner`); await loadTeam(); if (tab === 'clients') loadLeads(); openUser(r.code);
+        } catch (ex) { $('#cpForm .error').textContent = ex.message; }
+      };
+    };
     if ($('#toClient')) $('#toClient').onclick = () => setInternal(false);
     $('#assignSel').onchange = async (e) => { await api(`/api/admin/leads/${id}`, { method: 'PATCH', body: JSON.stringify({ assigned_to: e.target.value }) }); toast('Assignment saved'); };
     $('#leadForm').onsubmit = async (e) => {
@@ -397,6 +410,7 @@
       <div class="kv">
         <span>Share link</span><b><span class="linkbox"><input readonly value="${esc(shareLink(u))}"><button class="btn ghost xs" data-copy="${esc(shareLink(u))}">Copy link</button></span></b>
         <span>Added by</span><b>${esc(u.created_by_name || '—')} · ${when(u.created_at)}</b>
+        ${u.client_record ? `<span>Was a client</span><b><a class="lnk" data-lead="${u.client_record.id}">View their journey</a></b>` : ''}
         ${u.role !== 'channel_partner' ? `<span>Last sign-in</span><b>${when(u.last_login)}</b>` : ''}
         <span>Link opened by</span><b>${d.opens} ${d.opens === 1 ? 'person' : 'people'}${d.unverifiedOpens ? ` · ${d.unverifiedOpens} not verified yet` : ''}</b>
       </div>
