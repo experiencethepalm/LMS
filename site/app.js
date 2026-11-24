@@ -187,13 +187,9 @@
       <div class="sec" id="floorplans" data-track="floorplans">
         <h2>Floor plans</h2>
         <div class="chipsrow" id="planFilter">${plansByConfig.map((x, i) => `<button data-f="${esc(x)}"${i === 0 ? ' class="on"' : ''}>${esc(x)}</button>`).join('')}</div>
-        <div class="plans">${c.floorplans.map((f) => `
-          <button class="plan${f.config === plansByConfig[0] ? '' : ' hidden'}" data-plan="${esc(f.id)}" data-config="${esc(f.config)}">
-            <div class="ph" data-label="${esc(f.name)} plan"><img alt="${esc(f.name)} floor plan" data-src="${esc(f.image)}" loading="lazy" /></div>
-            <div class="body"><small>${esc(f.config)}</small><b>${esc(f.name)}</b>
-              <small>${f.sbAreaSqYd} sq.yds super built-up · ≈ ${(f.sbAreaSqYd * 9).toLocaleString('en-IN')} sq.ft</small>
-              ${f.parking ? `<small>${f.parking} allocated parkings</small>` : ''}</div>
-          </button>`).join('')}</div>
+        <div class="unit-tabs" id="unitTabs"></div>
+        <div class="fp" id="fp"></div>
+      </div>
       </div>
 
       <div class="sec" id="payment" data-track="payment">
@@ -243,15 +239,30 @@
     $('#project').classList.remove('hidden');
 
     $$('#project img[data-src]').forEach((img) => { if (img.dataset.srcset) img.srcset = img.dataset.srcset; setImg(img, img.dataset.src); });
-    $$('#planFilter button').forEach((b) => (b.onclick = () => {
-      $$('#planFilter button').forEach((x) => x.classList.toggle('on', x === b));
-      $$('.plan').forEach((pl) => pl.classList.toggle('hidden', pl.dataset.config !== b.dataset.f));
-    }));
-    $$('.plan').forEach((b) => (b.onclick = () => {
-      const f = c.floorplans.find((x) => x.id === b.dataset.plan);
-      queue({ type: 'floorplan_open', target: f.id });
-      openLightbox(f.image, `${f.name} · ${f.config} · ${f.sbAreaSqYd} sq.yds`);
-    }));
+    const plansIn = (cfg) => c.floorplans.filter((f) => f.config === cfg);
+    const showPlan = (f, user) => {
+      $$('#unitTabs button').forEach((x) => x.classList.toggle('on', x.dataset.plan === f.id));
+      const sqft = (f.sbAreaSqYd * 9).toLocaleString('en-IN');
+      $('#fp').innerHTML = `
+        <button class="fp-plan" id="fpZoom" aria-label="Zoom ${esc(f.name)} plan"><img src="${esc(f.image)}" alt="${esc(f.alt || f.name + ' floor plan')}" width="${f.w || 1800}" height="${f.h || 1500}" decoding="async" /><span>Tap to zoom</span></button>
+        <div class="fp-side">
+          <small class="fp-cfg">${esc(f.config)}</small><h3>${esc(f.name)}</h3>
+          <div class="fp-facts"><div><span>Super built-up</span><b>${f.sbAreaSqYd} sq.yds</b><em>≈ ${sqft} sq.ft</em></div>${f.parking ? `<div><span>Parking</span><b>${f.parking} cars</b><em>allocated</em></div>` : ''}</div>
+          ${f.rooms ? `<table class="fp-rooms"><tbody>${f.rooms.map((r) => `<tr class="${r.n.includes('A') ? 'sub' : ''}"><td>${esc(r.n)}</td><td>${esc(r.room)}</td><td>${esc(r.size)}</td></tr>`).join('')}</tbody></table><p class="fp-note">Room sizes are internal dimensions.</p>` : ''}
+          ${f.planNote ? `<p class="fp-note strong">${esc(f.planNote)}</p>` : ''}
+        </div>`;
+      $('#fpZoom').onclick = () => { queue({ type: 'floorplan_open', target: f.id }); openLightbox(f.image, `${f.name} · ${f.config} · ${f.sbAreaSqYd} sq.yds`, f.alt, false, 'plan'); };
+      if (user) queue({ type: 'floorplan_open', target: f.id });
+    };
+    const showConfig = (cfg, user) => {
+      $$('#planFilter button').forEach((x) => x.classList.toggle('on', x.dataset.f === cfg));
+      const list = plansIn(cfg);
+      $('#unitTabs').innerHTML = list.length > 1 ? list.map((f) => `<button data-plan="${esc(f.id)}">${esc(f.name)}</button>`).join('') : '';
+      $$('#unitTabs button').forEach((b) => (b.onclick = () => showPlan(c.floorplans.find((x) => x.id === b.dataset.plan), true)));
+      showPlan(list[0], user);
+    };
+    $$('#planFilter button').forEach((b) => (b.onclick = () => showConfig(b.dataset.f, true)));
+    showConfig(plansByConfig[0], false);
     $$('[data-gal]').forEach((fig) => (fig.onclick = () => openGallery(c.gallery, +fig.dataset.gal)));
     $('#visitCta').onclick = () => openVisit('site_visit');
     $('#shareFamily').onclick = sharePage;
@@ -358,8 +369,9 @@
     const dx = e.changedTouches[0].clientX - touchX; touchX = null;
     if (Math.abs(dx) > 45) showGal(dx < 0 ? 1 : -1);
   });
-  function openLightbox(src, caption, alt, fromGallery) {
+  function openLightbox(src, caption, alt, fromGallery, kind) {
     const lb = $('#lightbox');
+    lb.classList.toggle('is-plan', kind === 'plan');
     if (!fromGallery) { gal = null; lb.classList.remove('has-nav'); }
     $('img', lb).src = src; $('img', lb).alt = alt || caption; $('p', lb).textContent = caption;
     $('img', lb).onerror = () => { $('img', lb).removeAttribute('src'); $('p', lb).textContent = `${caption} — image coming soon`; };

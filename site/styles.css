@@ -281,3 +281,29 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .hl-art.photo img { max-height: none; object-fit: cover; aspect-ratio: 16 / 9; display: block; }
 @media (min-width: 760px) { .hl2 li.has-art .hl-art.photo img { height: 100%; aspect-ratio: auto; } }
 .hl-art.photo img { object-position: left center; }
+
+/* ---- unit plans ---- */
+.unit-tabs { display: flex; gap: 6px; margin: -6px 0 14px; flex-wrap: wrap; }
+.unit-tabs:empty { display: none; }
+.unit-tabs button { font: 500 14px var(--sans); background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 6px 4px; margin-right: 10px; cursor: pointer; }
+.unit-tabs button.on { color: var(--ink); border-color: var(--sand); }
+.fp { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.fp-plan { position: relative; display: block; width: 100%; border: 0; background: none; padding: 0 0 22px; cursor: zoom-in; }
+.fp-plan img { width: 100%; height: auto; display: block; }
+.fp-plan span { position: absolute; right: 0; bottom: 0; font-size: 12px; color: var(--muted); }
+.fp-side { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
+.fp-cfg { color: var(--sand); font-weight: 600; font-size: 12px; }
+.fp-side h3 { font-family: var(--serif); font-size: 30px; font-weight: 600; margin: 0 0 10px; line-height: 1.05; }
+.fp-facts { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
+.fp-facts span, .fp-facts em { display: block; font-size: 12px; color: var(--muted); font-style: normal; }
+.fp-facts b { font-size: 18px; font-weight: 600; white-space: nowrap; }
+.fp-rooms { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 8px; }
+.fp-rooms td { padding: 6px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.fp-rooms td:first-child { color: var(--muted); width: 3.1em; font-variant-numeric: tabular-nums; }
+.fp-rooms td:last-child { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fp-rooms tr.sub td:nth-child(2) { color: var(--muted); padding-left: 10px; }
+.fp-note { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+.fp-note.strong { font-size: 14px; color: var(--ink); background: var(--sand-soft); border-radius: 10px; padding: 10px 12px; }
+.lightbox.is-plan { background: #F6F3EE; color: var(--ink); }
+.lightbox.is-plan img { background: none; max-height: 86vh; }
+.lightbox.is-plan .icon-btn { color: var(--ink); }

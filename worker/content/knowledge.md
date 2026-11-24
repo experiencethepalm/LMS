@@ -58,3 +58,11 @@ The Work Lounge, The Fitness Studio, The Pool Deck, Guest Suites, Kid's Play Zon
 - Gardens & parks: Indroda Nature Park (6.2 km); Swarnim Park (8.6 km); Punit Van (9.3 km); Sarita Udyan (9.5 km)
 - Temples & heritage: Adalaj Stepwell (4.8 km); Dada Bhagwan Trimandir, Adalaj (5.5 km); Swaminarayan Akshardham (10.4 km)
 - Distances are approximate; say the sales team can confirm exact travel times.
+
+## Room sizes by unit plan (from the brochure; internal dimensions)
+- Pure (3 BHK): vestibule 5'0" × 8'6"; living + dining 15'1" × 22'2"; balcony 16'3" × 5'0"; kitchen 13'6" × 8'2"; wash & service 7'0" × 9'1"; common toilet 6'1" × 4'0"; master bedroom 1 11'0" × 15'0" (toilet 7'4" × 5'0"); master bedroom 2 11'1" × 15'0" (toilet 7'5" × 5'0"); bedroom 3 10'0" × 13'11". Puja and storage included.
+- Bliss (3 BHK): vestibule 5'5" × 10'4"; living + dining 24'0" × 20'4"; balcony 18'9" × 5'0"; kitchen 10'1" × 12'2"; wash & service 16'11" × 5'6"; master bedroom 1 17'0" × 12'1" (toilet 5'9" × 8'3"); master bedroom 2 15'0" × 12'0" (toilet 8'8" × 5'5"); master bedroom 3 11'0" × 13'0" (toilet 5'9" × 7'2"). Puja and storage included.
+- Zeal (4 BHK): vestibule 5'5" × 10'4"; living + dining 24'0" × 20'4"; balcony 18'9" × 5'0"; kitchen 10'1" × 12'2"; wash & service 16'11" × 5'6"; master bedroom 1 11'0" × 15'0" (toilet 7'4" × 5'0"); master bedroom 2 17'0" × 12'1" (toilet 5'9" × 8'3"); master bedroom 3 15'0" × 12'0" (toilet 8'8" × 5'5"); master bedroom 4 11'0" × 13'0" (toilet 6'0" × 7'2"). Puja and storage included.
+- Nova (4 BHK): vestibule 5'5" × 10'4"; living + dining 28'0" × 20'4"; balcony 18'9" × 5'0"; kitchen 14'0" × 12'2"; wash & service 16'11" × 5'6"; master bedroom 1 with walk-in wardrobe 11'3" × 20'4" (toilet 6'4" × 10'0"); master bedroom 2 17'0" × 12'1" (toilet 5'9" × 8'3"); master bedroom 3 15'0" × 12'0" (toilet 8'8" × 5'5"); master bedroom 4 11'0" × 13'0" (toilet 6'0" × 7'2"). Puja and storage included.
+- Every bedroom in Bliss, Zeal and Nova has an attached toilet; Pure has two attached toilets plus a common toilet.
+- Penthouse plans are not published yet; the sales team shares them on request.

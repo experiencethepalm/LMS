@@ -137,7 +137,77 @@
    "config": "3 BHK",
    "sbAreaSqYd": 314,
    "parking": 2,
-   "image": "assets/img/plan-pure.jpg"
+   "image": "assets/img/the-palm-unity-pure-unit-plan.png",
+   "w": 1800,
+   "h": 1344,
+   "alt": "3 BHK Pure unit plan, The Palm Unity, Kudasan, Gandhinagar",
+   "rooms": [
+    {
+     "n": "01",
+     "room": "Vestibule",
+     "size": "5'0\" × 8'6\""
+    },
+    {
+     "n": "02",
+     "room": "Living + dining",
+     "size": "15'1\" × 22'2\""
+    },
+    {
+     "n": "03",
+     "room": "Balcony",
+     "size": "16'3\" × 5'0\""
+    },
+    {
+     "n": "04",
+     "room": "Puja",
+     "size": ""
+    },
+    {
+     "n": "05",
+     "room": "Kitchen",
+     "size": "13'6\" × 8'2\""
+    },
+    {
+     "n": "06",
+     "room": "Storage",
+     "size": ""
+    },
+    {
+     "n": "07",
+     "room": "Wash & service area",
+     "size": "7'0\" × 9'1\""
+    },
+    {
+     "n": "08",
+     "room": "Common toilet",
+     "size": "6'1\" × 4'0\""
+    },
+    {
+     "n": "09",
+     "room": "Master bedroom 1",
+     "size": "11'0\" × 15'0\""
+    },
+    {
+     "n": "09 A",
+     "room": "Toilet",
+     "size": "7'4\" × 5'0\""
+    },
+    {
+     "n": "10",
+     "room": "Master bedroom 2",
+     "size": "11'1\" × 15'0\""
+    },
+    {
+     "n": "10 A",
+     "room": "Toilet",
+     "size": "7'5\" × 5'0\""
+    },
+    {
+     "n": "11",
+     "room": "Bedroom 3",
+     "size": "10'0\" × 13'11\""
+    }
+   ]
   },
   {
    "id": "bliss",
@@ -145,7 +215,77 @@
    "config": "3 BHK",
    "sbAreaSqYd": 350,
    "parking": 2,
-   "image": "assets/img/plan-bliss.jpg"
+   "image": "assets/img/the-palm-unity-bliss-unit-plan.png",
+   "w": 1800,
+   "h": 1980,
+   "alt": "3 BHK Bliss unit plan, The Palm Unity, Kudasan, Gandhinagar",
+   "rooms": [
+    {
+     "n": "01",
+     "room": "Vestibule",
+     "size": "5'5\" × 10'4\""
+    },
+    {
+     "n": "02",
+     "room": "Living + dining",
+     "size": "24'0\" × 20'4\""
+    },
+    {
+     "n": "03",
+     "room": "Balcony",
+     "size": "18'9\" × 5'0\""
+    },
+    {
+     "n": "04",
+     "room": "Puja",
+     "size": ""
+    },
+    {
+     "n": "05",
+     "room": "Kitchen",
+     "size": "10'1\" × 12'2\""
+    },
+    {
+     "n": "06",
+     "room": "Storage",
+     "size": ""
+    },
+    {
+     "n": "07",
+     "room": "Wash & service area",
+     "size": "16'11\" × 5'6\""
+    },
+    {
+     "n": "08",
+     "room": "Master bedroom 1",
+     "size": "17'0\" × 12'1\""
+    },
+    {
+     "n": "08 A",
+     "room": "Toilet",
+     "size": "5'9\" × 8'3\""
+    },
+    {
+     "n": "09",
+     "room": "Master bedroom 2",
+     "size": "15'0\" × 12'0\""
+    },
+    {
+     "n": "09 A",
+     "room": "Toilet",
+     "size": "8'8\" × 5'5\""
+    },
+    {
+     "n": "10",
+     "room": "Master bedroom 3",
+     "size": "11'0\" × 13'0\""
+    },
+    {
+     "n": "10 A",
+     "room": "Toilet",
+     "size": "5'9\" × 7'2\""
+    }
+   ]
   },
   {
    "id": "zeal",
@@ -153,7 +293,87 @@
    "config": "4 BHK",
    "sbAreaSqYd": 429,
    "parking": 3,
-   "image": "assets/img/plan-zeal.jpg"
+   "image": "assets/img/the-palm-unity-zeal-unit-plan.png",
+   "w": 1800,
+   "h": 1567,
+   "alt": "4 BHK Zeal unit plan, The Palm Unity, Kudasan, Gandhinagar",
+   "rooms": [
+    {
+     "n": "01",
+     "room": "Vestibule",
+     "size": "5'5\" × 10'4\""
+    },
+    {
+     "n": "02",
+     "room": "Living + dining",
+     "size": "24'0\" × 20'4\""
+    },
+    {
+     "n": "03",
+     "room": "Balcony",
+     "size": "18'9\" × 5'0\""
+    },
+    {
+     "n": "04",
+     "room": "Puja",
+     "size": ""
+    },
+    {
+     "n": "05",
+     "room": "Kitchen",
+     "size": "10'1\" × 12'2\""
+    },
+    {
+     "n": "06",
+     "room": "Storage",
+     "size": ""
+    },
+    {
+     "n": "07",
+     "room": "Wash & service area",
+     "size": "16'11\" × 5'6\""
+    },
+    {
+     "n": "08",
+     "room": "Master bedroom 1",
+     "size": "11'0\" × 15'0\""
+    },
+    {
+     "n": "08 A",
+     "room": "Toilet",
+     "size": "7'4\" × 5'0\""
+    },
+    {
+     "n": "09",
+     "room": "Master bedroom 2",
+     "size": "17'0\" × 12'1\""
+    },
+    {
+     "n": "09 A",
+     "room": "Toilet",
+     "size": "5'9\" × 8'3\""
+    },
+    {
+     "n": "10",
+     "room": "Master bedroom 3",
+     "size": "15'0\" × 12'0\""
+    },
+    {
+     "n": "10 A",
+     "room": "Toilet",
+     "size": "8'8\" × 5'5\""
+    },
+    {
+     "n": "11",
+     "room": "Master bedroom 4",
+     "size": "11'0\" × 13'0\""
+    },
+    {
+     "n": "11 A",
+     "room": "Toilet",
+     "size": "6'0\" × 7'2\""
+    }
+   ]
   },
   {
    "id": "nova",
@@ -161,28 +381,120 @@
    "config": "4 BHK",
    "sbAreaSqYd": 463,
    "parking": 3,
-   "image": "assets/img/plan-nova.jpg"
+   "image": "assets/img/the-palm-unity-nova-unit-plan.png",
+   "w": 1800,
+   "h": 1456,
+   "alt": "4 BHK Nova unit plan, The Palm Unity, Kudasan, Gandhinagar",
+   "rooms": [
+    {
+     "n": "01",
+     "room": "Vestibule",
+     "size": "5'5\" × 10'4\""
+    },
+    {
+     "n": "02",
+     "room": "Living + dining",
+     "size": "28'0\" × 20'4\""
+    },
+    {
+     "n": "03",
+     "room": "Balcony",
+     "size": "18'9\" × 5'0\""
+    },
+    {
+     "n": "04",
+     "room": "Puja",
+     "size": ""
+    },
+    {
+     "n": "05",
+     "room": "Kitchen",
+     "size": "14'0\" × 12'2\""
+    },
+    {
+     "n": "06",
+     "room": "Storage",
+     "size": ""
+    },
+    {
+     "n": "07",
+     "room": "Wash & service area",
+     "size": "16'11\" × 5'6\""
+    },
+    {
+     "n": "08",
+     "room": "Master bedroom 1 + walk-in",
+     "size": "11'3\" × 20'4\""
+    },
+    {
+     "n": "08 A",
+     "room": "Toilet",
+     "size": "6'4\" × 10'0\""
+    },
+    {
+     "n": "09",
+     "room": "Master bedroom 2",
+     "size": "17'0\" × 12'1\""
+    },
+    {
+     "n": "09 A",
+     "room": "Toilet",
+     "size": "5'9\" × 8'3\""
+    },
+    {
+     "n": "10",
+     "room": "Master bedroom 3",
+     "size": "15'0\" × 12'0\""
+    },
+    {
+     "n": "10 A",
+     "room": "Toilet",
+     "size": "8'8\" × 5'5\""
+    },
+    {
+     "n": "11",
+     "room": "Master bedroom 4",
+     "size": "11'0\" × 13'0\""
+    },
+    {
+     "n": "11 A",
+     "room": "Toilet",
+     "size": "6'0\" × 7'2\""
+    }
+   ]
   },
   {
    "id": "bliss-ph",
    "name": "Bliss Penthouse",
    "config": "3 BHK Penthouse",
    "sbAreaSqYd": 395,
-   "image": "assets/img/plan-bliss-penthouse.jpg"
+   "image": "assets/img/the-palm-unity-bliss-unit-plan.png",
+   "w": 1800,
+   "h": 1980,
+   "alt": "3 BHK Penthouse Bliss Penthouse unit plan, The Palm Unity, Kudasan, Gandhinagar",
+   "planNote": "Typical-floor Bliss layout shown. The penthouse plan is shared on request."
   },
   {
    "id": "zeal-ph",
    "name": "Zeal Penthouse",
    "config": "4 BHK Penthouse",
    "sbAreaSqYd": 456,
-   "image": "assets/img/plan-zeal-penthouse.jpg"
+   "image": "assets/img/the-palm-unity-zeal-unit-plan.png",
+   "w": 1800,
+   "h": 1567,
+   "alt": "4 BHK Penthouse Zeal Penthouse unit plan, The Palm Unity, Kudasan, Gandhinagar",
+   "planNote": "Typical-floor Zeal layout shown. The penthouse plan is shared on request."
   },
   {
    "id": "nova-ph",
    "name": "Nova Penthouse",
    "config": "4 BHK Penthouse",
    "sbAreaSqYd": 522,
-   "image": "assets/img/plan-nova-penthouse.jpg"
+   "image": "assets/img/the-palm-unity-nova-unit-plan.png",
+   "w": 1800,
+   "h": 1456,
+   "alt": "4 BHK Penthouse Nova Penthouse unit plan, The Palm Unity, Kudasan, Gandhinagar",
+   "planNote": "Typical-floor Nova layout shown. The penthouse plan is shared on request."
   }
  ],
  "paymentPlan": {
