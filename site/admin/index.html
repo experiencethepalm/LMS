@@ -3,17 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Unity Leads · The Palm Group</title>
+  <title>Unity Dashboard · The Palm Group</title>
   <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#F6F3EE" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=19" />
+  <link rel="stylesheet" href="../styles.css?v=20" />
   <style>
     body { padding-bottom: 0; }
-    .shell { max-width: 1200px; margin: 0 auto; padding: 18px; }
-    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tabs button { font: 500 14px var(--sans); border: 1px solid var(--line); background: #fff; padding: 8px 14px; border-radius: 99px; cursor: pointer; }
+    .shell { max-width: 1240px; margin: 0 auto; padding: 18px; }
+    .tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tabs button { font: 500 14px var(--sans); border: 1px solid var(--line); background: #fff; padding: 8px 14px; border-radius: 99px; cursor: pointer; white-space: nowrap; color: var(--ink); }
     .tabs button.on { background: var(--green); color: #fff; border-color: var(--green); }
+    .tabs .count { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 6px; border-radius: 99px; background: #B3261E; color: #fff; font-size: 11px; line-height: 18px; }
     .toolbar { display: flex; gap: 10px; justify-content: space-between; align-items: center; margin: 16px 0; flex-wrap: wrap; }
+    .toolbar .left { display: flex; gap: 8px; flex-wrap: wrap; }
     .toolbar input, .toolbar select { width: auto; padding: 8px 12px; }
     .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
     .stat { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
@@ -28,286 +32,92 @@
     .P0 { background: #B3261E; color: #fff; } .P1 { background: #E8833A; color: #fff; } .P2 { background: #F2D48A; } .P3 { background: #E4E8E2; } .P4 { background: #F1F1EF; color: #888; }
     .bar { height: 6px; background: var(--line); border-radius: 9px; width: 70px; display: inline-block; vertical-align: middle; margin-left: 6px; overflow: hidden; }
     .bar i { display: block; height: 100%; background: var(--green); }
-    .tag-share { background: #DCE8DE !important; color: #2F4A3A !important; }
-    .tag-via { background: #EEE !important; color: #555 !important; }
-    .net a { color: var(--green); font-weight: 600; }
-    .tag { font-size: 11px; background: var(--sand-soft); color: #7A5B23; padding: 2px 8px; border-radius: 99px; margin-right: 4px; white-space: nowrap; }
-    .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100%); background: var(--bg); z-index: 60; overflow-y: auto; box-shadow: -10px 0 40px rgba(0,0,0,.15); padding: 20px; }
+    .tag { font-size: 11px; background: var(--sand-soft); color: #7A5B23; padding: 2px 8px; border-radius: 99px; margin: 0 4px 2px 0; white-space: nowrap; display: inline-block; }
+    .tag-share { background: #DCE8DE; color: #2F4A3A; }
+    .tag-via { background: #EEE; color: #555; }
+    .tag-cp { background: #E8E2F4; color: #4B3B78; }
+    .tag-red { background: #F8DCDA; color: #9B1C14; }
+    .role { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: .06em; }
+    .role.super_admin { background: var(--green); color: #fff; } .role.sales { background: #DCE8DE; color: var(--green); } .role.channel_partner { background: #E8E2F4; color: #4B3B78; }
+    .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(580px, 100%); background: var(--bg); z-index: 60; overflow-y: auto; box-shadow: -10px 0 40px rgba(0,0,0,.15); padding: 20px; }
     .drawer h2 { margin-bottom: 0; }
-    .kv { display: grid; grid-template-columns: 120px 1fr; gap: 6px 12px; font-size: 14px; margin: 14px 0; }
+    .kv { display: grid; grid-template-columns: 130px 1fr; gap: 6px 12px; font-size: 14px; margin: 14px 0; }
     .kv span { color: var(--muted); }
     .box { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin: 12px 0; }
-    .box h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--sand); }
+    .box h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--sand); display: flex; justify-content: space-between; align-items: center; }
     .opening { background: var(--sand-soft); border-color: transparent; font-size: 15px; }
     .dwell-row { display: flex; align-items: center; gap: 8px; font-size: 13px; margin: 4px 0; }
     .dwell-row span:first-child { width: 110px; color: var(--muted); }
     .dwell-row .bar { width: auto; flex: 1; }
     .tl { font-size: 13px; padding: 6px 0; border-bottom: 1px dashed var(--line); display: flex; justify-content: space-between; gap: 10px; }
     .tl span:last-child { color: var(--muted); white-space: nowrap; }
+    .tl.staff span:first-child { color: var(--green); }
     .msg { max-width: 92%; }
     .chatbox { display: flex; flex-direction: column; gap: 8px; }
-    .login { max-width: 380px; margin: 60px auto; }
+    .login { max-width: 400px; margin: 60px auto; }
     .login form { display: grid; gap: 12px; margin-top: 14px; }
     .linkbox { display: flex; gap: 8px; align-items: center; }
     .linkbox input { font-size: 12px; }
-    @media (max-width: 720px) { .hide-m { display: none; } }
+    a.lnk, .lnk { color: var(--green); font-weight: 600; cursor: pointer; text-decoration: none; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form { display: grid; gap: 10px; }
+    .form label { font-size: 12px; }
+    .form input, .form select, .form textarea { padding: 9px 12px; }
+    .btnrow { display: flex; gap: 8px; flex-wrap: wrap; }
+    /* follow-ups */
+    .fu-group h3 { font-family: var(--sans); font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 22px 0 8px; display: flex; gap: 8px; align-items: center; }
+    .fu-group h3 .n { background: var(--line); color: var(--ink); border-radius: 99px; padding: 1px 8px; font-size: 11px; letter-spacing: 0; }
+    .fu-group.overdue h3 { color: #9B1C14; } .fu-group.overdue h3 .n { background: #F8DCDA; color: #9B1C14; }
+    .fu { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: start; }
+    .fu.late { border-left: 4px solid #B3261E; }
+    .fu-ic { width: 38px; height: 38px; border-radius: 50%; background: var(--sand-soft); color: var(--green); display: grid; place-items: center; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    .fu-main b { font-size: 14.5px; }
+    .fu-main .small { display: block; margin-top: 2px; }
+    .fu-note { font-size: 13.5px; margin-top: 4px; color: #3E4640; }
+    .fu-out { font-size: 13px; margin-top: 4px; color: var(--green); }
+    .fu-when { font-size: 12.5px; color: var(--muted); white-space: nowrap; text-align: right; }
+    .fu-when.late { color: #B3261E; font-weight: 600; }
+    .fu-actions { grid-column: 2 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+    .fu-done-form { grid-column: 1 / -1; background: #FBF9F5; border-radius: 10px; padding: 12px; display: grid; gap: 8px; }
+    .btn.xs { padding: 6px 12px; font-size: 13px; border-radius: 8px; }
+    .empty { text-align: center; color: var(--muted); padding: 40px 10px; font-size: 14px; }
+    .feed .tl b { font-weight: 600; }
+    .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 99px; z-index: 99; font-size: 14px; }
+    @media (max-width: 720px) { .hide-m { display: none; } .grid2 { grid-template-columns: 1fr; } .fu { grid-template-columns: 34px 1fr; } .fu-when { grid-column: 2; text-align: left; } }
   </style>
 </head>
 <body>
-  <header class="topbar"><span class="brand">THE PALM <b>UNITY</b> · LEADS</span><span id="who" class="small"></span></header>
+  <header class="topbar"><span class="brand">THE PALM <b>UNITY</b> · DASHBOARD</span><span id="who" class="small"></span></header>
 
   <div class="login card" id="loginView">
     <h2>Sign in</h2>
-    <div class="tabs" id="loginTabs"><button class="on" data-mode="sales">Sales team</button><button data-mode="owner">Owner</button></div>
-    <form id="loginForm">
-      <label class="sales-only">Your code<input name="code" placeholder="e.g. RAHUL" autocapitalize="characters" /></label>
-      <label class="sales-only">PIN<input name="pin" type="password" inputmode="numeric" /></label>
-      <label class="owner-only hidden">Owner password<input name="password" type="password" /></label>
-      <p class="error" id="loginError"></p>
+    <p class="muted">For The Palm Group team. We'll send a code to your WhatsApp.</p>
+    <form id="phoneForm">
+      <label>Mobile number
+        <div class="phone"><span>+91</span><input name="phone" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" maxlength="14" /></div>
+      </label>
+      <p class="error" id="phoneError"></p>
+      <button class="btn primary">Send code on WhatsApp</button>
+    </form>
+    <form id="codeForm" class="hidden">
+      <p class="muted" id="codeSent"></p>
+      <input class="code-input" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" />
+      <p class="dev-note hidden" id="devNote"></p>
+      <p class="error" id="codeError"></p>
       <button class="btn primary">Sign in</button>
+      <p class="small"><a href="#" id="changePhone">Use a different number</a></p>
     </form>
   </div>
 
   <div class="shell hidden" id="appView">
-    <div class="tabs" id="mainTabs">
-      <button class="on" data-tab="leads">My queue</button>
-      <button data-tab="requests">Visit & callback requests</button>
-      <button data-tab="team">Team & share links</button>
-      <button id="logout" style="margin-left:auto">Sign out</button>
-    </div>
-
-    <section id="tab-leads">
-      <div class="toolbar">
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <input id="q" placeholder="Search name or number" />
-          <select id="fPri"><option value="">All priorities</option><option>P0</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select>
-          <select id="fStatus"><option value="">All statuses</option></select>
-          <select id="fRef" class="owner-only hidden"><option value="">All salespeople</option><option value="none">Unassigned</option></select>
-        </div>
-        <div style="display:flex;gap:8px"><button class="btn ghost sm" id="refresh">Refresh</button><a class="btn ghost sm owner-only hidden" id="exportCsv">Export CSV</a></div>
-      </div>
-      <div class="stats" id="stats"></div>
-      <table class="list"><thead><tr><th>Priority</th><th>Lead</th><th class="hide-m">Interest</th><th class="hide-m">Status</th><th class="hide-m">Last seen</th></tr></thead><tbody id="leadRows"></tbody></table>
-    </section>
-
-    <section id="tab-requests" class="hidden" style="margin-top:16px">
-      <table class="list"><thead><tr><th>Type</th><th>Lead</th><th>Preferred</th><th class="hide-m">Note</th><th class="hide-m">Received</th><th></th></tr></thead><tbody id="reqRows"></tbody></table>
-    </section>
-
-    <section id="tab-team" class="hidden" style="margin-top:16px">
-      <div class="box">
-        <h4>Share links</h4>
-        <p class="small">Each salesperson shares their own link. Buyers who verify through it are credited to them — even if the link is forwarded.</p>
-        <div id="links"></div>
-      </div>
-      <div class="box owner-only hidden">
-        <h4>Add or update a salesperson</h4>
-        <form id="spForm" style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));align-items:end">
-          <label>Code<input name="code" placeholder="RAHUL" required /></label>
-          <label>Name<input name="name" placeholder="Rahul Shah" required /></label>
-          <label>Phone<input name="phone" placeholder="98xxxxxxxx" /></label>
-          <label>PIN<input name="pin" placeholder="4–6 digits" /></label>
-          <label>Active<select name="active"><option value="1">Yes</option><option value="0">No</option></select></label>
-          <button class="btn primary sm">Save</button>
-        </form>
-        <p class="error" id="spError"></p>
-      </div>
-    </section>
+    <div class="tabs" id="mainTabs"></div>
+    <section id="view"></section>
   </div>
 
   <div class="drawer hidden" id="drawer"></div>
   <div class="scrim hidden" id="scrim"></div>
 
-  <script src="../config.js?v=19"></script>
-  <script>
-  (() => {
-    const C = window.UNITY_CONFIG;
-    const $ = (s, el = document) => el.querySelector(s);
-    const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    const STATUSES = { new: 'New', contacted: 'Contacted', visit_booked: 'Visit booked', visited: 'Visited', negotiating: 'Negotiating', booked: 'Booked ✓', lost: 'Lost' };
-    const SECTION_NAMES = { overview: 'Overview', highlights: 'Highlights', gallery: 'Gallery', floorplans: 'Floor plans', payment: 'Payment plan', amenities: 'Amenities', specifications: 'Specs', location: 'Location', brochure: 'Brochure' };
-    let token = sessionStorage.getItem('unity_admin'), role = sessionStorage.getItem('unity_role'), leads = [];
-
-    const ago = (t) => { const s = Date.now() / 1000 - t; if (s < 3600) return `${Math.max(1, Math.round(s / 60))} min ago`; if (s < 86400) return `${Math.round(s / 3600)} h ago`; return `${Math.round(s / 86400)} d ago`; };
-    const when = (t) => new Date(t * 1000).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
-
-    async function api(path, opts = {}) {
-      const res = await fetch(C.API_BASE + path, { ...opts, headers: { 'content-type': 'application/json', authorization: `Bearer ${token}`, ...(opts.headers || {}) } });
-      if (res.status === 401) { logout(); throw new Error('Session expired'); }
-      const d = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(d.error || 'Error');
-      return d;
-    }
-
-    // ---- login ----
-    let mode = 'sales';
-    $$('#loginTabs button').forEach((b) => (b.onclick = (e) => {
-      e.preventDefault(); mode = b.dataset.mode;
-      $$('#loginTabs button').forEach((x) => x.classList.toggle('on', x === b));
-      $$('.sales-only').forEach((x) => x.classList.toggle('hidden', mode !== 'sales'));
-      $$('#loginForm .owner-only').forEach((x) => x.classList.toggle('hidden', mode !== 'owner'));
-    }));
-    $('#loginForm').onsubmit = async (e) => {
-      e.preventDefault(); const f = e.target; $('#loginError').textContent = '';
-      const body = mode === 'owner' ? { password: f.elements.password.value } : { code: f.elements.code.value, pin: f.elements.pin.value };
-      try {
-        const res = await fetch(C.API_BASE + '/api/admin/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
-        const d = await res.json(); if (!res.ok) throw new Error(d.error);
-        token = d.token; role = d.role;
-        sessionStorage.setItem('unity_admin', token); sessionStorage.setItem('unity_role', role); sessionStorage.setItem('unity_name', d.name);
-        start();
-      } catch (ex) { $('#loginError').textContent = ex.message || 'Sign-in failed'; }
-    };
-    function logout() { sessionStorage.clear(); location.reload(); }
-    $('#logout').onclick = logout;
-
-    function start() {
-      $('#loginView').classList.add('hidden'); $('#appView').classList.remove('hidden');
-      $('#who').textContent = sessionStorage.getItem('unity_name') + (role === 'owner' ? ' · all leads' : ' · your leads');
-      $$('#appView .owner-only').forEach((x) => x.classList.toggle('hidden', role !== 'owner'));
-      $('#fStatus').innerHTML = '<option value="">All statuses</option>' + Object.entries(STATUSES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
-      loadLeads(); loadTeam();
-    }
-
-    // ---- tabs ----
-    $$('#mainTabs button[data-tab]').forEach((b) => (b.onclick = () => {
-      $$('#mainTabs button[data-tab]').forEach((x) => x.classList.toggle('on', x === b));
-      ['leads', 'requests', 'team'].forEach((t) => $(`#tab-${t}`).classList.toggle('hidden', t !== b.dataset.tab));
-      if (b.dataset.tab === 'requests') loadRequests();
-      if (b.dataset.tab === 'team') loadTeam();
-    }));
-
-    // ---- leads ----
-    async function loadLeads() {
-      const ref = $('#fRef').value;
-      const d = await api('/api/admin/leads' + (ref ? `?ref=${encodeURIComponent(ref)}` : ''));
-      leads = d.leads; renderLeads();
-    }
-    function renderLeads() {
-      const q = $('#q').value.toLowerCase().trim(), pr = $('#fPri').value, st = $('#fStatus').value;
-      const rows = leads.filter((l) => (!q || l.name.toLowerCase().includes(q) || l.phone.includes(q)) && (!pr || l.priority === pr) && (!st || l.status === st));
-      const day = Date.now() / 1000 - 86400;
-      $('#stats').innerHTML = [
-        ['Verified leads', leads.length],
-        ['New today', leads.filter((l) => l.created_at > day).length],
-        ['Hot (P0–P1)', leads.filter((l) => ['P0', 'P1'].includes(l.priority)).length],
-        ['Open requests', leads.reduce((s, l) => s + l.openRequests.length, 0)],
-        ['Visits booked', leads.filter((l) => ['visit_booked', 'visited', 'negotiating', 'booked'].includes(l.status)).length],
-        ['Came via family/friends', leads.filter((l) => l.referred_by).length],
-      ].map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join('');
-      $('#leadRows').innerHTML = rows.map((l) => `
-        <tr class="row" data-id="${l.id}">
-          <td><span class="pri ${l.priority}">${l.priority}</span><span class="bar"><i style="width:${l.score}%"></i></span></td>
-          <td><b>${esc(l.name)}</b><br><span class="small">+91 ${esc(l.phone)}${l.profession ? ' · ' + esc(l.profession) : ''}${role === 'owner' && l.first_ref ? ' · ' + esc(l.first_ref) : ''}</span></td>
-          <td class="hide-m">${l.openRequests.map((r) => `<span class="tag">${r === 'site_visit' ? 'Wants visit' : 'Callback'}</span>`).join('')}${l.sessions > 1 ? `<span class="tag">${l.sessions} visits</span>` : ''}${l.questions ? `<span class="tag">${l.questions} questions</span>` : ''}${l.referrals ? `<span class="tag tag-share">Brought ${l.referrals}</span>` : l.link_opens ? `<span class="tag tag-share">Shared · ${l.link_opens} opened</span>` : ''}${l.referred_by_name ? `<span class="tag tag-via">via ${esc(l.referred_by_name)}</span>` : ''}</td>
-          <td class="hide-m">${STATUSES[l.status] || l.status}</td>
-          <td class="hide-m small">${ago(l.last_seen)}</td>
-        </tr>`).join('') || `<tr><td colspan="5" class="small" style="text-align:center;padding:30px">No leads yet.</td></tr>`;
-      $$('#leadRows tr.row').forEach((tr) => (tr.onclick = () => openLead(tr.dataset.id)));
-    }
-    ['#q', '#fPri', '#fStatus'].forEach((s) => $(s).addEventListener('input', renderLeads));
-    $('#fRef').onchange = loadLeads;
-    $('#refresh').onclick = loadLeads;
-    $('#exportCsv').onclick = async () => {
-      const res = await fetch(C.API_BASE + '/api/admin/export.csv', { headers: { authorization: `Bearer ${token}` } });
-      const url = URL.createObjectURL(await res.blob()); const a = document.createElement('a'); a.href = url; a.download = 'unity-leads.csv'; a.click();
-    };
-
-    async function openLead(id) {
-      const d = await api(`/api/admin/leads/${id}`);
-      const l = d.lead;
-      const maxDwell = Math.max(1, ...Object.values(d.dwell));
-      const tlLabel = (e) => ({ arrived_via: `Received the link from ${e.target}`, share_open: 'Someone opened the link they shared (not verified yet)', share_open_verified: `${e.target} opened the link they shared`, referral_verified: `${e.target} verified via their link`, session_start: (e.target || '').startsWith('lead:') ? 'Opened the page (from a shared link)' : 'Opened the page', floorplan_open: `Opened floor plan: ${e.target}`, brochure_open: 'Opened the brochure', gallery_open: 'Viewed a photo', walkthrough_play: 'Played the walkthrough', cta: e.target === 'share' ? 'Tapped Share' : `Tapped ${e.target}`, map: (e.target || '').startsWith('place:') ? `Checked commute to ${e.target.slice(6)}` : `Viewed nearby ${(e.target || '').slice(4)} on map` }[e.type] || e.type);
-      const wa = `https://wa.me/91${l.phone}?text=${encodeURIComponent(d.openingLine)}`;
-      $('#drawer').innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:start">
-          <div><span class="pri ${d.priority}">${d.priority}</span> <span class="small">Score ${d.score}/100</span><h2>${esc(l.name)}</h2></div>
-          <button class="icon-btn" id="closeDrawer">✕</button>
-        </div>
-        <div style="display:flex;gap:8px;margin:10px 0">
-          <a class="btn primary sm" href="tel:+91${esc(l.phone)}">Call +91 ${esc(l.phone)}</a>
-          <a class="btn ghost sm" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>
-        </div>
-        <div class="box opening"><h4>Suggested opening line</h4>${esc(d.openingLine)}</div>
-        <div class="kv">
-          <span>Profession</span><b>${esc(l.profession || '—')}</b>
-          <span>Credited to</span><b>${esc(l.first_ref || 'Unassigned')}${l.last_ref && l.last_ref !== l.first_ref ? ` <span class="small">(last via ${esc(l.last_ref)})</span>` : ''}</b>
-          <span>Source</span><b>${esc(l.source || '—')}</b>
-          <span>First verified</span><b>${when(l.created_at)}</b>
-          <span>Visits</span><b>${l.sessions} · last ${ago(l.last_seen)}</b>
-        </div>
-        ${d.requests.length ? `<div class="box"><h4>Requests</h4>${d.requests.map((r) => `<div class="tl"><span>${r.kind === 'site_visit' ? '🏠 Site visit' : '📞 Callback'} ${esc(r.preferred_date || '')} ${esc(r.slot || '')}${r.message ? ' — ' + esc(r.message) : ''}</span><span>${r.handled ? 'Handled' : 'Open'}</span></div>`).join('')}</div>` : ''}
-        <div class="box"><h4>Why this score</h4>${d.parts.map((p) => `<div class="tl"><span>${esc(p.label)}</span><span>${p.pts > 0 ? '+' : ''}${p.pts}</span></div>`).join('') || '<p class="small">Only verified so far.</p>'}</div>
-        <div class="box"><h4>Time spent by section</h4>${Object.entries(d.dwell).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="dwell-row"><span>${SECTION_NAMES[k] || esc(k)}</span><span class="bar"><i style="width:${(v / maxDwell) * 100}%"></i></span><span>${v >= 60 ? Math.round(v / 60) + ' min' : v + ' s'}</span></div>`).join('') || '<p class="small">No browsing recorded yet.</p>'}</div>
-        ${d.chats.length ? `<div class="box"><h4>Questions to the assistant</h4><div class="chatbox">${d.chats.map((c) => `<div class="msg ${c.role}">${esc(c.content)}</div>`).join('')}</div></div>` : ''}
-        ${(d.network.referrer || d.network.opens || d.network.referees.length) ? `<div class="box net"><h4>Family & friends</h4>
-          ${d.network.referrer ? `<div class="tl"><span>Came via</span><span>${d.network.referrer.open ? `<a href="#" data-lead="${d.network.referrer.id}">${esc(d.network.referrer.name)}</a>` : esc(d.network.referrer.name)}</span></div>` : ''}
-          ${d.network.opens ? `<div class="tl"><span>Their shared link was opened</span><span>${d.network.opens} ${d.network.opens === 1 ? 'person' : 'people'}${d.network.unverifiedOpens ? ` · ${d.network.unverifiedOpens} not verified yet` : ''}</span></div>` : ''}
-          ${d.network.referees.map((r) => `<div class="tl"><span>${r.open ? `<a href="#" data-lead="${r.id}">${esc(r.name)}</a>` : esc(r.name)} verified</span><span>${STATUSES[r.status] || r.status} · ${when(r.created_at)}</span></div>`).join('')}
-        </div>` : ''}
-        <div class="box"><h4>Journey</h4>${d.timeline.slice(0, 40).map((e) => `<div class="tl"><span>${esc(tlLabel(e))}</span><span>${when(e.ts)}</span></div>`).join('')}</div>
-        <div class="box"><h4>Follow-up</h4>
-          <form id="leadForm" style="display:grid;gap:10px">
-            <label>Status<select name="status">${Object.entries(STATUSES).map(([k, v]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
-            ${role === 'owner' ? `<label>Credited salesperson<input name="first_ref" value="${esc(l.first_ref || '')}" placeholder="Code" /></label>` : ''}
-            <label>Notes<textarea name="notes" rows="4">${esc(l.notes || '')}</textarea></label>
-            <button class="btn primary sm">Save</button>
-          </form>
-        </div>`;
-      $('#drawer').classList.remove('hidden'); $('#scrim').classList.remove('hidden');
-      $('#closeDrawer').onclick = closeDrawer;
-      $$('#drawer [data-lead]').forEach((a) => (a.onclick = (e) => { e.preventDefault(); openLead(a.dataset.lead); }));
-      $('#leadForm').onsubmit = async (e) => {
-        e.preventDefault(); const f = e.target;
-        const body = { status: f.elements.status.value, notes: f.elements.notes.value };
-        if (f.elements.first_ref) body.first_ref = f.elements.first_ref.value;
-        await api(`/api/admin/leads/${id}`, { method: 'PATCH', body: JSON.stringify(body) });
-        closeDrawer(); loadLeads();
-      };
-    }
-    function closeDrawer() { $('#drawer').classList.add('hidden'); $('#scrim').classList.add('hidden'); }
-    $('#scrim').onclick = closeDrawer;
-
-    // ---- requests ----
-    async function loadRequests() {
-      const d = await api('/api/admin/requests');
-      $('#reqRows').innerHTML = d.requests.map((r) => `
-        <tr style="${r.handled ? 'opacity:.5' : ''}">
-          <td>${r.kind === 'site_visit' ? '🏠 Visit' : '📞 Callback'}</td>
-          <td><b>${esc(r.name)}</b><br><a class="small" href="tel:+91${esc(r.phone)}">+91 ${esc(r.phone)}</a></td>
-          <td>${esc(r.preferred_date || '')} ${esc(r.slot || '')}</td>
-          <td class="hide-m small">${esc(r.message || '')}</td>
-          <td class="hide-m small">${ago(r.created_at)}</td>
-          <td>${r.handled ? 'Done' : `<button class="btn ghost sm" data-done="${r.id}">Mark done</button>`}</td>
-        </tr>`).join('') || '<tr><td colspan="6" class="small" style="text-align:center;padding:30px">No requests yet.</td></tr>';
-      $$('[data-done]').forEach((b) => (b.onclick = async () => { await api(`/api/admin/requests/${b.dataset.done}`, { method: 'PATCH' }); loadRequests(); }));
-    }
-
-    // ---- team ----
-    async function loadTeam() {
-      const d = await api('/api/admin/salespeople');
-      const base = d.siteUrl || location.origin + location.pathname.replace(/admin\/.*$/, '');
-      $('#links').innerHTML = d.salespeople.map((s) => {
-        const link = s.share_id ? `${base}?r=${encodeURIComponent(s.share_id)}` : `${base}?ref=${encodeURIComponent(s.code)}`;
-        return `<div class="tl"><span><b>${esc(s.name)}</b> (${esc(s.code)})${s.active ? '' : ' — inactive'}</span></div>
-          <div class="linkbox"><input readonly value="${esc(link)}" /><button class="btn ghost sm" data-copy="${esc(link)}">Copy</button></div>`;
-      }).join('') || '<p class="small">No salespeople yet — add one below.</p>';
-      $$('[data-copy]').forEach((b) => (b.onclick = () => navigator.clipboard.writeText(b.dataset.copy).then(() => (b.textContent = 'Copied'))));
-      if (role === 'owner') {
-        $('#fRef').innerHTML = '<option value="">All salespeople</option><option value="none">Unassigned</option>' + d.salespeople.map((s) => `<option value="${esc(s.code)}">${esc(s.name)}</option>`).join('');
-      }
-    }
-    $('#spForm').onsubmit = async (e) => {
-      e.preventDefault(); const f = e.target; $('#spError').textContent = '';
-      try {
-        await api('/api/admin/salespeople', { method: 'POST', body: JSON.stringify({ code: f.elements.code.value, name: f.elements.name.value, phone: f.elements.phone.value, pin: f.elements.pin.value, active: f.elements.active.value === '1' }) });
-        f.reset(); loadTeam();
-      } catch (ex) { $('#spError').textContent = ex.message; }
-    };
-
-    if (token) start();
-  })();
-  </script>
+  <script src="../config.js?v=20"></script>
+  <script src="admin.js?v=20"></script>
 </body>
 </html>

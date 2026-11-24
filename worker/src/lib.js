@@ -81,3 +81,8 @@ export async function readJson(request) {
     return {};
   }
 }
+
+export function newShareId() {
+  const abc = 'abcdefghjkmnpqrstuvwxyz23456789';
+  return [...crypto.getRandomValues(new Uint8Array(6))].map((b) => abc[b % abc.length]).join('');
+}

@@ -7,6 +7,10 @@ CREATE TABLE IF NOT EXISTS salespeople (
   phone       TEXT,
   pin_hash    TEXT,                      -- dashboard login PIN (hashed)
   share_id    TEXT,                      -- opaque id used in share links: ?r=share_id
+  role        TEXT DEFAULT 'sales',      -- super_admin | sales | channel_partner
+  company     TEXT,                      -- channel partner's firm
+  created_by  TEXT,                      -- user code who added this user
+  last_login  INTEGER,
   active      INTEGER NOT NULL DEFAULT 1,
   created_at  INTEGER NOT NULL
 );
@@ -23,6 +27,7 @@ CREATE TABLE IF NOT EXISTS leads (
   last_seen   INTEGER NOT NULL,
   sessions    INTEGER NOT NULL DEFAULT 1,
   referred_by INTEGER,                   -- lead id of the buyer whose link they opened
+  assigned_to TEXT,                      -- sales team member responsible for follow-up
   share_id    TEXT,                      -- this buyer's own share id (?r=...) for forwarding to family
   status      TEXT NOT NULL DEFAULT 'new',   -- new | contacted | visit_booked | visited | negotiating | booked | lost
   notes       TEXT
@@ -35,7 +40,8 @@ CREATE TABLE IF NOT EXISTS otps (
   attempts    INTEGER NOT NULL DEFAULT 0,
   created_at  INTEGER NOT NULL,
   ip          TEXT,
-  pending     TEXT                       -- JSON: name, profession, ref, source
+  pending     TEXT,                      -- JSON: name, profession, ref, source
+  purpose     TEXT DEFAULT 'buyer'       -- buyer | staff
 );
 CREATE INDEX IF NOT EXISTS idx_otps_phone ON otps(phone, created_at);
 CREATE INDEX IF NOT EXISTS idx_otps_ip ON otps(ip, created_at);
@@ -84,3 +90,36 @@ CREATE TABLE IF NOT EXISTS link_opens (
 );
 CREATE INDEX IF NOT EXISTS idx_opens_by ON link_opens(by_lead, ts);
 CREATE INDEX IF NOT EXISTS idx_opens_device ON link_opens(device);
+
+-- Follow-ups planned by the sales team (for a client or a channel partner)
+CREATE TABLE IF NOT EXISTS followups (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  lead_id       INTEGER,
+  partner_code  TEXT,
+  assigned_to   TEXT NOT NULL,
+  created_by    TEXT NOT NULL,
+  kind          TEXT NOT NULL DEFAULT 'call',   -- call | whatsapp | meeting | site_visit | other
+  due_at        INTEGER NOT NULL,
+  note          TEXT,
+  status        TEXT NOT NULL DEFAULT 'open',   -- open | done | cancelled
+  outcome       TEXT,
+  done_at       INTEGER,
+  done_by       TEXT,
+  created_at    INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_fu_assignee ON followups(assigned_to, status, due_at);
+CREATE INDEX IF NOT EXISTS idx_fu_lead ON followups(lead_id);
+CREATE INDEX IF NOT EXISTS idx_fu_partner ON followups(partner_code);
+
+-- What staff did in the dashboard (super admin view)
+CREATE TABLE IF NOT EXISTS staff_activity (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_code    TEXT NOT NULL,
+  action       TEXT NOT NULL,
+  target_type  TEXT,
+  target_id    TEXT,
+  detail       TEXT,
+  ts           INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_staff_user ON staff_activity(user_code, ts);
+CREATE INDEX IF NOT EXISTS idx_staff_target ON staff_activity(target_type, target_id);

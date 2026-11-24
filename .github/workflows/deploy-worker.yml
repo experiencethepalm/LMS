@@ -43,6 +43,14 @@ jobs:
           npx wrangler d1 execute palm-unity-leads --remote --command "ALTER TABLE leads ADD COLUMN share_id TEXT" || echo "lead share_id already exists"
           npx wrangler d1 execute palm-unity-leads --remote --command "CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_share ON leads(share_id)"
           npx wrangler d1 execute palm-unity-leads --remote --command "CREATE INDEX IF NOT EXISTS idx_leads_ref ON leads(referred_by)"
+          for col in "role TEXT DEFAULT 'sales'" "company TEXT" "created_by TEXT" "last_login INTEGER"; do
+            npx wrangler d1 execute palm-unity-leads --remote --command "ALTER TABLE salespeople ADD COLUMN $col" || echo "salespeople.$col exists"
+          done
+          npx wrangler d1 execute palm-unity-leads --remote --command "ALTER TABLE leads ADD COLUMN assigned_to TEXT" || echo "leads.assigned_to exists"
+          npx wrangler d1 execute palm-unity-leads --remote --command "ALTER TABLE otps ADD COLUMN purpose TEXT DEFAULT 'buyer'" || echo "otps.purpose exists"
+          npx wrangler d1 execute palm-unity-leads --remote --command "UPDATE salespeople SET role='sales' WHERE role IS NULL"
+          npx wrangler d1 execute palm-unity-leads --remote --command "UPDATE leads SET assigned_to=first_ref WHERE assigned_to IS NULL AND first_ref IN (SELECT code FROM salespeople WHERE COALESCE(role,'sales') IN ('sales','super_admin'))"
+          npx wrangler d1 execute palm-unity-leads --remote --command "CREATE INDEX IF NOT EXISTS idx_leads_assigned ON leads(assigned_to)"
 
       - name: Deploy Worker
         run: npx wrangler deploy
@@ -50,6 +58,7 @@ jobs:
       - name: Set Worker secrets from GitHub secrets
         env:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          SUPER_ADMIN_PHONE: ${{ secrets.SUPER_ADMIN_PHONE }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           WATI_API_ENDPOINT: ${{ secrets.WATI_API_ENDPOINT }}
           WATI_ACCESS_TOKEN: ${{ secrets.WATI_ACCESS_TOKEN }}
@@ -64,7 +73,7 @@ jobs:
             const crypto = require("crypto");
             const existing = JSON.parse(process.argv[1]).map((s) => s.name);
             const out = {};
-            for (const k of ["ADMIN_PASSWORD","ANTHROPIC_API_KEY","WATI_API_ENDPOINT","WATI_ACCESS_TOKEN","WA_ACCESS_TOKEN","WA_PHONE_NUMBER_ID","MSG91_AUTH_KEY","MSG91_TEMPLATE_ID","ALERT_WEBHOOK_URL"])
+            for (const k of ["ADMIN_PASSWORD","SUPER_ADMIN_PHONE","ANTHROPIC_API_KEY","WATI_API_ENDPOINT","WATI_ACCESS_TOKEN","WA_ACCESS_TOKEN","WA_PHONE_NUMBER_ID","MSG91_AUTH_KEY","MSG91_TEMPLATE_ID","ALERT_WEBHOOK_URL"])
               if (process.env[k]) out[k] = process.env[k];
             // Signing key is generated once and kept, so buyer and staff logins survive redeploys
             if (!existing.includes("TOKEN_SECRET")) out.TOKEN_SECRET = crypto.randomBytes(32).toString("hex");

@@ -1,12 +1,12 @@
 // The Palm Unity — lead platform API (Cloudflare Worker + D1)
 import content from '../content/unity.json';
-import { json, bad, now, sha256, signToken, verifyToken, bearer, normalisePhone, clean, sixDigitCode, readJson } from './lib.js';
+import { json, bad, now, sha256, signToken, verifyToken, bearer, normalisePhone, clean, sixDigitCode, readJson, newShareId } from './lib.js';
 import { sendOtp } from './otp.js';
 import { scoreLead } from './score.js';
 import { askAssistant } from './chat.js';
+import { adminRoute, assignLead } from './admin.js';
 
 const BUYER_TTL = 180 * 86400;   // verified buyers stay unlocked for 6 months on that device
-const ADMIN_TTL = 12 * 3600;
 const OTP_TTL = 600;             // code valid 10 minutes
 const NEW_SESSION_GAP = 30 * 60; // a return after 30 min counts as a new visit
 const STATUSES = ['new', 'contacted', 'visit_booked', 'visited', 'negotiating', 'booked', 'lost'];
@@ -55,21 +55,7 @@ async function route(request, env, ctx) {
   if (p === '/api/chat' && m === 'POST') return chat(request, env);
   if (p === '/api/request' && m === 'POST') return buyerRequest(request, env, ctx);
 
-  if (p === '/api/admin/login' && m === 'POST') return adminLogin(request, env);
-  if (p.startsWith('/api/admin/')) {
-    const admin = await verifyToken(bearer(request), env.TOKEN_SECRET);
-    if (!admin || !['owner', 'sales'].includes(admin.role)) return bad('Please sign in again.', 401);
-    if (p === '/api/admin/leads' && m === 'GET') return listLeads(env, admin, url);
-    const lm = p.match(/^\/api\/admin\/leads\/(\d+)$/);
-    if (lm && m === 'GET') return leadDetail(env, admin, Number(lm[1]));
-    if (lm && m === 'PATCH') return updateLead(request, env, admin, Number(lm[1]));
-    if (p === '/api/admin/salespeople' && m === 'GET') return listSales(env, admin);
-    if (p === '/api/admin/salespeople' && m === 'POST') return upsertSales(request, env, admin);
-    if (p === '/api/admin/requests' && m === 'GET') return listRequests(env, admin);
-    const rm = p.match(/^\/api\/admin\/requests\/(\d+)$/);
-    if (rm && m === 'PATCH') return markRequest(env, admin, Number(rm[1]));
-    if (p === '/api/admin/export.csv' && m === 'GET') return exportCsv(env, admin);
-  }
+  if (p.startsWith('/api/admin/')) return adminRoute(request, env, url, p, m);
   return bad('Not found', 404);
 }
 
@@ -85,7 +71,7 @@ async function otpStart(request, env) {
 
   const ip = request.headers.get('cf-connecting-ip') || 'local';
   const t = now();
-  const perPhone = await env.DB.prepare('SELECT COUNT(*) n FROM otps WHERE phone=? AND created_at>?').bind(phone, t - 900).first();
+  const perPhone = await env.DB.prepare("SELECT COUNT(*) n FROM otps WHERE phone=? AND created_at>? AND COALESCE(purpose,'buyer')='buyer'").bind(phone, t - 900).first();
   if (perPhone.n >= 3) return bad('Too many codes requested. Please try again in 15 minutes.', 429);
   const perIp = await env.DB.prepare('SELECT COUNT(*) n FROM otps WHERE ip=? AND created_at>?').bind(ip, t - 3600).first();
   if (perIp.n >= 10) return bad('Too many requests from this network. Please try again later.', 429);
@@ -98,7 +84,7 @@ async function otpStart(request, env) {
     device: clean(body.device, 40),
     source: clean(body.source, 80),
   });
-  await env.DB.prepare('INSERT INTO otps (phone, code_hash, expires_at, created_at, ip, pending) VALUES (?,?,?,?,?,?)')
+  await env.DB.prepare("INSERT INTO otps (phone, code_hash, expires_at, created_at, ip, pending, purpose) VALUES (?,?,?,?,?,?,'buyer')")
     .bind(phone, await sha256(`${phone}:${code}:${env.TOKEN_SECRET}`), t + OTP_TTL, t, ip, pending).run();
 
   const sent = await sendOtp(env, phone, code);
@@ -112,7 +98,7 @@ async function otpVerify(request, env) {
   if (!phone || code.length !== 6) return bad('Please enter the 6-digit code.');
 
   const t = now();
-  const row = await env.DB.prepare('SELECT rowid, * FROM otps WHERE phone=? ORDER BY created_at DESC LIMIT 1').bind(phone).first();
+  const row = await env.DB.prepare("SELECT rowid, * FROM otps WHERE phone=? AND COALESCE(purpose,'buyer')='buyer' ORDER BY created_at DESC LIMIT 1").bind(phone).first();
   if (!row || row.expires_at < t) return bad('This code has expired. Please request a new one.');
   if (row.attempts >= 5) return bad('Too many wrong attempts. Please request a new code.', 429);
   if ((await sha256(`${phone}:${code}:${env.TOKEN_SECRET}`)) !== row.code_hash) {
@@ -139,6 +125,7 @@ async function otpVerify(request, env) {
     leadId = r.meta.last_row_id;
   }
   if (info.device) await env.DB.prepare('UPDATE link_opens SET verified_lead=? WHERE device=? AND verified_lead IS NULL').bind(leadId, info.device).run();
+  await assignLead(env, leadId);
   await logEvents(env, leadId, [{ type: 'session_start', target: via.leadId ? `lead:${via.leadId}` : ref || '' }]);
   const mine = await env.DB.prepare('SELECT share_id FROM leads WHERE id=?').bind(leadId).first();
 
@@ -186,15 +173,7 @@ async function linkOpen(request, env) {
   return json({ ok: true });
 }
 
-function newShareId() {
-  const abc = 'abcdefghjkmnpqrstuvwxyz23456789';
-  return [...crypto.getRandomValues(new Uint8Array(6))].map((b) => abc[b % abc.length]).join('');
-}
 
-async function ensureShareIds(env) {
-  const missing = (await env.DB.prepare('SELECT code FROM salespeople WHERE share_id IS NULL OR share_id = ?').bind('').all()).results;
-  for (const r of missing) await env.DB.prepare('UPDATE salespeople SET share_id=? WHERE code=?').bind(newShareId(), r.code).run();
-}
 
 async function buyerFrom(request, env, bodyToken) {
   const tok = await verifyToken(bearer(request) || bodyToken, env.TOKEN_SECRET);
@@ -302,177 +281,4 @@ async function alert(env, text) {
   } catch (e) { console.error('alert failed', e); }
 }
 
-// ---------- Admin ----------
-
-async function adminLogin(request, env) {
-  const body = await readJson(request);
-  const ip = request.headers.get('cf-connecting-ip') || 'local';
-  if (body.password) {
-    if (!env.ADMIN_PASSWORD || body.password !== env.ADMIN_PASSWORD) return bad('Wrong password.', 401);
-    return json({ token: await signToken({ role: 'owner', name: 'Owner' }, env.TOKEN_SECRET, ADMIN_TTL), role: 'owner', name: 'Owner' });
-  }
-  const code = clean(body.code, 32).toUpperCase();
-  const sp = await env.DB.prepare('SELECT * FROM salespeople WHERE code=? AND active=1').bind(code).first();
-  if (!sp || !sp.pin_hash || (await sha256(`${code}:${body.pin}:${env.TOKEN_SECRET}`)) !== sp.pin_hash) {
-    console.log('failed sales login', code, ip);
-    return bad('Wrong code or PIN.', 401);
-  }
-  return json({ token: await signToken({ role: 'sales', code, name: sp.name }, env.TOKEN_SECRET, ADMIN_TTL), role: 'sales', name: sp.name, code });
-}
-
-const scopeSql = (admin) => (admin.role === 'sales' ? { where: 'WHERE l.first_ref = ?', args: [admin.code] } : { where: '', args: [] });
-
-async function listLeads(env, admin, url) {
-  const scope = scopeSql(admin);
-  let where = scope.where, args = [...scope.args];
-  const ref = url.searchParams.get('ref');
-  if (admin.role === 'owner' && ref === 'none') { where = 'WHERE l.first_ref IS NULL'; args = []; }
-  else if (admin.role === 'owner' && ref) { where = 'WHERE l.first_ref = ?'; args = [ref]; }
-
-  const leads = (await env.DB.prepare(
-    `SELECT l.*, rb.name AS referred_by_name,
-       (SELECT COUNT(*) FROM leads x WHERE x.referred_by = l.id) AS referrals,
-       (SELECT COUNT(DISTINCT o.device) FROM link_opens o WHERE o.by_lead = l.id) AS link_opens
-     FROM leads l LEFT JOIN leads rb ON rb.id = l.referred_by ${where} ORDER BY l.last_seen DESC LIMIT 2000`
-  ).bind(...args).all()).results;
-  if (!leads.length) return json({ leads: [] });
-  // Subquery keeps bound parameters small (D1 allows max 100 per query)
-  const inScope = `lead_id IN (SELECT l.id FROM leads l ${where})`;
-  const agg = await groupBy(env, `SELECT lead_id, type, target, COUNT(*) n, SUM(value) v FROM events WHERE ${inScope} GROUP BY lead_id, type, target`, args);
-  const chats = await groupBy(env, `SELECT lead_id, COUNT(*) n FROM chats WHERE role='user' AND ${inScope} GROUP BY lead_id`, args);
-  const reqs = await groupBy(env, `SELECT lead_id, kind, handled FROM requests WHERE ${inScope}`, args);
-
-  const out = leads.map((l) => {
-    const s = scoreLead(l, agg[l.id] || [], (chats[l.id] || [{ n: 0 }])[0].n, reqs[l.id] || []);
-    const open = (reqs[l.id] || []).filter((r) => !r.handled).map((r) => r.kind);
-    return { ...l, score: s.score, priority: s.priority, openRequests: open, questions: (chats[l.id] || [{ n: 0 }])[0].n };
-  });
-  out.sort((a, b) => b.score - a.score || b.last_seen - a.last_seen);
-  return json({ leads: out });
-}
-
-async function groupBy(env, sql, ids) {
-  const res = (await env.DB.prepare(sql).bind(...ids).all()).results;
-  const map = {};
-  for (const r of res) (map[r.lead_id] ||= []).push(r);
-  return map;
-}
-
-async function getScopedLead(env, admin, id) {
-  const lead = await env.DB.prepare('SELECT * FROM leads WHERE id=?').bind(id).first();
-  if (!lead) return null;
-  if (admin.role === 'sales' && lead.first_ref !== admin.code) return null;
-  return lead;
-}
-
-async function leadDetail(env, admin, id) {
-  const lead = await getScopedLead(env, admin, id);
-  if (!lead) return bad('Lead not found', 404);
-  const agg = (await env.DB.prepare('SELECT type, target, COUNT(*) n, SUM(value) v FROM events WHERE lead_id=? GROUP BY type, target').bind(id).all()).results;
-  const timeline = (await env.DB.prepare("SELECT type, target, value, ts FROM events WHERE lead_id=? AND type!='dwell' ORDER BY ts DESC LIMIT 200").bind(id).all()).results;
-  const chats = (await env.DB.prepare('SELECT role, content, ts FROM chats WHERE lead_id=? ORDER BY ts, id').bind(id).all()).results;
-  const requests = (await env.DB.prepare('SELECT * FROM requests WHERE lead_id=? ORDER BY created_at DESC').bind(id).all()).results;
-  const referrer = lead.referred_by ? await env.DB.prepare('SELECT id, name, first_ref FROM leads WHERE id=?').bind(lead.referred_by).first() : null;
-  const referees = (await env.DB.prepare('SELECT id, name, status, created_at, first_ref FROM leads WHERE referred_by=? ORDER BY created_at').bind(id).all()).results;
-  const opens = (await env.DB.prepare(
-    `SELECT o.ts, o.device, o.verified_lead, v.name AS verified_name FROM link_opens o LEFT JOIN leads v ON v.id = o.verified_lead
-     WHERE o.by_lead=? ORDER BY o.ts DESC LIMIT 200`).bind(id).all()).results;
-  lead.referrals = referees.length;
-  lead.link_opens = new Set(opens.map((o) => o.device)).size;
-  const canOpen = (l) => admin.role === 'owner' || l.first_ref === admin.code;
-  const network = {
-    referrer: referrer ? { id: referrer.id, name: referrer.name, open: canOpen(referrer) } : null,
-    referees: referees.map((r) => ({ id: r.id, name: r.name, status: r.status, created_at: r.created_at, open: canOpen(r) })),
-    opens: lead.link_opens,
-    unverifiedOpens: new Set(opens.filter((o) => !o.verified_lead).map((o) => o.device)).size,
-  };
-  // One journey: own activity + how they arrived + what happened with the links they shared
-  const journey = [
-    ...timeline.map((e) => ({ ...e })),
-    ...(referrer ? [{ type: 'arrived_via', target: referrer.name, ts: lead.created_at }] : []),
-    ...opens.map((o) => ({ type: o.verified_lead ? 'share_open_verified' : 'share_open', target: o.verified_name || '', ts: o.ts })),
-    ...referees.map((r) => ({ type: 'referral_verified', target: r.name, ts: r.created_at })),
-  ].sort((a, b) => b.ts - a.ts).slice(0, 250);
-  const s = scoreLead(lead, agg, chats.filter((c) => c.role === 'user').length, requests);
-  return json({ lead, ...s, timeline: journey, network, chats, requests, openingLine: openingLine(lead, s, chats, requests) });
-}
-
-// A suggested first line for the sales call, based on what the buyer looked at
-function openingLine(lead, s, chats, requests) {
-  const first = lead.name.split(' ')[0];
-  const topSection = Object.entries(s.dwell).sort((a, b) => b[1] - a[1])[0]?.[0];
-  const PLACE = { gift: 'GIFT City', airport: 'the airport', infocity: 'Infocity', mahatma: 'Mahatma Mandir', railway: 'the railway station', vaishnodevi: 'SG Highway', metro: 'the metro' };
-  const checked = [...new Set(s.places || [])].map((id) => PLACE[id]).filter(Boolean);
-  const lastQ = [...chats].reverse().find((c) => c.role === 'user')?.content;
-  if (lead.referrals > 0) return `Hi ${first}, this is from The Palm Unity — thank you for sharing Unity with your family and friends! Would you like to plan a site visit together with them?`;
-  if (requests.some((r) => r.kind === 'site_visit')) return `Hi ${first}, this is from The Palm Unity — calling to confirm your site visit. Which day suits you best?`;
-  if (lastQ) return `Hi ${first}, this is from The Palm Unity. I saw you asked "${lastQ.slice(0, 80)}" — happy to take you through that properly.`;
-  if (checked.length) return `Hi ${first}, this is from The Palm Unity. I noticed you checked the commute to ${checked.slice(0, 2).join(' and ')} — Unity is well placed for that. Would a quick site visit this week help?`;
-  if (topSection === 'floorplans') return `Hi ${first}, this is from The Palm Unity. You were looking at our floor plans — shall I share the layouts that are still available on your preferred floor?`;
-  if (topSection === 'payment') return `Hi ${first}, this is from The Palm Unity. You were checking the payment plan — I can share the full cost sheet for the home you liked.`;
-  if (topSection === 'location') return `Hi ${first}, this is from The Palm Unity. You were exploring the location — would a quick site visit this week help?`;
-  return `Hi ${first}, this is from The Palm Unity. Thanks for checking out the project — what kind of home are you looking for?`;
-}
-
-async function updateLead(request, env, admin, id) {
-  const lead = await getScopedLead(env, admin, id);
-  if (!lead) return bad('Lead not found', 404);
-  const body = await readJson(request);
-  const status = STATUSES.includes(body.status) ? body.status : lead.status;
-  const notes = body.notes !== undefined ? clean(body.notes, 4000) : lead.notes;
-  let firstRef = lead.first_ref;
-  if (admin.role === 'owner' && body.first_ref !== undefined) firstRef = body.first_ref ? await validRef(env, clean(body.first_ref, 32).toUpperCase()) : null;
-  await env.DB.prepare('UPDATE leads SET status=?, notes=?, first_ref=? WHERE id=?').bind(status, notes, firstRef, id).run();
-  return json({ ok: true });
-}
-
-async function listSales(env, admin) {
-  await ensureShareIds(env);
-  const rows = (await env.DB.prepare('SELECT code, name, phone, active, share_id, created_at FROM salespeople ORDER BY name').all()).results;
-  const visible = admin.role === 'owner' ? rows : rows.filter((r) => r.code === admin.code);
-  return json({ salespeople: visible, siteUrl: env.SITE_URL || '' });
-}
-
-async function upsertSales(request, env, admin) {
-  if (admin.role !== 'owner') return bad('Only the owner can manage the team.', 403);
-  const b = await readJson(request);
-  const code = clean(b.code, 16).toUpperCase().replace(/[^A-Z0-9]/g, '');
-  if (!code || !clean(b.name)) return bad('Code and name are required.');
-  const existing = await env.DB.prepare('SELECT * FROM salespeople WHERE code=?').bind(code).first();
-  const pinHash = b.pin ? await sha256(`${code}:${b.pin}:${env.TOKEN_SECRET}`) : existing?.pin_hash || null;
-  if (!pinHash) return bad('Set a PIN for the new salesperson.');
-  const active = b.active === false ? 0 : 1;
-  if (existing) {
-    await env.DB.prepare('UPDATE salespeople SET name=?, phone=?, pin_hash=?, active=? WHERE code=?').bind(clean(b.name), clean(b.phone, 20), pinHash, active, code).run();
-  } else {
-    await env.DB.prepare('INSERT INTO salespeople (code, name, phone, pin_hash, active, share_id, created_at) VALUES (?,?,?,?,?,?,?)').bind(code, clean(b.name), clean(b.phone, 20), pinHash, active, newShareId(), now()).run();
-  }
-  return json({ ok: true });
-}
-
-async function listRequests(env, admin) {
-  const scope = scopeSql(admin);
-  const rows = (await env.DB.prepare(
-    `SELECT r.*, l.name, l.phone, l.first_ref FROM requests r JOIN leads l ON l.id=r.lead_id ${scope.where} ORDER BY r.handled, r.created_at DESC LIMIT 500`
-  ).bind(...scope.args).all()).results;
-  return json({ requests: rows });
-}
-
-async function markRequest(env, admin, id) {
-  const r = await env.DB.prepare('SELECT r.*, l.first_ref FROM requests r JOIN leads l ON l.id=r.lead_id WHERE r.id=?').bind(id).first();
-  if (!r || (admin.role === 'sales' && r.first_ref !== admin.code)) return bad('Not found', 404);
-  await env.DB.prepare('UPDATE requests SET handled=1 WHERE id=?').bind(id).run();
-  return json({ ok: true });
-}
-
-async function exportCsv(env, admin) {
-  const fake = new URL('https://x/api/admin/leads');
-  const { leads } = await (await listLeads(env, admin, fake)).json();
-  const cols = ['id', 'name', 'phone', 'profession', 'first_ref', 'referred_by_name', 'referrals', 'link_opens', 'source', 'status', 'score', 'priority', 'sessions', 'questions', 'created_at', 'last_seen', 'notes'];
-  const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const iso = (t) => (t ? new Date(t * 1000).toISOString() : '');
-  const lines = [cols.join(',')].concat(
-    leads.map((l) => cols.map((c) => esc(c === 'created_at' || c === 'last_seen' ? iso(l[c]) : l[c])).join(','))
-  );
-  return new Response(lines.join('\n'), { headers: { 'content-type': 'text/csv', 'content-disposition': 'attachment; filename="unity-leads.csv"' } });
-}
+// ---------- Admin: see admin.js ----------
