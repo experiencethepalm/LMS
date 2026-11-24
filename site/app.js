@@ -169,7 +169,6 @@
           <div class="fact"><span>Possession</span><b>${val(p.possession)}</b></div>
           <div class="fact"><span>Homes</span><b>3 & 4 BHK · Penthouses</b></div>
           <div class="fact"><span>Developer</span><b>${esc(p.developer)}</b></div>
-          <div class="fact wide"><span>RERA</span><b>${val(p.rera, 'Registered · number shared on request')}</b></div>
         </div>
       </div>
 
