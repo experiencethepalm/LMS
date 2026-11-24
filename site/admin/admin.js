@@ -280,8 +280,21 @@
       <div class="box"><h4>Why this score</h4>${d.parts.map((p) => `<div class="tl"><span>${esc(p.label)}</span><span>${p.pts > 0 ? '+' : ''}${p.pts}</span></div>`).join('') || '<p class="small">Only verified so far.</p>'}</div>
       <div class="box"><h4>Time spent by section</h4>${Object.entries(d.dwell).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="dwell-row"><span>${SECTION_NAMES[k] || esc(k)}</span><span class="bar"><i style="width:${(v / maxDwell) * 100}%"></i></span><span>${v >= 60 ? Math.round(v / 60) + ' min' : v + ' s'}</span></div>`).join('') || '<p class="small">No browsing recorded yet.</p>'}</div>
       ${d.chats.length ? `<div class="box"><h4>Questions to the assistant</h4><div class="chatbox">${d.chats.map((c) => `<div class="msg ${c.role}">${esc(c.content)}</div>`).join('')}</div></div>` : ''}
-      <div class="box"><h4>Journey</h4>${d.timeline.slice(0, 80).map((e) => `<div class="tl ${e.type === 'staff' ? 'staff' : ''}"><span>${esc(tlLabel(e))}</span><span>${when(e.ts)}</span></div>`).join('')}</div>`);
+      <div class="box"><h4>Journey</h4>${d.timeline.slice(0, 80).map((e) => `<div class="tl ${e.type === 'staff' ? 'staff' : ''}"><span>${esc(tlLabel(e))}</span><span>${when(e.ts)}</span></div>`).join('')}</div>
+      ${isSuper() ? `<div class="box danger"><h4>Delete client</h4><p class="small" style="margin:0 0 10px">Removes ${esc(l.name)} and their journey, questions, requests and follow-ups. This can't be undone.</p>
+        <div id="delBox"><button class="btn danger sm" id="delLead">Delete this client</button></div></div>` : ''}`);
     const reopen = () => openLead(id);
+    if ($('#delLead')) $('#delLead').onclick = () => {
+      $('#delBox').innerHTML = `<p class="small" style="margin:0 0 8px">Type <b>DELETE</b> to confirm.</p><div class="btnrow"><input id="delTxt" autocomplete="off" style="max-width:160px"><button class="btn danger sm" id="delGo" disabled>Delete permanently</button><button class="btn ghost sm" id="delNo">Keep</button></div>`;
+      $('#delTxt').focus();
+      $('#delTxt').oninput = (e) => ($('#delGo').disabled = e.target.value.trim().toUpperCase() !== 'DELETE');
+      $('#delNo').onclick = reopen;
+      $('#delGo').onclick = async () => {
+        $('#delGo').disabled = true;
+        try { await api(`/api/admin/leads/${id}`, { method: 'DELETE' }); toast(`${l.name} deleted`); closeDrawer(); leadsCache = []; if (tab === 'clients') loadLeads(); }
+        catch (ex) { toast(ex.message); $('#delGo').disabled = false; }
+      };
+    };
     bindFuCards($('#leadFus'), reopen);
     $('#addFu').onclick = () => openNewFollowup($('#fuNewLead'), { lead_id: Number(id), after: reopen });
     $('#assignSel').onchange = async (e) => { await api(`/api/admin/leads/${id}`, { method: 'PATCH', body: JSON.stringify({ assigned_to: e.target.value }) }); toast('Assignment saved'); };

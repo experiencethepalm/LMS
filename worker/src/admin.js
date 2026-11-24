@@ -33,6 +33,7 @@ export async function adminRoute(request, env, url, p, m) {
   const lm = p.match(/^\/api\/admin\/leads\/(\d+)$/);
   if (lm && m === 'GET') return leadDetail(env, me, Number(lm[1]));
   if (lm && m === 'PATCH') return updateLead(request, env, me, Number(lm[1]));
+  if (lm && m === 'DELETE') return isSuper ? deleteLead(env, me, Number(lm[1])) : bad('Only super admins can delete clients.', 403);
   if (p === '/api/admin/followups' && m === 'GET') return listFollowups(env, me, url);
   if (p === '/api/admin/followups' && m === 'POST') return addFollowup(request, env, me);
   const fm = p.match(/^\/api\/admin\/followups\/(\d+)$/);
@@ -427,4 +428,23 @@ async function exportCsv(env, me) {
   const lines = [cols.join(',')].concat(leads.map((l) => cols.map((c) => esc(['created_at', 'last_seen', 'next_followup'].includes(c) ? iso(l[c]) : l[c])).join(',')));
   await log(env, me, 'export', null, null, 'Exported clients CSV');
   return new Response(lines.join('\n'), { headers: { 'content-type': 'text/csv', 'content-disposition': 'attachment; filename="unity-clients.csv"' } });
+}
+
+// Super admin only: remove a client and everything recorded about them
+async function deleteLead(env, me, id) {
+  const lead = await env.DB.prepare('SELECT id, name, phone FROM leads WHERE id=?').bind(id).first();
+  if (!lead) return bad('Client not found.', 404);
+  await env.DB.batch([
+    env.DB.prepare('DELETE FROM events WHERE lead_id=?').bind(id),
+    env.DB.prepare('DELETE FROM chats WHERE lead_id=?').bind(id),
+    env.DB.prepare('DELETE FROM requests WHERE lead_id=?').bind(id),
+    env.DB.prepare('DELETE FROM followups WHERE lead_id=?').bind(id),
+    env.DB.prepare('DELETE FROM link_opens WHERE by_lead=?').bind(id),
+    env.DB.prepare('UPDATE link_opens SET verified_lead=NULL WHERE verified_lead=?').bind(id),
+    env.DB.prepare('UPDATE leads SET referred_by=NULL WHERE referred_by=?').bind(id),
+    env.DB.prepare("DELETE FROM otps WHERE phone=? AND COALESCE(purpose,'buyer')='buyer'").bind(lead.phone),
+    env.DB.prepare('DELETE FROM leads WHERE id=?').bind(id),
+  ]);
+  await log(env, me, 'lead_delete', 'lead', id, `deleted client ${lead.name} (+91 ${lead.phone})`);
+  return json({ ok: true });
 }
