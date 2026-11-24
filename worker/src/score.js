@@ -22,7 +22,7 @@ export function scoreLead(lead, agg, chatCount, requests) {
   for (const r of rows('dwell')) dwell[r.target] = Math.round((dwell[r.target] || 0) + (r.v || 0));
   let dwellPts = 0;
   for (const [sec, secs] of Object.entries(dwell)) dwellPts += (DWELL_WEIGHTS[sec] ?? 0.05) * secs;
-  add('Time on floor plans, payment plan & specs', Math.min(dwellPts, 30));
+  add('Time on floor plans & specs', Math.min(dwellPts, 30));
 
   const plansOpened = rows('floorplan_open').length;
   add('Floor plans opened', Math.min(plansOpened * 5 + Math.max(count('floorplan_open') - plansOpened, 0) * 2, 15));

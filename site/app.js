@@ -138,7 +138,7 @@
   // ---------- render unlocked page ----------
   const SECTIONS = [
     ['overview', 'Overview'], ['highlights', 'Highlights'], ['gallery', 'Gallery'], ['floorplans', 'Floor plans'],
-    ['payment', 'Payment plan'], ['amenities', 'Amenities'], ['specifications', 'Specifications'],
+    ['amenities', 'Amenities'], ['specifications', 'Specifications'],
     ['location', 'Location'], ['visit', 'Visit'],
   ];
   const isTbc = (v) => v == null || v === '' || /^TBC/i.test(String(v));
@@ -190,13 +190,6 @@
         <div class="unit-tabs" id="unitTabs"></div>
         <div class="fp" id="fp"></div>
       </div>
-      </div>
-
-      <div class="sec" id="payment" data-track="payment">
-        <h2>Payment plan</h2>
-        ${c.paymentPlan.milestones.some((m) => m.percent == null) ? '<p class="muted">The detailed milestone schedule is shared by our sales team with the cost sheet.</p>' : ''}
-        <ol class="steps">${c.paymentPlan.milestones.map((m) => `<li><span>${esc(m.stage)}</span>${m.percent != null ? `<b>${m.percent}%</b>` : ''}</li>`).join('')}</ol>
-        <p class="small">GST and stamp duty apply as per government norms. Ask for the full cost sheet for any home.</p>
       </div>
 
       <div class="sec" id="amenities" data-track="amenities">
