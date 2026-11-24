@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="Unity Sales" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=22" />
+  <link rel="stylesheet" href="../styles.css?v=23" />
   <style>
     body { padding-bottom: 0; }
     .shell { max-width: 1240px; margin: 0 auto; padding: 18px; }
@@ -99,10 +99,71 @@
 .install-sheet .app-ic{width:56px;height:56px;border-radius:14px;float:right;margin-left:12px}
 .kn h2{font-family:var(--serif);font-size:24px;margin:22px 0 6px}.kn h3{font-size:16px;margin:16px 0 4px}.kn ul{margin:0 0 6px;padding-left:20px}.kn li{margin:4px 0;font-size:14px;overflow-wrap:anywhere}.kn p{font-size:14px;margin:6px 0}
 @media (display-mode: standalone){#installBtn{display:none!important}}
+
+/* ---- shared bits ---- */
+a.btn{text-decoration:none}
+.brand{display:flex;align-items:center;gap:10px}.brand-ic{width:22px;height:22px}
+.stat b{font-family:var(--sans);font-weight:600;font-variant-numeric:tabular-nums}
+.stat span{text-transform:none;letter-spacing:0;font-size:12px}
+.t-short,.m-only,.avatar,.more-btn{display:none}
+.tab-ic{display:none}
+#who{position:relative}
+.acct{position:absolute;right:0;top:44px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:6px;min-width:210px;box-shadow:0 12px 30px rgba(0,0,0,.12);z-index:40;text-align:left}
+.acct .role{justify-self:start}
+.more-item{display:block;width:100%;text-align:left;font:500 16px var(--sans);padding:14px 4px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink)}
+/* ---- phone layout ---- */
+@media (max-width:720px){
+  .t-full,.who-full{display:none}.t-short{display:inline}.m-only{display:block}
+  .topbar{padding:10px 14px}
+  .brand{font-size:12px;letter-spacing:.18em}
+  .avatar{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;border:0;background:var(--green);color:#fff;font:600 15px var(--sans)}
+  #installBtn{padding:6px 10px}
+  .shell{padding:12px 14px calc(84px + env(safe-area-inset-bottom))}
+  /* bottom navigation */
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:35;background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));gap:0;justify-content:space-around;overflow:visible}
+  .tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;border-radius:12px;padding:6px 2px;font-size:11.5px;color:var(--muted);position:relative}
+  .tabs button.extra{display:none}
+  .tabs .more-btn{display:flex}
+  .tabs .tab-ic{display:block;line-height:0}
+  .tabs button.on{background:none;color:var(--green);font-weight:600}
+  .tabs button.on .tab-ic{background:#DCE8DE;border-radius:99px;padding:2px 14px}
+  .tabs .count{position:absolute;top:2px;left:calc(50% + 8px);margin:0}
+  /* toolbar: search full width, filters in one swipeable row */
+  .toolbar{margin:10px 0 12px;gap:8px;flex-wrap:nowrap;align-items:flex-start}
+  .toolbar .left{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+  .toolbar .left::-webkit-scrollbar{display:none}
+  .toolbar .left select{flex:none;font-size:14px;padding:8px 30px 8px 12px}
+  #view>.toolbar:has(#q){display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+  #view>.toolbar:has(#q) .left,#view>.toolbar:has(#q) .tb-actions{display:contents}
+  #view>.toolbar:has(#q) #q{grid-column:1/3;grid-row:1}
+  #view>.toolbar:has(#q) #exportCsv{grid-column:3;grid-row:1}
+  #view>.toolbar:has(#q) #refresh{display:none}
+  #view>.toolbar:has(#q) #fScope{grid-column:1/-1}
+  #view>.toolbar:has(#q) #fStatus{grid-column:2/-1}
+  .toolbar .left select,.toolbar .left input{width:100%}
+  /* stats: compact 3 across */
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+  .stat{padding:9px 10px;border-radius:10px}
+  .stat span{font-size:11px;line-height:1.25;display:block;min-height:2.5em}
+  .stat b{font-size:20px;line-height:1.2}
+  /* lists become cards */
+  table.list{border:0;background:none}
+  .list thead{display:none}
+  .list tr.row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:start;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px}
+  .list tr.row td{padding:0;border:0}
+  .list tr.row td.hide-m{display:none}
+  .list .bar{display:none}
+  .m-meta{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:12.5px;color:var(--muted)}
+  .m-meta .od{color:#B3261E;font-weight:500}
+  .m-meta .tag{margin:0}
+  .drawer{padding:16px 14px calc(16px + env(safe-area-inset-bottom))}
+  .kv{grid-template-columns:110px 1fr}
+  .toast{bottom:calc(90px + env(safe-area-inset-bottom))}
+}
 </style>
 </head>
 <body>
-  <header class="topbar"><span class="brand">THE PALM <b>UNITY</b> · DASHBOARD</span><span class="top-right"><button class="btn ghost xs hidden" id="installBtn">Install app</button><span id="who" class="small"></span></span></header>
+  <header class="topbar"><span class="brand"><img src="icons/favicon-32.png" alt="" class="brand-ic"><span>THE PALM <b>UNITY</b><span class="t-full"> · DASHBOARD</span></span></span><span class="top-right"><button class="btn ghost xs hidden" id="installBtn" aria-label="Install app"><span class="t-full">Install app</span><span class="t-short">Get app</span></button><span id="who" class="small"></span></span></header>
 
   <div class="login card" id="loginView">
     <h2>Sign in</h2>
@@ -132,7 +193,7 @@
   <div class="drawer hidden" id="drawer"></div>
   <div class="scrim hidden" id="scrim"></div>
 
-  <script src="../config.js?v=22"></script>
-  <script src="admin.js?v=22"></script>
+  <script src="../config.js?v=23"></script>
+  <script src="admin.js?v=23"></script>
 </body>
 </html>

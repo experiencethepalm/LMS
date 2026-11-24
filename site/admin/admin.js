@@ -67,8 +67,12 @@
       me = r.user; siteUrl = r.siteUrl || location.origin + '/';
     } catch { return; }
     $('#loginView').classList.add('hidden'); $('#appView').classList.remove('hidden');
-    $('#who').innerHTML = `${esc(me.name)} · <span class="role ${me.role}">${ROLES[me.role]}</span> · <a href="#" id="logout" class="lnk">Sign out</a>`;
-    $('#logout').onclick = (e) => { e.preventDefault(); logout(); };
+    $('#who').innerHTML = `<span class="who-full">${esc(me.name)} · <span class="role ${me.role}">${ROLES[me.role]}</span> · <a href="#" class="lnk" data-logout>Sign out</a></span>
+      <button class="avatar" id="avatarBtn" aria-label="Account">${esc((me.name || '?').trim().charAt(0).toUpperCase())}</button>
+      <div class="acct hidden" id="acctMenu"><b>${esc(me.name)}</b><span class="role ${me.role}">${ROLES[me.role]}</span><span class="small">+91 ${esc(me.phone || '')}</span><a href="#" class="btn ghost sm" data-logout>Sign out</a></div>`;
+    $$('[data-logout]').forEach((a) => (a.onclick = (e) => { e.preventDefault(); logout(); }));
+    $('#avatarBtn').onclick = (e) => { e.stopPropagation(); $('#acctMenu').classList.toggle('hidden'); };
+    document.addEventListener('click', (e) => { if (!e.target.closest('#acctMenu')) $('#acctMenu')?.classList.add('hidden'); });
     await loadTeam();
     renderTabs();
     show(tab);
@@ -82,15 +86,36 @@
   const partners = () => team.filter((u) => u.role === 'channel_partner');
   const shareLink = (u) => `${siteUrl}?r=${encodeURIComponent(u.share_id)}`;
 
+  const ICONS = {
+    followups: '<path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="8"/>',
+    clients: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5"/><path d="M16 5.5a3 3 0 0 1 0 5.6M17.5 14.3c1.6.7 2.6 2.2 3 4.7"/>',
+    partners: '<path d="M8 12l2.5 2.5L16 9"/><path d="M3 12l4-4 3 1 2-2 3 1 6 4-4 5-2-1-2 2-3-1-3-2z"/>',
+    requests: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',
+    more: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
+  };
+  const ic = (k) => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICONS[k] || ICONS.more}</svg>`;
+  const SHORT = { followups: 'Follow-ups', clients: 'Clients', partners: 'Partners', requests: 'Requests' };
+  let tabList = [];
   function renderTabs() {
-    const tabs = [['followups', 'Follow-ups'], ['clients', 'Clients'], ['partners', 'Channel partners'], ['requests', 'Visit & callback requests']];
-    if (isSuper()) tabs.push(['team', 'Team & roles'], ['activity', 'Team activity'], ['knowledge', 'AI knowledge']);
-    $('#mainTabs').innerHTML = tabs.map(([k, v]) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}">${v}${k === 'followups' ? '<span class="count hidden" id="fuCount"></span>' : ''}</button>`).join('');
-    $$('#mainTabs button').forEach((b) => (b.onclick = () => show(b.dataset.tab)));
+    tabList = [['followups', 'Follow-ups'], ['clients', 'Clients'], ['partners', 'Channel partners'], ['requests', 'Visit & callback requests']];
+    if (isSuper()) tabList.push(['team', 'Team & roles'], ['activity', 'Team activity'], ['knowledge', 'AI knowledge']);
+    const extra = tabList.slice(4);
+    $('#mainTabs').innerHTML = tabList.map(([k, v], i) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}${i >= 4 ? ' extra' : ''}">${i < 4 ? `<i class="tab-ic">${ic(k)}</i>` : ''}<span class="t-full">${v}</span><span class="t-short">${SHORT[k] || v}</span>${k === 'followups' ? '<span class="count hidden" id="fuCount"></span>' : ''}</button>`).join('')
+      + (extra.length ? `<button class="more-btn" id="moreBtn"><i class="tab-ic">${ic('more')}</i><span class="t-short">More</span></button>` : '');
+    $$('#mainTabs button[data-tab]').forEach((b) => (b.onclick = () => show(b.dataset.tab)));
+    if ($('#moreBtn')) $('#moreBtn').onclick = () => {
+      const d = document.createElement('div'); d.className = 'install-sheet more-sheet';
+      d.innerHTML = `<h3>More</h3>${extra.map(([k, v]) => `<button class="more-item" data-go="${k}">${v}</button>`).join('')}<button class="btn ghost sm" data-x style="margin-top:8px">Close</button>`;
+      document.body.appendChild(d);
+      $$('[data-go]', d).forEach((b) => (b.onclick = () => { d.remove(); show(b.dataset.go); }));
+      $('[data-x]', d).onclick = () => d.remove();
+    };
   }
   function show(t) {
     tab = t;
-    $$('#mainTabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === t));
+    $$('#mainTabs button[data-tab]').forEach((b) => b.classList.toggle('on', b.dataset.tab === t));
+    if ($('#moreBtn')) $('#moreBtn').classList.toggle('on', tabList.findIndex(([k]) => k === t) >= 4);
+    window.scrollTo(0, 0);
     ({ followups: viewFollowups, clients: viewClients, partners: viewPartners, requests: viewRequests, team: viewTeam, activity: viewActivity, knowledge: viewKnowledge }[t] || viewFollowups)();
   }
 
@@ -195,7 +220,7 @@
         <select id="fScope"><option value="all">All clients</option><option value="mine">My clients</option><option value="partners">Via channel partners</option><option value="unassigned">Unassigned</option>${staff().map((u) => `<option value="user:${u.code}">${esc(u.name)}'s clients</option>`).join('')}${partners().map((u) => `<option value="user:${u.code}">Via ${esc(u.name)}</option>`).join('')}</select>
         <select id="fPri"><option value="">All priorities</option><option>P0</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select>
         <select id="fStatus"><option value="">All statuses</option>${Object.entries(STATUSES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>
-      </div><div class="btnrow"><button class="btn ghost sm" id="refresh">Refresh</button><button class="btn ghost sm" id="exportCsv">Export CSV</button></div></div>
+      </div><div class="btnrow tb-actions"><button class="btn ghost sm" id="refresh" aria-label="Refresh">↻<span class="t-full"> Refresh</span></button><button class="btn ghost sm" id="exportCsv" aria-label="Export CSV">⤓<span class="t-full"> Export CSV</span></button></div></div>
       <div class="stats" id="stats"></div>
       <table class="list"><thead><tr><th>Priority</th><th>Client</th><th class="hide-m">Came via</th><th class="hide-m">Signals</th><th class="hide-m">Status</th><th class="hide-m">Next follow-up</th></tr></thead><tbody id="leadRows"></tbody></table>`;
     $('#fScope').value = clientScope;
@@ -224,7 +249,8 @@
     ].map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join('');
     $('#leadRows').innerHTML = rows.map((l) => `<tr class="row" data-id="${l.id}">
         <td><span class="pri ${l.priority}">${l.priority}</span><span class="bar"><i style="width:${l.score}%"></i></span></td>
-        <td><b>${esc(l.name)}</b><br><span class="small">+91 ${esc(l.phone)}${l.assigned_name ? ` · ${esc(l.assigned_name)}` : ' · Unassigned'}</span></td>
+        <td><b>${esc(l.name)}</b><br><span class="small">+91 ${esc(l.phone)}${l.assigned_name ? ` · ${esc(l.assigned_name)}` : ' · Unassigned'}</span>
+          <div class="m-only m-meta"><span>${STATUSES[l.status] || l.status}</span>${l.next_followup ? `<span class="${l.overdue ? 'od' : ''}">Next: ${when(l.next_followup)}</span>` : '<span class="od">No follow-up</span>'}${l.source_user_role === 'channel_partner' ? `<span class="tag tag-cp">${esc(l.source_user_name)}</span>` : ''}${l.referred_by_name ? `<span class="tag tag-via">via ${esc(l.referred_by_name)}</span>` : ''}${l.openRequests.length ? '<span class="tag">Wants visit/call</span>' : ''}</div></td>
         <td class="hide-m">${l.referred_by_name ? `<span class="tag tag-via">via ${esc(l.referred_by_name)}</span>` : ''}${l.source_user_role === 'channel_partner' ? `<span class="tag tag-cp">${esc(l.source_user_name)}</span>` : l.source_user_name ? `<span class="small">${esc(l.source_user_name)}</span>` : l.referred_by_name ? '' : '<span class="small">Direct</span>'}</td>
         <td class="hide-m">${l.openRequests.map((r) => `<span class="tag">${r === 'site_visit' ? 'Wants visit' : 'Callback'}</span>`).join('')}${l.sessions > 1 ? `<span class="tag">${l.sessions} visits</span>` : ''}${l.questions ? `<span class="tag">${l.questions} questions</span>` : ''}${l.referrals ? `<span class="tag tag-share">Brought ${l.referrals}</span>` : l.link_opens ? `<span class="tag tag-share">Shared · ${l.link_opens} opened</span>` : ''}</td>
         <td class="hide-m">${STATUSES[l.status] || l.status}</td>
