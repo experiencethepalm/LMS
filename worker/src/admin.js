@@ -131,13 +131,19 @@ export async function assignLead(env, leadId) {
 
 // ---------- Clients ----------
 
+// A lead is "internal" (team member, channel partner or test entry) when marked so,
+// or automatically when its number belongs to a dashboard user — unless someone moved it back to clients.
+const INTERNAL = "(COALESCE(l.internal,0)=1 OR (COALESCE(l.internal,0)=0 AND l.phone IN (SELECT phone FROM salespeople WHERE COALESCE(phone,'')!='')))";
+
 function leadFilter(me, url) {
   const scope = url.searchParams.get('scope') || 'all';
-  if (scope === 'mine') return { where: 'WHERE (l.assigned_to = ? OR l.first_ref = ?)', args: [me.code, me.code] };
-  if (scope === 'unassigned') return { where: 'WHERE l.assigned_to IS NULL', args: [] };
-  if (scope === 'partners') return { where: "WHERE l.first_ref IN (SELECT code FROM salespeople WHERE role='channel_partner')", args: [] };
-  if (scope.startsWith('user:')) return { where: 'WHERE (l.first_ref = ? OR l.assigned_to = ?)', args: [scope.slice(5), scope.slice(5)] };
-  return { where: '', args: [] };
+  const c = [], args = [];
+  if (scope === 'internal') c.push(INTERNAL); else c.push(`NOT ${INTERNAL}`);
+  if (scope === 'mine') { c.push('(l.assigned_to = ? OR l.first_ref = ?)'); args.push(me.code, me.code); }
+  if (scope === 'unassigned') c.push('l.assigned_to IS NULL');
+  if (scope === 'partners') c.push("l.first_ref IN (SELECT code FROM salespeople WHERE role='channel_partner')");
+  if (scope.startsWith('user:')) { c.push('(l.first_ref = ? OR l.assigned_to = ?)'); args.push(scope.slice(5), scope.slice(5)); }
+  return { where: `WHERE ${c.join(' AND ')}`, args };
 }
 
 async function listLeads(env, me, url) {
@@ -177,7 +183,7 @@ async function groupBy(env, sql, args) {
 }
 
 async function leadDetail(env, me, id) {
-  const lead = await env.DB.prepare('SELECT * FROM leads WHERE id=?').bind(id).first();
+  const lead = await env.DB.prepare(`SELECT l.*, ${INTERNAL} AS is_internal, (SELECT name FROM salespeople WHERE phone = l.phone LIMIT 1) AS staff_match FROM leads l WHERE l.id=?`).bind(id).first();
   if (!lead) return bad('Client not found', 404);
   const agg = (await env.DB.prepare('SELECT type, target, COUNT(*) n, SUM(value) v FROM events WHERE lead_id=? GROUP BY type, target').bind(id).all()).results;
   const timeline = (await env.DB.prepare("SELECT type, target, value, ts FROM events WHERE lead_id=? AND type!='dwell' ORDER BY ts DESC LIMIT 200").bind(id).all()).results;
@@ -248,7 +254,10 @@ async function updateLead(request, env, me, id) {
       assigned = u.code;
     }
   }
-  await env.DB.prepare('UPDATE leads SET status=?, notes=?, assigned_to=? WHERE id=?').bind(status, notes, assigned, id).run();
+  let internal = lead.internal;
+  if (b.internal !== undefined) internal = b.internal ? 1 : -1;
+  await env.DB.prepare('UPDATE leads SET status=?, notes=?, assigned_to=?, internal=? WHERE id=?').bind(status, notes, assigned, internal, id).run();
+  if (b.internal !== undefined && internal !== lead.internal) await log(env, me, internal === 1 ? 'mark_internal' : 'mark_client', 'lead', id, internal === 1 ? 'Marked as team / test entry' : 'Moved back to clients');
   if (status !== lead.status) await log(env, me, 'status', 'lead', id, `Status → ${status.replace('_', ' ')}`);
   if (notes !== lead.notes) await log(env, me, 'notes', 'lead', id, 'Updated notes');
   if (assigned !== lead.assigned_to) await log(env, me, 'assign', 'lead', id, `Assigned to ${assigned || 'nobody'}`);

@@ -217,7 +217,7 @@
   async function viewClients() {
     $('#view').innerHTML = `<div class="toolbar"><div class="left">
         <input id="q" placeholder="Search name or number" />
-        <select id="fScope"><option value="all">All clients</option><option value="mine">My clients</option><option value="partners">Via channel partners</option><option value="unassigned">Unassigned</option>${staff().map((u) => `<option value="user:${u.code}">${esc(u.name)}'s clients</option>`).join('')}${partners().map((u) => `<option value="user:${u.code}">Via ${esc(u.name)}</option>`).join('')}</select>
+        <select id="fScope"><option value="all">All clients</option><option value="mine">My clients</option><option value="partners">Via channel partners</option><option value="unassigned">Unassigned</option><option value="internal">Team & test entries (hidden)</option>${staff().map((u) => `<option value="user:${u.code}">${esc(u.name)}'s clients</option>`).join('')}${partners().map((u) => `<option value="user:${u.code}">Via ${esc(u.name)}</option>`).join('')}</select>
         <select id="fPri"><option value="">All priorities</option><option>P0</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select>
         <select id="fStatus"><option value="">All statuses</option>${Object.entries(STATUSES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>
       </div><div class="btnrow tb-actions"><button class="btn ghost sm" id="refresh" aria-label="Refresh">↻<span class="t-full"> Refresh</span></button><button class="btn ghost sm" id="exportCsv" aria-label="Export CSV">⤓<span class="t-full"> Export CSV</span></button></div></div>
@@ -281,6 +281,7 @@
         <a class="btn primary sm" href="tel:+91${esc(l.phone)}">Call +91 ${esc(l.phone)}</a>
         <a class="btn ghost sm" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>
       </div>
+      ${l.is_internal ? `<div class="box internal-note"><b>Hidden from the client list</b><p class="small" style="margin:4px 0 8px">${l.staff_match && l.internal !== 1 ? `This number belongs to ${esc(l.staff_match)} on the team, so it's treated as a team entry.` : 'Marked as a team member or test entry.'}</p><button class="btn ghost xs" id="toClient">Move back to clients</button></div>` : ''}
       <div class="box opening"><h4>Suggested opening line</h4>${esc(d.openingLine)}</div>
       <div class="kv">
         <span>Came via</span><b>${src}${d.source && d.source.role === 'channel_partner' ? ` <a class="lnk" data-user="${esc(d.source.code)}">View</a>` : ''}</b>
@@ -296,7 +297,7 @@
         <form id="leadForm" class="form">
           <label>Status<select name="status">${Object.entries(STATUSES).map(([k, v]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
           <label>Notes<textarea name="notes" rows="3">${esc(l.notes || '')}</textarea></label>
-          <button class="btn primary sm">Save</button>
+          <div class="btnrow"><button class="btn primary sm">Save</button>${l.is_internal ? '' : '<button type="button" class="btn ghost sm" id="toInternal">Mark as team / test entry</button>'}</div>
         </form></div>
       ${(d.network.referrer || d.network.opens || d.network.referees.length) ? `<div class="box"><h4>Family & friends</h4>
         ${d.network.referrer ? `<div class="tl"><span>Came via</span><span><a class="lnk" data-lead="${d.network.referrer.id}">${esc(d.network.referrer.name)}</a></span></div>` : ''}
@@ -323,6 +324,14 @@
     };
     bindFuCards($('#leadFus'), reopen);
     $('#addFu').onclick = () => openNewFollowup($('#fuNewLead'), { lead_id: Number(id), after: reopen });
+    const setInternal = async (v) => {
+      await api(`/api/admin/leads/${id}`, { method: 'PATCH', body: JSON.stringify({ internal: v }) });
+      toast(v ? `${l.name} hidden from the client list` : `${l.name} is back in the client list`);
+      if (tab === 'clients') loadLeads();
+      v ? closeDrawer() : reopen();
+    };
+    if ($('#toInternal')) $('#toInternal').onclick = () => setInternal(true);
+    if ($('#toClient')) $('#toClient').onclick = () => setInternal(false);
     $('#assignSel').onchange = async (e) => { await api(`/api/admin/leads/${id}`, { method: 'PATCH', body: JSON.stringify({ assigned_to: e.target.value }) }); toast('Assignment saved'); };
     $('#leadForm').onsubmit = async (e) => {
       e.preventDefault();

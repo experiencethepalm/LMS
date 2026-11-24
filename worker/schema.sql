@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS leads (
   sessions    INTEGER NOT NULL DEFAULT 1,
   referred_by INTEGER,                   -- lead id of the buyer whose link they opened
   assigned_to TEXT,                      -- sales team member responsible for follow-up
+  internal    INTEGER DEFAULT 0,         -- 1 = team/test entry, -1 = kept as client, 0 = auto (team numbers hidden)
   share_id    TEXT,                      -- this buyer's own share id (?r=...) for forwarding to family
   status      TEXT NOT NULL DEFAULT 'new',   -- new | contacted | visit_booked | visited | negotiating | booked | lost
   notes       TEXT
