@@ -207,7 +207,15 @@
      "room": "Bedroom 3",
      "size": "13'11\" × 10'0\""
     }
-   ]
+   ],
+   "floorPlan": {
+    "image": "assets/img/the-palm-unity-pure-floor-plan.webp",
+    "w": 1600,
+    "h": 1266,
+    "floors": "2nd to 11th floor",
+    "units": "2-E, 2-F",
+    "alt": "Pure homes (2-E, 2-F) highlighted on the 2nd to 11th floor plan, The Palm Unity, Kudasan, Gandhinagar"
+   }
   },
   {
    "id": "bliss",
@@ -285,7 +293,15 @@
      "room": "Toilet",
      "size": "7'2\" × 5'9\""
     }
-   ]
+   ],
+   "floorPlan": {
+    "image": "assets/img/the-palm-unity-bliss-floor-plan.webp",
+    "w": 1600,
+    "h": 1266,
+    "floors": "2nd to 11th floor",
+    "units": "2-A, 2-B, 2-C, 2-D",
+    "alt": "Bliss homes (2-A, 2-B, 2-C, 2-D) highlighted on the 2nd to 11th floor plan, The Palm Unity, Kudasan, Gandhinagar"
+   }
   },
   {
    "id": "zeal",
@@ -373,7 +389,15 @@
      "room": "Toilet",
      "size": "7'2\" × 6'0\""
     }
-   ]
+   ],
+   "floorPlan": {
+    "image": "assets/img/the-palm-unity-zeal-floor-plan.webp",
+    "w": 1600,
+    "h": 1266,
+    "floors": "13th to 17th floor",
+    "units": "13-A, 13-C",
+    "alt": "Zeal homes (13-A, 13-C) highlighted on the 13th to 17th floor plan, The Palm Unity, Kudasan, Gandhinagar"
+   }
   },
   {
    "id": "nova",
@@ -461,7 +485,15 @@
      "room": "Toilet",
      "size": "7'2\" × 6'0\""
     }
-   ]
+   ],
+   "floorPlan": {
+    "image": "assets/img/the-palm-unity-nova-floor-plan.webp",
+    "w": 1600,
+    "h": 1266,
+    "floors": "13th to 17th floor",
+    "units": "13-B, 13-D",
+    "alt": "Nova homes (13-B, 13-D) highlighted on the 13th to 17th floor plan, The Palm Unity, Kudasan, Gandhinagar"
+   }
   },
   {
    "id": "bliss-ph",
@@ -544,7 +576,15 @@
      "size": "16'4\" × 12'3\""
     }
    ],
-   "parking": 2
+   "parking": 2,
+   "floorPlan": {
+    "image": "assets/img/the-palm-unity-bliss-penthouse-floor-plan.webp",
+    "w": 1600,
+    "h": 1266,
+    "floors": "1st floor",
+    "units": "1-A, 1-B, 1-C, 1-D",
+    "alt": "Bliss Penthouse homes (1-A, 1-B, 1-C, 1-D) highlighted on the 1st floor plan, The Palm Unity, Kudasan, Gandhinagar"
+   }
   },
   {
    "id": "zeal-ph",
@@ -637,7 +677,15 @@
      "size": "22'8\" × 10'5\""
     }
    ],
-   "parking": 3
+   "parking": 3,
+   "floorPlan": {
+    "image": "assets/img/the-palm-unity-zeal-penthouse-floor-plan.webp",
+    "w": 1600,
+    "h": 1266,
+    "floors": "12th floor",
+    "units": "12-A, 12-C",
+    "alt": "Zeal Penthouse homes (12-A, 12-C) highlighted on the 12th floor plan, The Palm Unity, Kudasan, Gandhinagar"
+   }
   },
   {
    "id": "nova-ph",
@@ -730,7 +778,15 @@
      "size": "35'4\" × 14'9\""
     }
    ],
-   "parking": 3
+   "parking": 3,
+   "floorPlan": {
+    "image": "assets/img/the-palm-unity-nova-penthouse-floor-plan.webp",
+    "w": 1600,
+    "h": 1266,
+    "floors": "12th floor",
+    "units": "12-B, 12-D",
+    "alt": "Nova Penthouse homes (12-B, 12-D) highlighted on the 12th floor plan, The Palm Unity, Kudasan, Gandhinagar"
+   }
   }
  ],
  "paymentPlan": {

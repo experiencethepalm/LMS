@@ -237,14 +237,34 @@
       $$('#unitTabs button').forEach((x) => x.classList.toggle('on', x.dataset.plan === f.id));
       const sqft = (f.sbAreaSqYd * 9).toLocaleString('en-IN');
       $('#fp').innerHTML = `
-        <button class="fp-plan" id="fpZoom" aria-label="Zoom ${esc(f.name)} plan"><img src="${esc(f.image)}" alt="${esc(f.alt || f.name + ' floor plan')}" width="${f.w || 1800}" height="${f.h || 1500}" decoding="async" /><span>Tap to zoom</span></button>
+        <div class="fp-slider">
+          ${f.floorPlan ? `<div class="fp-tabs"><button data-s="0" class="on">Unit plan</button><button data-s="1">Floor plan</button></div>` : ''}
+          <div class="fp-track" id="fpTrack">
+            <figure class="fp-slide"><button class="fp-plan" data-zoom="unit" aria-label="Zoom ${esc(f.name)} unit plan"><img src="${esc(f.image)}" alt="${esc(f.alt || f.name + ' unit plan')}" width="${f.w || 1800}" height="${f.h || 1500}" decoding="async" /></button></figure>
+            ${f.floorPlan ? `<figure class="fp-slide"><button class="fp-plan fp-floor" data-zoom="floor" aria-label="Zoom ${esc(f.name)} floor plan"><img src="${esc(f.floorPlan.image)}" alt="${esc(f.floorPlan.alt)}" width="${f.floorPlan.w}" height="${f.floorPlan.h}" loading="lazy" decoding="async" /></button><figcaption><b>${esc(f.floorPlan.floors)}</b> · ${esc(f.name)} homes ${esc(f.floorPlan.units)} highlighted</figcaption></figure>` : ''}
+          </div>
+          ${f.floorPlan ? `<button class="fp-nav prev" aria-label="Unit plan" disabled>‹</button><button class="fp-nav next" aria-label="Floor plan">›</button><div class="fp-dots"><i class="on"></i><i></i></div><p class="fp-hint">Swipe for the floor plan · tap to zoom</p>` : '<p class="fp-hint">Tap to zoom</p>'}
+        </div>
         <div class="fp-side">
           <small class="fp-cfg">${esc(f.config)}</small><h3>${esc(f.name)}</h3>
           <div class="fp-facts"><div><span>Super built-up</span><b>${f.sbAreaSqYd} sq.yds</b><em>≈ ${sqft} sq.ft</em></div>${f.parking ? `<div><span>Parking</span><b>${f.parking} cars</b><em>allocated</em></div>` : ''}</div>
           ${f.rooms ? `<table class="fp-rooms"><tbody>${f.rooms.map((r) => `<tr class="${r.n.includes('A') ? 'sub' : ''}"><td>${esc(r.n)}</td><td>${esc(r.room)}</td><td>${esc(r.size)}</td></tr>`).join('')}</tbody></table><p class="fp-note">Room sizes are internal dimensions.</p>` : ''}
           ${f.planNote ? `<p class="fp-note strong">${esc(f.planNote)}</p>` : ''}
         </div>`;
-      $('#fpZoom').onclick = () => { queue({ type: 'floorplan_open', target: f.id }); openLightbox(f.image, `${f.name} · ${f.config} · ${f.sbAreaSqYd} sq.yds`, f.alt, false, 'plan'); };
+      $$('#fp [data-zoom]').forEach((b) => (b.onclick = () => {
+        const fl = b.dataset.zoom === 'floor';
+        queue({ type: 'floorplan_open', target: fl ? `${f.id}:floor` : f.id });
+        fl ? openLightbox(f.floorPlan.image, `${f.name} · ${f.floorPlan.floors} · ${f.floorPlan.units}`, f.floorPlan.alt, false, 'plan')
+           : openLightbox(f.image, `${f.name} · ${f.config} · ${f.sbAreaSqYd} sq.yds`, f.alt, false, 'plan');
+      }));
+      if (f.floorPlan) {
+        const tr = $('#fpTrack'); let si = 0, seen = false;
+        const mark = (i) => { $$('#fp .fp-tabs button').forEach((b, k) => b.classList.toggle('on', k === i)); $$('#fp .fp-dots i').forEach((d, k) => d.classList.toggle('on', k === i)); $('#fp .prev').disabled = i === 0; $('#fp .next').disabled = i === 1; if (i === 1 && !seen) { seen = true; queue({ type: 'floorplan_open', target: `${f.id}:floor` }); } };
+        const go = (i) => { tr.scrollTo({ left: i * tr.clientWidth, behavior: 'smooth' }); si = i; mark(i); };
+        tr.addEventListener('scroll', () => { const i = Math.round(tr.scrollLeft / tr.clientWidth); if (i !== si) { si = i; mark(i); } }, { passive: true });
+        $$('#fp .fp-tabs button').forEach((b) => (b.onclick = () => go(+b.dataset.s)));
+        $('#fp .prev').onclick = () => go(0); $('#fp .next').onclick = () => go(1);
+      }
       if (user) queue({ type: 'floorplan_open', target: f.id });
     };
     const showConfig = (cfg, user) => {

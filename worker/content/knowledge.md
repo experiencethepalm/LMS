@@ -80,3 +80,13 @@ The Work Lounge, The Fitness Studio, The Pool Deck, Guest Suites, Kid's Play Zon
 - Plumbing: Concealed plumbing with good-quality UPVC and CPVC pipes; C.P. fittings and sanitary ware of a reputed brand.
 - Electrification: Meter, MCB and ELCB tripper; Concealed wiring with adequate points and quality fittings.
 - Paint: Exterior acrylic paint; Internal walls in putty finish.
+
+## Where each unit type is in the tower
+- Pure (3 BHK): 2nd to 11th floor, units E and F (e.g. 2-E, 2-F).
+- Bliss (3 BHK): 2nd to 11th floor, units A, B, C, D.
+- Bliss Penthouse (3 BHK): 1st floor, units 1-A to 1-D.
+- Zeal (4 BHK): 13th to 17th floor, units A and C.
+- Nova (4 BHK): 13th to 17th floor, units B and D.
+- Zeal Penthouse (4 BHK): 12th floor, units 12-A and 12-C.
+- Nova Penthouse (4 BHK): 12th floor, units 12-B and 12-D.
+- Specific unit availability is confirmed by the sales team.
