@@ -43,6 +43,7 @@ export async function adminRoute(request, env, url, p, m) {
   if (fm && m === 'PATCH') return updateFollowup(request, env, me, Number(fm[1]));
   if (p === '/api/admin/users' && m === 'GET') return listUsers(env, me, url);
   if (p === '/api/admin/users' && m === 'POST') return saveUser(request, env, me);
+  if (p === '/api/admin/users/bulk' && m === 'POST') return bulkPartners(request, env, me);
   const um = p.match(/^\/api\/admin\/users\/([A-Z0-9]+)$/);
   if (um && m === 'GET') return userDetail(env, me, um[1]);
   if (um && m === 'DELETE') return isSuper ? deleteUser(env, me, um[1]) : bad('Only super admins can delete users.', 403);
@@ -505,4 +506,32 @@ async function leadToPartner(request, env, me, id) {
   await env.DB.prepare('UPDATE leads SET internal=0 WHERE id=?').bind(id).run();
   await log(env, me, 'user_add', 'user', code, `Marked client ${lead.name} as channel partner${company ? ` (${company})` : ''}`);
   return json({ ok: true, code });
+}
+
+// Add many channel partners at once (from a pasted list or spreadsheet). Existing numbers are returned, not duplicated.
+async function bulkPartners(request, env, me) {
+  const b = await readJson(request);
+  const rows = Array.isArray(b.partners) ? b.partners.slice(0, 300) : [];
+  if (!rows.length) return bad('No partners in the list.');
+  const site = env.SITE_URL || '';
+  const out = [];
+  let added = 0;
+  for (const r of rows) {
+    const name = clean(r.name, 80), phone = normalisePhone(r.phone), company = clean(r.company, 120) || null;
+    if (!name || !phone) { out.push({ name: name || String(r.name || ''), phone: String(r.phone || ''), status: 'skipped', reason: !name ? 'Name missing' : 'Invalid mobile number' }); continue; }
+    const ex = await env.DB.prepare('SELECT code, name, role, share_id, company FROM salespeople WHERE phone=?').bind(phone).first();
+    if (ex) { out.push({ name: ex.name, phone, company: ex.company, code: ex.code, status: 'existing', role: ex.role || 'sales', link: ex.share_id ? `${site}?r=${ex.share_id}` : '' }); continue; }
+    let code;
+    for (let i = 0; i < 5; i++) {
+      code = 'CP' + newShareId().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+      if (!(await env.DB.prepare('SELECT 1 FROM salespeople WHERE code=?').bind(code).first())) break;
+    }
+    const share = newShareId();
+    await env.DB.prepare("INSERT INTO salespeople (code, name, phone, role, company, active, share_id, created_by, created_at) VALUES (?,?,?,'channel_partner',?,1,?,?,?)")
+      .bind(code, name, phone, company, share, me.code, now()).run();
+    added++;
+    out.push({ name, phone, company, code, status: 'added', role: 'channel_partner', link: `${site}?r=${share}` });
+  }
+  if (added) await log(env, me, 'user_add', null, null, `Imported ${added} channel partner${added === 1 ? '' : 's'}`);
+  return json({ ok: true, added, results: out });
 }

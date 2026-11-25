@@ -357,7 +357,7 @@
   async function viewPartners() {
     await loadTeam();
     const list = partners();
-    $('#view').innerHTML = `<div class="toolbar"><div class="left"><input id="pq" placeholder="Search partner, firm or number" /></div><button class="btn primary sm" id="addCp">+ Add channel partner</button></div>
+    $('#view').innerHTML = `<div class="toolbar"><div class="left"><input id="pq" placeholder="Search partner, firm or number" /></div><div class="btnrow"><button class="btn ghost sm" id="importCp">Import list</button><button class="btn primary sm" id="addCp">+ Add channel partner</button></div></div>
       <div id="cpForm"></div>
       <table class="list"><thead><tr><th>Channel partner</th><th class="hide-m">Clients</th><th class="hide-m">Link opens</th><th class="hide-m">Added by</th><th>Share link</th></tr></thead><tbody id="cpRows"></tbody></table>`;
     const draw = () => {
@@ -372,6 +372,39 @@
     };
     $('#pq').oninput = draw; draw();
     $('#addCp').onclick = () => userForm($('#cpForm'), { role: 'channel_partner' }, viewPartners);
+    $('#importCp').onclick = () => importPartners($('#cpForm'));
+  }
+  function parsePartnerList(text) {
+    return text.split(/\r?\n/).map((line) => {
+      const cells = line.split(/\t|,|;/).map((c) => c.trim()).filter(Boolean);
+      const pi = cells.findIndex((c) => c.replace(/\D/g, '').length >= 10);
+      if (pi < 0) return null;
+      const rest = cells.filter((c, i) => i !== pi && !/^\d{1,3}$/.test(c));
+      return { name: rest[0] || '', company: rest[1] || '', phone: cells[pi] };
+    }).filter((r) => r && r.name && !/^cp name$/i.test(r.name));
+  }
+  function importPartners(box) {
+    box.innerHTML = `<div class="box form" id="impBox"><h4>Import channel partners</h4>
+      <p class="small" style="margin:0">Copy the rows from Excel (name, firm, mobile number) and paste them here. Each partner gets a tracked share link. Numbers already in the system are not duplicated.</p>
+      <textarea id="impTxt" rows="7" placeholder="Smit Sathvara	Gruham Properties	9601010763"></textarea>
+      <p class="small" id="impCount" style="margin:0"></p><p class="error"></p>
+      <div class="btnrow"><button class="btn primary sm" id="impGo" disabled>Import</button><button class="btn ghost sm" data-x>Cancel</button></div></div>`;
+    const b = $('#impBox'); let rows = [];
+    $('[data-x]', b).onclick = () => (box.innerHTML = '');
+    $('#impTxt').oninput = (e) => { rows = parsePartnerList(e.target.value); $('#impCount').textContent = rows.length ? `${rows.length} partner${rows.length === 1 ? '' : 's'} found` : ''; $('#impGo').disabled = !rows.length; };
+    $('#impGo').onclick = async () => {
+      $('#impGo').disabled = true;
+      try {
+        const r = await api('/api/admin/users/bulk', { method: 'POST', body: JSON.stringify({ partners: rows }) });
+        const tsv = ['Name\tFirm\tMobile\tLink'].concat(r.results.map((x) => [x.name, x.company || '', x.phone, x.link || x.reason || ''].join('\t'))).join('\n');
+        box.innerHTML = `<div class="box"><h4>${r.added} added · ${r.results.filter((x) => x.status === 'existing').length} already in the system${r.results.some((x) => x.status === 'skipped') ? ` · ${r.results.filter((x) => x.status === 'skipped').length} skipped` : ''}</h4>
+          <div class="btnrow" style="margin-bottom:8px"><button class="btn primary xs" id="impCopy">Copy table for Excel</button><button class="btn ghost xs" data-x>Close</button></div>
+          ${r.results.map((x) => `<div class="tl"><span><b>${esc(x.name)}</b>${x.company ? ` · ${esc(x.company)}` : ''}<br><span class="small">${x.status === 'skipped' ? esc(x.reason) : esc(x.link)}</span></span><span>${x.status === 'added' ? 'Added' : x.status === 'existing' ? 'Existing' : 'Skipped'}</span></div>`).join('')}</div>`;
+        $('#impCopy').onclick = () => navigator.clipboard.writeText(tsv).then(() => toast('Copied — paste into Excel'));
+        $('[data-x]', box).onclick = () => viewPartners();
+        await loadTeam();
+      } catch (ex) { $('.error', b).textContent = ex.message; $('#impGo').disabled = false; }
+    };
   }
   function bindCopy(root) { $$('[data-copy]', root).forEach((b) => (b.onclick = (e) => { e.stopPropagation(); navigator.clipboard.writeText(b.dataset.copy).then(() => { b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy link'), 1500); }); })); }
 
