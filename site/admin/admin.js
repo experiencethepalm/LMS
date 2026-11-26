@@ -530,7 +530,7 @@
     const d = await api('/api/admin/integrations');
     const base = C.API_BASE;
     const sample = JSON.stringify({ crm_id: 'CRM-10234', name: 'Rahul Shah', phone: '9876543210', email: 'rahul@example.com', source: 'Facebook ads', assigned_to: '9900000002', notes: 'Wants 4 BHK' }, null, 2);
-    const reply = JSON.stringify({ ok: true, result: 'created', lead_id: 128, crm_id: 'CRM-10234', link: siteUrl + '?i=k7m2qx', verified: false, status: 'new' }, null, 2);
+    const reply = JSON.stringify({ ok: true, result: 'created', crm_id: 'CRM-10234', lead_id: 128, link: siteUrl + '?i=k7m2qx' }, null, 2);
     $('#view').innerHTML = `<div class="box"><h4>CRM integration</h4>
         <p class="small" style="margin:0 0 10px">${d.linked} client${d.linked === 1 ? '' : 's'} linked to CRM lead IDs.</p>
         <div id="keyNew"></div>
@@ -547,11 +547,11 @@ ${esc(sample)}</pre>
         <p>Required: <code>crm_id</code>, <code>name</code>, <code>phone</code> (10-digit mobile). Optional: <code>email</code>, <code>source</code>, <code>notes</code>, <code>assigned_to</code> (salesperson's mobile number or name in this dashboard).</p>
         <p><b>Reply</b> (201 when created, 200 when updated or linked to someone already on the page):</p>
         <pre>${esc(reply)}</pre>
-        <p>Send <code>link</code> to the client (e.g. by WhatsApp). It greets them by name, and their visits are recorded against this lead. If the phone number already belongs to a different CRM lead, the reply is 409 with <code>phone_already_mapped</code>, and nothing changes.</p>
-        <p><b>2. Read engagement back</b> (optional) — e.g. to show the score inside the CRM:</p>
+        <p>Send <code>link</code> to the client (e.g. by WhatsApp). It greets them by name, and their visits are recorded against this lead. If the phone number already belongs to a different CRM lead, the reply is 409 with <code>phone_already_mapped</code> and that lead's <code>mapped_crm_id</code>; nothing changes.</p>
+        <p><b>2. Get the link again</b> (optional) — for a lead already sent:</p>
         <pre>GET ${esc(base)}/api/crm/leads/CRM-10234
 Authorization: Bearer plms_…</pre>
-        <p>Returns verified, link opened, score, priority (P0–P4), visits, questions asked, site visit / callback requested and status.</p>
+        <p>Returns the same <code>crm_id</code>, <code>lead_id</code> and <code>link</code>, or 404 <code>not_registered</code> if that lead hasn't been sent yet. No visit or engagement data is shared with the CRM.</p>
       </div>`;
     $('#mkKey').onclick = async () => {
       const r = await api('/api/admin/integrations/keys', { method: 'POST', body: JSON.stringify({ name: $('#keyName').value }) });

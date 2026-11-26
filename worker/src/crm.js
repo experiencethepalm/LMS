@@ -1,9 +1,7 @@
 // CRM integration: the CRM pushes leads in, gets back a personal project-page link,
-// and can read the lead's engagement back. Leads keep the CRM's own lead ID (crm_id).
+// and can look up that link again later. Leads keep the CRM's own lead ID (crm_id). No engagement data goes back to the CRM.
 import { json, bad, now, sha256, clean, readJson, normalisePhone, newShareId } from './lib.js';
-import { scoreLead } from './score.js';
 
-const STATUS = ['new', 'contacted', 'visit_booked', 'visited', 'negotiating', 'booked', 'lost'];
 
 function apiKeyFrom(request) {
   const h = request.headers.get('authorization') || '';
@@ -32,13 +30,8 @@ async function salesFrom(env, value) {
   return row?.code || null;
 }
 
-function publicLead(env, l, extra = {}) {
-  return {
-    lead_id: l.id, crm_id: l.crm_id, name: l.name, phone: l.phone, email: l.email || null,
-    link: inviteLink(env, l), verified: !!l.verified_at, verified_at: l.verified_at || null,
-    status: l.status, assigned_to: l.assigned_to || null, ...extra,
-  };
-}
+// What the CRM gets back: only the mapping and the personal link — no engagement data
+const reply = (env, l) => ({ crm_id: l.crm_id, lead_id: l.id, link: inviteLink(env, l) });
 
 export async function crmRoute(request, env, url, p, m) {
   const key = await checkKey(request, env);
@@ -74,16 +67,16 @@ async function upsertLead(request, env, key) {
     await env.DB.prepare('UPDATE leads SET name=?, phone=?, email=COALESCE(?,email), assigned_to=COALESCE(assigned_to,?), invite_id=COALESCE(invite_id,?) WHERE id=?')
       .bind(name, newPhone, email, assigned, newShareId(), byCrm.id).run();
     lead = await env.DB.prepare('SELECT * FROM leads WHERE id=?').bind(byCrm.id).first();
-    result = { result: 'updated', ...(newPhone !== phone ? { warning: 'phone belongs to another lead; kept the old number' } : {}) };
+    result = { result: 'updated' };
   } else if (byPhone) {
     if (byPhone.crm_id && byPhone.crm_id !== crmId) {
       // The number is already mapped to a different CRM lead — don't break that mapping
-      return json({ ok: false, error: 'phone_already_mapped', message: 'This phone number already belongs to another CRM lead.', ...publicLead(env, byPhone) }, 409);
+      return json({ ok: false, error: 'phone_already_mapped', message: 'This phone number already belongs to another CRM lead.', mapped_crm_id: byPhone.crm_id }, 409);
     }
     await env.DB.prepare('UPDATE leads SET crm_id=?, email=COALESCE(email,?), assigned_to=COALESCE(assigned_to,?), invite_id=COALESCE(invite_id,?) WHERE id=?')
       .bind(crmId, email, assigned, newShareId(), byPhone.id).run();
     lead = await env.DB.prepare('SELECT * FROM leads WHERE id=?').bind(byPhone.id).first();
-    result = { result: 'linked', message: 'This person was already on the project page; linked to the CRM lead.' };
+    result = { result: 'linked' };
   } else {
     const r = await env.DB.prepare(
       'INSERT INTO leads (phone, name, email, crm_id, source, notes, assigned_to, first_ref, last_ref, share_id, invite_id, created_at, last_seen, sessions) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,0)'
@@ -92,23 +85,14 @@ async function upsertLead(request, env, key) {
     result = { result: 'created' };
     await env.DB.prepare('INSERT INTO events (lead_id, type, target, value, ts) VALUES (?,?,?,?,?)').bind(lead.id, 'crm_created', key.name, 0, t).run();
   }
-  return json({ ok: true, ...result, ...publicLead(env, lead) }, result.result === 'created' ? 201 : 200);
+  return json({ ok: true, ...result, ...reply(env, lead) }, result.result === 'created' ? 201 : 200);
 }
 
+// Look up the link for a CRM lead that is already registered here
 async function getLead(env, crmId) {
-  const l = await env.DB.prepare('SELECT * FROM leads WHERE crm_id=?').bind(crmId).first();
-  if (!l) return bad('No lead with this crm_id.', 404);
-  const agg = (await env.DB.prepare('SELECT type, target, COUNT(*) n, SUM(value) v FROM events WHERE lead_id=? GROUP BY type, target').bind(l.id).all()).results;
-  const reqs = (await env.DB.prepare('SELECT kind, preferred_date, slot, handled FROM requests WHERE lead_id=?').bind(l.id).all()).results;
-  const chats = (await env.DB.prepare("SELECT COUNT(*) n FROM chats WHERE lead_id=? AND role='user'").bind(l.id).first()).n;
-  const sc = l.verified_at ? scoreLead(l, agg, chats, reqs) : { score: 0, priority: 'P4' };
-  const opened = (await env.DB.prepare("SELECT COUNT(*) n, MAX(ts) last FROM events WHERE lead_id=? AND type='invite_open'").bind(l.id).first());
-  return json(publicLead(env, l, {
-    link_opened: opened.n > 0, link_opened_at: opened.last || null,
-    score: sc.score, priority: sc.priority, visits: l.sessions, last_seen: l.verified_at ? l.last_seen : null,
-    questions_asked: chats, site_visit_requested: reqs.some((r) => r.kind === 'site_visit'),
-    callback_requested: reqs.some((r) => r.kind === 'callback'),
-  }));
+  const l = await env.DB.prepare('SELECT id, crm_id, invite_id FROM leads WHERE crm_id=?').bind(crmId).first();
+  if (!l) return json({ ok: false, error: 'not_registered', message: 'No lead with this crm_id.' }, 404);
+  return json({ ok: true, ...reply(env, l) });
 }
 
 // Public: someone opened their personal link (?i=…). Returns only the first name, to greet them and prefill the form.
