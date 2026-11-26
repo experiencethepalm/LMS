@@ -9,6 +9,6 @@ window.UNITY_CONFIG = {
   HELP_EMAIL: 'info@thepalm.in',
   // Google tag (Google Ads / Analytics) and the WhatsApp-verified conversion — 'AW-XXXXXXXXX/label' from the conversion action
   GOOGLE_TAG: 'G-1YKCQTELJG',
-  ADS_CONVERSION: '',
+  ADS_CONVERSION: 'AW-792400131/Mt3rCMWY9b8dEIOi7PkC',
   PRIVACY_URL: 'privacy.html', // buyer privacy notice in this repo — have it reviewed
 };
