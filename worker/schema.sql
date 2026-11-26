@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS leads (
   email       TEXT,
   crm_id      TEXT,                      -- the lead's ID in the CRM (kept in sync both ways)
   invite_id   TEXT,                      -- personal link id (?i=...) given to the CRM
-  verified_at INTEGER                    -- when they verified on WhatsApp (NULL = pushed from CRM, not verified yet)
+  verified_at INTEGER,                   -- when they verified on WhatsApp (NULL = pushed from CRM, not verified yet)
+  gclid       TEXT                       -- Google Ads click ID when they arrived from an ad (for offline conversion import)
 );
 
 CREATE TABLE IF NOT EXISTS otps (

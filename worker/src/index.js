@@ -86,6 +86,7 @@ async function otpStart(request, env) {
     ref: clean(body.ref, 32),
     device: clean(body.device, 40),
     source: clean(body.source, 80),
+    gclid: clean(body.gclid, 200),
   });
   await env.DB.prepare("INSERT INTO otps (phone, code_hash, expires_at, created_at, ip, pending, purpose) VALUES (?,?,?,?,?,?,'buyer')")
     .bind(phone, await sha256(`${phone}:${code}:${env.TOKEN_SECRET}`), t + OTP_TTL, t, ip, pending).run();
@@ -114,17 +115,18 @@ async function otpVerify(request, env) {
   const via = await resolveRef(env, info.ref);          // { sales, leadId } — salesperson link or another buyer's link
   const ref = via.sales || null;
   const existing = await env.DB.prepare('SELECT * FROM leads WHERE phone=?').bind(phone).first();
+  const isNew = !existing || !existing.verified_at;   // first WhatsApp verification for this person (counts as a conversion)
   let leadId;
   if (existing) {
     leadId = existing.id;
     const referrer = !existing.referred_by && via.leadId && via.leadId !== leadId ? via.leadId : null;
     await env.DB.prepare(
-      `UPDATE leads SET name=?, profession=COALESCE(NULLIF(?,''),profession), last_ref=COALESCE(?,last_ref), first_ref=COALESCE(first_ref,?), referred_by=COALESCE(referred_by,?), share_id=COALESCE(share_id,?), last_seen=?, sessions=sessions+1, verified_at=COALESCE(verified_at,?) WHERE id=?`
-    ).bind(info.name, info.profession || '', ref, ref, referrer, newShareId(), t, t, leadId).run();
+      `UPDATE leads SET name=?, profession=COALESCE(NULLIF(?,''),profession), last_ref=COALESCE(?,last_ref), first_ref=COALESCE(first_ref,?), referred_by=COALESCE(referred_by,?), share_id=COALESCE(share_id,?), last_seen=?, sessions=sessions+1, verified_at=COALESCE(verified_at,?), gclid=COALESCE(gclid,?) WHERE id=?`
+    ).bind(info.name, info.profession || '', ref, ref, referrer, newShareId(), t, t, info.gclid || null, leadId).run();
   } else {
     const r = await env.DB.prepare(
-      'INSERT INTO leads (phone, name, profession, first_ref, last_ref, source, referred_by, share_id, created_at, last_seen, verified_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
-    ).bind(phone, info.name, info.profession || null, ref, ref, via.leadId ? 'shared by a buyer' : info.source || null, via.leadId || null, newShareId(), t, t, t).run();
+      'INSERT INTO leads (phone, name, profession, first_ref, last_ref, source, referred_by, share_id, created_at, last_seen, verified_at, gclid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'
+    ).bind(phone, info.name, info.profession || null, ref, ref, via.leadId ? 'shared by a buyer' : info.source || (info.gclid ? 'google-ads' : null), via.leadId || null, newShareId(), t, t, t, info.gclid || null).run();
     leadId = r.meta.last_row_id;
   }
   if (info.device) await env.DB.prepare('UPDATE link_opens SET verified_lead=? WHERE device=? AND verified_lead IS NULL').bind(leadId, info.device).run();
@@ -133,7 +135,7 @@ async function otpVerify(request, env) {
   const mine = await env.DB.prepare('SELECT share_id FROM leads WHERE id=?').bind(leadId).first();
 
   const token = await signToken({ sub: leadId, role: 'buyer' }, env.TOKEN_SECRET, BUYER_TTL);
-  return json({ ok: true, token, name: info.name, shareId: mine.share_id, content });
+  return json({ ok: true, token, name: info.name, shareId: mine.share_id, isNew, leadId, content });
 }
 
 // Share links carry an opaque id (?r=k7m2qx) so buyers never see the salesperson's name.

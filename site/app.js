@@ -22,6 +22,10 @@
   if (incomingRef && incomingRef !== myShareId) {
     fetch(C.API_BASE + '/api/open', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ref: incomingRef, device }), keepalive: true }).catch(() => {});
   }
+  // Google Ads click ID: kept for 90 days so a later verification is still credited to the ad
+  const clickId = params.get('gclid') || params.get('gbraid') || params.get('wbraid');
+  if (clickId) store.set('unity_gclid', JSON.stringify({ id: clickId, t: Date.now() }));
+  const gclid = (() => { try { const g = JSON.parse(store.get('unity_gclid') || 'null'); return g && Date.now() - g.t < 90 * 864e5 ? g.id : ''; } catch { return ''; } })();
   const source = params.get('utm_source') ? [params.get('utm_source'), params.get('utm_campaign')].filter(Boolean).join('/') : document.referrer ? new URL(document.referrer).hostname : '';
   const ref = store.get('unity_ref') || '';
   // Personal link from the CRM (?i=…): greet the person and prefill their name
@@ -38,6 +42,16 @@
   }
   let token = store.get('unity_token');
   let phone = '';
+
+  // ---------- Google Ads conversion: first WhatsApp verification only ----------
+  function reportConversion(phone, leadId) {
+    if (typeof window.gtag !== 'function') return;
+    try {
+      gtag('set', 'user_data', { phone_number: '+91' + phone });            // enhanced conversions (hashed by Google's tag)
+      gtag('event', 'generate_lead', { method: 'whatsapp_verification' });
+      if (C.ADS_CONVERSION) gtag('event', 'conversion', { send_to: C.ADS_CONVERSION, transaction_id: 'lead-' + leadId });
+    } catch {}
+  }
 
   // ---------- static bits ----------
   setImg($('#heroImg'));
@@ -91,7 +105,7 @@
     if (!f.elements.consent.checked) return (err.textContent = 'Please tick the consent box to continue.');
     btn.disabled = true; btn.textContent = 'Sending…';
     try {
-      const r = await api('/api/otp/start', { method: 'POST', body: JSON.stringify({ name: f.elements.name.value, phone, profession: f.elements.profession.value, consent: true, ref, source, device }) });
+      const r = await api('/api/otp/start', { method: 'POST', body: JSON.stringify({ name: f.elements.name.value, phone, profession: f.elements.profession.value, consent: true, ref, source, device, gclid }) });
       $('#stepDetails').classList.add('hidden');
       $('#stepCode').classList.remove('hidden');
       $('#codeSentTo').textContent = `We sent a code on ${r.channel === 'sms' ? 'SMS' : 'WhatsApp'} to +91 ${phone.slice(0, 5)} ${phone.slice(5)}.`;
@@ -109,6 +123,7 @@
     try {
       const r = await api('/api/otp/verify', { method: 'POST', body: JSON.stringify({ phone, code: e.target.elements.code.value }) });
       token = r.token; store.set('unity_token', token);
+      if (r.isNew) reportConversion(phone, r.leadId);
       unlock(r.content, r.name, r.shareId);
     } catch (ex) { err.textContent = ex.message; }
     btn.disabled = false; btn.textContent = 'Verify & open';
