@@ -31,7 +31,11 @@ CREATE TABLE IF NOT EXISTS leads (
   internal    INTEGER DEFAULT 0,         -- 1 = team/test entry, -1 = kept as client, 0 = auto (team numbers hidden)
   share_id    TEXT,                      -- this buyer's own share id (?r=...) for forwarding to family
   status      TEXT NOT NULL DEFAULT 'new',   -- new | contacted | visit_booked | visited | negotiating | booked | lost
-  notes       TEXT
+  notes       TEXT,
+  email       TEXT,
+  crm_id      TEXT,                      -- the lead's ID in the CRM (kept in sync both ways)
+  invite_id   TEXT,                      -- personal link id (?i=...) given to the CRM
+  verified_at INTEGER                    -- when they verified on WhatsApp (NULL = pushed from CRM, not verified yet)
 );
 
 CREATE TABLE IF NOT EXISTS otps (
@@ -124,3 +128,14 @@ CREATE TABLE IF NOT EXISTS staff_activity (
 );
 CREATE INDEX IF NOT EXISTS idx_staff_user ON staff_activity(user_code, ts);
 CREATE INDEX IF NOT EXISTS idx_staff_target ON staff_activity(target_type, target_id);
+
+CREATE TABLE IF NOT EXISTS api_keys (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  name        TEXT NOT NULL,
+  key_hash    TEXT NOT NULL UNIQUE,
+  prefix      TEXT,
+  created_by  TEXT,
+  created_at  INTEGER NOT NULL,
+  last_used   INTEGER,
+  active      INTEGER NOT NULL DEFAULT 1
+);

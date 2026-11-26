@@ -98,7 +98,7 @@
   let tabList = [];
   function renderTabs() {
     tabList = [['followups', 'Follow-ups'], ['clients', 'Clients'], ['partners', 'Channel partners'], ['requests', 'Visit & callback requests']];
-    if (isSuper()) tabList.push(['team', 'Team & roles'], ['activity', 'Team activity'], ['knowledge', 'AI knowledge']);
+    if (isSuper()) tabList.push(['team', 'Team & roles'], ['activity', 'Team activity'], ['knowledge', 'AI knowledge'], ['integrations', 'CRM integration']);
     const extra = tabList.slice(4);
     $('#mainTabs').innerHTML = tabList.map(([k, v], i) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}${i >= 4 ? ' extra' : ''}">${i < 4 ? `<i class="tab-ic">${ic(k)}</i>` : ''}<span class="t-full">${v}</span><span class="t-short">${SHORT[k] || v}</span>${k === 'followups' ? '<span class="count hidden" id="fuCount"></span>' : ''}</button>`).join('')
       + (extra.length ? `<button class="more-btn" id="moreBtn"><i class="tab-ic">${ic('more')}</i><span class="t-short">More</span></button>` : '');
@@ -116,7 +116,7 @@
     $$('#mainTabs button[data-tab]').forEach((b) => b.classList.toggle('on', b.dataset.tab === t));
     if ($('#moreBtn')) $('#moreBtn').classList.toggle('on', tabList.findIndex(([k]) => k === t) >= 4);
     window.scrollTo(0, 0);
-    ({ followups: viewFollowups, clients: viewClients, partners: viewPartners, requests: viewRequests, team: viewTeam, activity: viewActivity, knowledge: viewKnowledge }[t] || viewFollowups)();
+    ({ followups: viewFollowups, clients: viewClients, partners: viewPartners, requests: viewRequests, team: viewTeam, activity: viewActivity, knowledge: viewKnowledge, integrations: viewIntegrations }[t] || viewFollowups)();
   }
 
   // ---------- Follow-ups ----------
@@ -250,8 +250,8 @@
     $('#leadRows').innerHTML = rows.map((l) => `<tr class="row" data-id="${l.id}">
         <td><span class="pri ${l.priority}">${l.priority}</span><span class="bar"><i style="width:${l.score}%"></i></span></td>
         <td><b>${esc(l.name)}</b><br><span class="small">+91 ${esc(l.phone)}${l.assigned_name ? ` · ${esc(l.assigned_name)}` : ' · Unassigned'}</span>
-          <div class="m-only m-meta"><span>${STATUSES[l.status] || l.status}</span>${l.next_followup ? `<span class="${l.overdue ? 'od' : ''}">Next: ${when(l.next_followup)}</span>` : '<span class="od">No follow-up</span>'}${l.source_user_role === 'channel_partner' ? `<span class="tag tag-cp">${esc(l.source_user_name)}</span>` : ''}${l.referred_by_name ? `<span class="tag tag-via">via ${esc(l.referred_by_name)}</span>` : ''}${l.openRequests.length ? '<span class="tag">Wants visit/call</span>' : ''}</div></td>
-        <td class="hide-m">${l.referred_by_name ? `<span class="tag tag-via">via ${esc(l.referred_by_name)}</span>` : ''}${l.source_user_role === 'channel_partner' ? `<span class="tag tag-cp">${esc(l.source_user_name)}</span>` : l.source_user_name ? `<span class="small">${esc(l.source_user_name)}</span>` : l.referred_by_name ? '' : '<span class="small">Direct</span>'}</td>
+          <div class="m-only m-meta"><span>${STATUSES[l.status] || l.status}</span>${l.verified_at ? '' : '<span class="od">Not verified yet</span>'}${l.crm_id ? `<span class="tag">CRM ${esc(l.crm_id)}</span>` : ''}${l.next_followup ? `<span class="${l.overdue ? 'od' : ''}">Next: ${when(l.next_followup)}</span>` : '<span class="od">No follow-up</span>'}${l.source_user_role === 'channel_partner' ? `<span class="tag tag-cp">${esc(l.source_user_name)}</span>` : ''}${l.referred_by_name ? `<span class="tag tag-via">via ${esc(l.referred_by_name)}</span>` : ''}${l.openRequests.length ? '<span class="tag">Wants visit/call</span>' : ''}</div></td>
+        <td class="hide-m">${l.crm_id ? `<span class="tag">CRM ${esc(l.crm_id)}</span>` : ''}${l.verified_at ? '' : '<span class="tag tag-red">Not verified yet</span>'}${l.referred_by_name ? `<span class="tag tag-via">via ${esc(l.referred_by_name)}</span>` : ''}${l.source_user_role === 'channel_partner' ? `<span class="tag tag-cp">${esc(l.source_user_name)}</span>` : l.source_user_name ? `<span class="small">${esc(l.source_user_name)}</span>` : l.referred_by_name ? '' : '<span class="small">Direct</span>'}</td>
         <td class="hide-m">${l.openRequests.map((r) => `<span class="tag">${r === 'site_visit' ? 'Wants visit' : 'Callback'}</span>`).join('')}${l.sessions > 1 ? `<span class="tag">${l.sessions} visits</span>` : ''}${l.questions ? `<span class="tag">${l.questions} questions</span>` : ''}${l.referrals ? `<span class="tag tag-share">Brought ${l.referrals}</span>` : l.link_opens ? `<span class="tag tag-share">Shared · ${l.link_opens} opened</span>` : ''}</td>
         <td class="hide-m">${STATUSES[l.status] || l.status}</td>
         <td class="hide-m small">${l.next_followup ? `<span class="${l.overdue ? 'tag tag-red' : ''}">${when(l.next_followup)}</span>` : '<span class="tag tag-red" style="background:#F1F1EF;color:#888">None planned</span>'}</td>
@@ -267,7 +267,7 @@
       arrived_via: `Received the link from ${e.target}`, share_open: 'Someone opened the link they shared (not verified yet)', share_open_verified: `${e.target} opened the link they shared`,
       referral_verified: `${e.target} verified via their link`, session_start: 'Opened the page', floorplan_open: `Opened floor plan: ${e.target}`, brochure_open: 'Opened the brochure',
       gallery_open: 'Viewed a photo', walkthrough_play: 'Played the walkthrough', cta: e.target === 'share' ? 'Tapped Share' : `Tapped ${e.target}`,
-      map: (e.target || '').startsWith('place:') ? `Checked commute to ${e.target.slice(6)}` : `Viewed nearby ${(e.target || '').slice(4)} on map`, staff: e.target,
+      crm_created: 'Added from the CRM', invite_open: 'Opened their personal link', map: (e.target || '').startsWith('place:') ? `Checked commute to ${e.target.slice(6)}` : `Viewed nearby ${(e.target || '').slice(4)} on map`, staff: e.target,
     }[e.type] || e.type);
     const wa = `https://wa.me/91${l.phone}?text=${encodeURIComponent(d.openingLine)}`;
     const t = Date.now() / 1000;
@@ -286,6 +286,10 @@
       <div class="kv">
         <span>Came via</span><b>${src}${d.source && d.source.role === 'channel_partner' ? ` <a class="lnk" data-user="${esc(d.source.code)}">View</a>` : ''}</b>
         <span>Assigned to</span><b><select id="assignSel" style="padding:6px 10px;width:auto"><option value="">Unassigned</option>${staff().map((u) => `<option value="${u.code}" ${d.assigned && d.assigned.code === u.code ? 'selected' : ''}>${esc(u.name)}</option>`).join('')}</select></b>
+        ${l.crm_id ? `<span>CRM lead ID</span><b>${esc(l.crm_id)}</b>` : ''}
+        ${l.invite_id ? `<span>Personal link</span><b><span class="linkbox"><input readonly value="${esc(siteUrl + '?i=' + l.invite_id)}"><button class="btn ghost xs" data-copy="${esc(siteUrl + '?i=' + l.invite_id)}">Copy link</button></span></b>` : ''}
+        ${l.verified_at ? '' : '<span>WhatsApp</span><b><span class="tag tag-red">Not verified yet</span></b>'}
+        ${l.email ? `<span>Email</span><b>${esc(l.email)}</b>` : ''}
         <span>Profession</span><b>${esc(l.profession || '—')}</b>
         <span>First verified</span><b>${when(l.created_at)}</b>
         <span>Visits</span><b>${l.sessions} · last ${ago(l.last_seen)}</b>
@@ -313,6 +317,7 @@
       ${isSuper() ? `<div class="box danger"><h4>Delete client</h4><p class="small" style="margin:0 0 10px">Removes ${esc(l.name)} and their journey, questions, requests and follow-ups. This can't be undone.</p>
         <div id="delBox"><button class="btn danger sm" id="delLead">Delete this client</button></div></div>` : ''}`);
     const reopen = () => openLead(id);
+    bindCopy($('#drawer'));
     if ($('#delLead')) $('#delLead').onclick = () => {
       $('#delBox').innerHTML = `<p class="small" style="margin:0 0 8px">Type <b>DELETE</b> to confirm.</p><div class="btnrow"><input id="delTxt" autocomplete="off" style="max-width:160px"><button class="btn danger sm" id="delGo" disabled>Delete permanently</button><button class="btn ghost sm" id="delNo">Keep</button></div>`;
       $('#delTxt').focus();
@@ -518,6 +523,43 @@
       $$('[data-user]', $('#feed')).forEach((x) => (x.onclick = (e) => { e.preventDefault(); openUser(x.dataset.user); }));
     };
     $('#aUser').onchange = load; load();
+  }
+
+  // ---------- CRM integration (super admin) ----------
+  async function viewIntegrations() {
+    const d = await api('/api/admin/integrations');
+    const base = C.API_BASE;
+    const sample = JSON.stringify({ crm_id: 'CRM-10234', name: 'Rahul Shah', phone: '9876543210', email: 'rahul@example.com', source: 'Facebook ads', assigned_to: '9900000002', notes: 'Wants 4 BHK' }, null, 2);
+    const reply = JSON.stringify({ ok: true, result: 'created', lead_id: 128, crm_id: 'CRM-10234', link: siteUrl + '?i=k7m2qx', verified: false, status: 'new' }, null, 2);
+    $('#view').innerHTML = `<div class="box"><h4>CRM integration</h4>
+        <p class="small" style="margin:0 0 10px">${d.linked} client${d.linked === 1 ? '' : 's'} linked to CRM lead IDs.</p>
+        <div id="keyNew"></div>
+        <div class="btnrow" style="margin-bottom:8px"><input id="keyName" placeholder="Key name, e.g. Our CRM" style="max-width:240px"><button class="btn primary sm" id="mkKey">Create API key</button></div>
+        ${d.keys.map((k) => `<div class="tl"><span><b>${esc(k.name)}</b> · ${esc(k.prefix)}… ${k.active ? '' : '<span class="tag">Revoked</span>'}<br><span class="small">Created ${when(k.created_at)} by ${esc(k.created_by_name || '—')} · last used ${k.last_used ? ago(k.last_used) : 'never'}</span></span><span>${k.active ? `<button class="btn ghost xs" data-revoke="${k.id}">Revoke</button>` : ''}</span></div>`).join('') || '<p class="small" style="margin:0">No API keys yet.</p>'}
+      </div>
+      <div class="box kn"><h4>For your CRM developer</h4>
+        <p><b>1. Create a lead</b> — call this whenever a lead is created in the CRM. Sending the same <code>crm_id</code> again updates that lead instead of duplicating it.</p>
+        <pre>POST ${esc(base)}/api/crm/leads
+Authorization: Bearer plms_…
+Content-Type: application/json
+
+${esc(sample)}</pre>
+        <p>Required: <code>crm_id</code>, <code>name</code>, <code>phone</code> (10-digit mobile). Optional: <code>email</code>, <code>source</code>, <code>notes</code>, <code>assigned_to</code> (salesperson's mobile number or name in this dashboard).</p>
+        <p><b>Reply</b> (201 when created, 200 when updated or linked to someone already on the page):</p>
+        <pre>${esc(reply)}</pre>
+        <p>Send <code>link</code> to the client (e.g. by WhatsApp). It greets them by name, and their visits are recorded against this lead. If the phone number already belongs to a different CRM lead, the reply is 409 with <code>phone_already_mapped</code>, and nothing changes.</p>
+        <p><b>2. Read engagement back</b> (optional) — e.g. to show the score inside the CRM:</p>
+        <pre>GET ${esc(base)}/api/crm/leads/CRM-10234
+Authorization: Bearer plms_…</pre>
+        <p>Returns verified, link opened, score, priority (P0–P4), visits, questions asked, site visit / callback requested and status.</p>
+      </div>`;
+    $('#mkKey').onclick = async () => {
+      const r = await api('/api/admin/integrations/keys', { method: 'POST', body: JSON.stringify({ name: $('#keyName').value }) });
+      await viewIntegrations();
+      $('#keyNew').innerHTML = `<div class="box internal-note"><b>Copy this key now — it won't be shown again.</b><div class="linkbox" style="margin-top:8px"><input readonly value="${esc(r.key)}"><button class="btn primary xs" data-copy="${esc(r.key)}">Copy key</button></div><p class="small" style="margin:6px 0 0">Give it only to your CRM developer. Anyone with it can add leads.</p></div>`;
+      bindCopy($('#keyNew'));
+    };
+    $$('[data-revoke]').forEach((b) => (b.onclick = async () => { if (!confirm('Revoke this key? The CRM will stop being able to send leads with it.')) return; await api(`/api/admin/integrations/keys/${b.dataset.revoke}`, { method: 'DELETE' }); viewIntegrations(); }));
   }
 
   // ---------- AI knowledge (super admin) ----------

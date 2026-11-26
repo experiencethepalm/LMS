@@ -10,6 +10,7 @@ import { json, bad, now, sha256, signToken, verifyToken, bearer, normalisePhone,
 import { sendOtp } from './otp.js';
 import { scoreLead } from './score.js';
 import knowledge from '../content/knowledge.md';
+import { listKeys, createKey, revokeKey } from './crm.js';
 
 const STAFF_TTL = 7 * 86400;
 const OTP_TTL = 600;
@@ -47,6 +48,10 @@ export async function adminRoute(request, env, url, p, m) {
   const um = p.match(/^\/api\/admin\/users\/([A-Z0-9]+)$/);
   if (um && m === 'GET') return userDetail(env, me, um[1]);
   if (um && m === 'DELETE') return isSuper ? deleteUser(env, me, um[1]) : bad('Only super admins can delete users.', 403);
+  if (p === '/api/admin/integrations' && m === 'GET') return isSuper ? listKeys(env) : bad('Only super admins can manage integrations.', 403);
+  if (p === '/api/admin/integrations/keys' && m === 'POST') return isSuper ? createKey(request, env, me) : bad('Only super admins can manage integrations.', 403);
+  const km = p.match(/^\/api\/admin\/integrations\/keys\/(\d+)$/);
+  if (km && m === 'DELETE') return isSuper ? revokeKey(env, Number(km[1])) : bad('Only super admins can manage integrations.', 403);
   if (p === '/api/admin/knowledge' && m === 'GET') return isSuper ? json({ knowledge }) : bad('Only super admins can see this.', 403);
   if (p === '/api/admin/requests' && m === 'GET') return listRequests(env);
   const rm = p.match(/^\/api\/admin\/requests\/(\d+)$/);

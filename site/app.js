@@ -24,6 +24,18 @@
   }
   const source = params.get('utm_source') ? [params.get('utm_source'), params.get('utm_campaign')].filter(Boolean).join('/') : document.referrer ? new URL(document.referrer).hostname : '';
   const ref = store.get('unity_ref') || '';
+  // Personal link from the CRM (?i=…): greet the person and prefill their name
+  const invite = (params.get('i') || '').trim();
+  if (invite && !store.get('unity_token')) {
+    fetch(C.API_BASE + '/api/invite', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ invite, device }) })
+      .then((r) => r.json()).then((d) => {
+        if (!d.ok || !d.firstName) return;
+        const n = document.querySelector('#detailsForm [name=name]');
+        if (n && !n.value) n.placeholder = 'Your full name';
+        const h = document.querySelector('#stepDetails h2');
+        if (h) h.textContent = `Welcome, ${d.firstName}`;
+      }).catch(() => {});
+  }
   let token = store.get('unity_token');
   let phone = '';
 

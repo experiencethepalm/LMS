@@ -5,6 +5,7 @@ import { sendOtp } from './otp.js';
 import { scoreLead } from './score.js';
 import { askAssistant } from './chat.js';
 import { adminRoute, assignLead } from './admin.js';
+import { crmRoute, inviteOpen } from './crm.js';
 
 const BUYER_TTL = 180 * 86400;   // verified buyers stay unlocked for 6 months on that device
 const OTP_TTL = 600;             // code valid 10 minutes
@@ -56,6 +57,8 @@ async function route(request, env, ctx) {
   if (p === '/api/request' && m === 'POST') return buyerRequest(request, env, ctx);
 
   if (p.startsWith('/api/admin/')) return adminRoute(request, env, url, p, m);
+  if (p.startsWith('/api/crm/')) return crmRoute(request, env, url, p, m);
+  if (p === '/api/invite' && m === 'POST') return inviteOpen(request, env);
   return bad('Not found', 404);
 }
 
@@ -116,12 +119,12 @@ async function otpVerify(request, env) {
     leadId = existing.id;
     const referrer = !existing.referred_by && via.leadId && via.leadId !== leadId ? via.leadId : null;
     await env.DB.prepare(
-      `UPDATE leads SET name=?, profession=COALESCE(NULLIF(?,''),profession), last_ref=COALESCE(?,last_ref), first_ref=COALESCE(first_ref,?), referred_by=COALESCE(referred_by,?), share_id=COALESCE(share_id,?), last_seen=?, sessions=sessions+1 WHERE id=?`
-    ).bind(info.name, info.profession || '', ref, ref, referrer, newShareId(), t, leadId).run();
+      `UPDATE leads SET name=?, profession=COALESCE(NULLIF(?,''),profession), last_ref=COALESCE(?,last_ref), first_ref=COALESCE(first_ref,?), referred_by=COALESCE(referred_by,?), share_id=COALESCE(share_id,?), last_seen=?, sessions=sessions+1, verified_at=COALESCE(verified_at,?) WHERE id=?`
+    ).bind(info.name, info.profession || '', ref, ref, referrer, newShareId(), t, t, leadId).run();
   } else {
     const r = await env.DB.prepare(
-      'INSERT INTO leads (phone, name, profession, first_ref, last_ref, source, referred_by, share_id, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?,?,?)'
-    ).bind(phone, info.name, info.profession || null, ref, ref, via.leadId ? 'shared by a buyer' : info.source || null, via.leadId || null, newShareId(), t, t).run();
+      'INSERT INTO leads (phone, name, profession, first_ref, last_ref, source, referred_by, share_id, created_at, last_seen, verified_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
+    ).bind(phone, info.name, info.profession || null, ref, ref, via.leadId ? 'shared by a buyer' : info.source || null, via.leadId || null, newShareId(), t, t, t).run();
     leadId = r.meta.last_row_id;
   }
   if (info.device) await env.DB.prepare('UPDATE link_opens SET verified_lead=? WHERE device=? AND verified_lead IS NULL').bind(leadId, info.device).run();
