@@ -434,3 +434,9 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .group h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(26px, 5vw, 32px); margin: 4px 0 10px; color: #6E3E2E; }
 .group p:not(.eyebrow) { font-size: 15.5px; line-height: 1.65; margin: 0 0 16px; max-width: 640px; }
 .intro-title em { font-style: italic; font-weight: 400; color: #9A7E70; font-size: .62em; display: block; margin-bottom: 2px; }
+
+/* map: own compositing layer (prevents stale/blank patches while scrolling on some PCs) */
+.map { transform: translateZ(0); isolation: isolate; }
+/* "Ctrl + scroll to zoom" hint: a small pill instead of a dark screen over the whole map */
+.map .maplibregl-cooperative-gesture-screen { background: transparent !important; align-items: flex-end !important; justify-content: center !important; padding: 0 0 14px !important; pointer-events: none; }
+.map .maplibregl-cooperative-gesture-screen > div { background: rgba(47,74,58,.88); color: #fff; font: 500 12.5px var(--sans); padding: 7px 12px; border-radius: 99px; box-shadow: 0 4px 14px rgba(0,0,0,.12); }

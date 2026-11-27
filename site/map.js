@@ -100,6 +100,7 @@
       map = new maplibregl.Map({
         container: mapEl, style, center: home, zoom: 13.2, attributionControl: false,
         cooperativeGestures: true, dragRotate: false, pitchWithRotate: false,
+        preserveDrawingBuffer: true,   // keeps the last frame on screen; avoids blank patches on some Windows/Intel GPUs while scrolling
       });
       map.touchZoomRotate.disableRotation();
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
@@ -110,8 +111,9 @@
       mapEl.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show');
       // Some PCs without GPU acceleration leave stale patches on the map after scrolling; repaint when scrolling stops
       let st;
-      const repaint = () => { clearTimeout(st); st = setTimeout(() => map.triggerRepaint(), 150); };
-      window.addEventListener('scroll', repaint, { passive: true });
+      const repaint = () => { clearTimeout(st); st = setTimeout(() => { map.resize(); map.triggerRepaint(); }, 120); };
+      window.addEventListener('scroll', repaint, { passive: true, capture: true });
+      new IntersectionObserver((es) => { if (es[0].isIntersecting) repaint(); }).observe(mapEl);
       document.addEventListener('visibilitychange', () => { if (!document.hidden) map.triggerRepaint(); });
       map.addSource('route', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       map.addLayer({ id: 'route-casing', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#FFFFFF', 'line-width': 8 } });
