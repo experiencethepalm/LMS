@@ -95,6 +95,7 @@ function draw(){
   else{const k=Math.floor(u),f=u-k;
     if(k>=N){A=N-1;tA=[1,1,1,1];}
     else{const p=Math.max(0,(f-.3)/.7);A=k-1;B=k;tA=outT(p);tB=inT(p);}}
+  want((B!=null?B:A)+1);
   const ia=SCENES[A].id, ib=B!=null?SCENES[B].id:null;
   if(!tex[ia]||(ib&&!tex[ib])) return; last=u;
   gl.viewport(0,0,cv.width,cv.height);gl.uniform2f(U('res'),cv.width,cv.height);
@@ -114,9 +115,11 @@ function loop(){if(inView)draw();requestAnimationFrame(loop);}
 if('IntersectionObserver' in window) new IntersectionObserver(es=>{inView=es[0].isIntersecting;},{rootMargin:'200px 0px'}).observe(root);
 addEventListener('resize',resize);
 let started=false;
+// Load scenes just ahead of the reader (keeps the first page load light)
+let queued=0, loading=Promise.resolve();
+function want(upTo){upTo=Math.min(N-1,upTo);while(queued<upTo){const id=SCENES[++queued].id;loading=loading.then(()=>loadScene(id)).catch(()=>{});}}
 const start=async()=>{if(started)return;started=true;
-  await loadScene(SCENES[0].id);resize();loop();
-  for(let i=1;i<N;i++) await loadScene(SCENES[i].id);};
+  await loadScene(SCENES[0].id);resize();loop();want(1);};
 if('IntersectionObserver' in window) new IntersectionObserver((es,o)=>{if(es.some(e=>e.isIntersecting)){o.disconnect();start();}},{rootMargin:'800px 0px'}).observe(root);
 else start();
 })();

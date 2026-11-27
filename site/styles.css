@@ -1,3 +1,9 @@
+/* self-hosted fonts (no render-blocking Google Fonts request) */
+@font-face { font-family: 'Cormorant Garamond'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/cormorant-garamond-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Cormorant Garamond'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/cormorant-garamond-latin-600-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/inter-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/inter-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/inter-latin-600-normal.woff2) format('woff2'); }
 :root {
   --bg: #F6F3EE;
   --card: #FFFFFF;
@@ -369,9 +375,9 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .sk-cap.on { opacity: 1; transform: none; }
 .sk-cap h2, .sk-cap h3 { font-size: clamp(24px, 5vw, 34px); font-weight: 500; color: #6E3E2E; margin: 4px 0 6px; }
 .sk-cap p:not(.eyebrow) { font-size: 14px; color: var(--muted); margin: 0; }
-.sk-cap .eyebrow { color: #B07A5A; }
+.sk-cap .eyebrow { color: #8E5A3C; }
 .sk-end h2, .sk-end h3 { font-size: clamp(26px, 5.6vw, 38px); line-height: 1.2; }
-.sk-end h2 span, .sk-end h3 span { color: #8FA57A; }
+.sk-end h2 span, .sk-end h3 span { color: #5F7A4C; }
 .sk-dots { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: grid; gap: 9px; }
 .sk-dots b { width: 6px; height: 6px; border-radius: 50%; border: 1px solid #6E3E2E; opacity: .35; transition: .3s; }
 .sk-dots b.on { background: #6E3E2E; opacity: .9; }
@@ -381,13 +387,13 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 
 /* ---- opening ---- */
 .intro { min-height: calc(72vh - 49px); min-height: calc(72svh - 49px); display: grid; place-content: center; text-align: center; padding: 24px 18px; }
-.intro-eyebrow { font: 400 12px/1.4 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: #9A7E70; margin: 0; }
+.intro-eyebrow { font: 400 12px/1.4 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: #7A5F51; margin: 0; }
 .intro-title { font-family: var(--serif); font-weight: 500; font-size: clamp(40px, 8vw, 64px); line-height: 1.1; color: #6E3E2E; margin: 18px 0 0; }
-.intro-hint { font: 400 13px var(--sans); color: #9A7E70; margin-top: 44px; }
-.intro-hint i { display: block; width: 1px; height: 38px; margin: 10px auto 0; background: linear-gradient(#9A7E70, transparent); animation: drip 2s infinite; }
+.intro-hint { font: 400 13px var(--sans); color: #7A5F51; margin-top: 44px; }
+.intro-hint i { display: block; width: 1px; height: 38px; margin: 10px auto 0; background: linear-gradient(#7A5F51, transparent); animation: drip 2s infinite; }
 @keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
 @media (max-width: 480px) { .intro-eyebrow { font-size: 11px; letter-spacing: .2em; } }
-.sk-cap em { font-style: normal; color: #A8603F; border-bottom: 1px solid rgba(201,116,78,.35); }
+.sk-cap em { font-style: normal; color: #93502F; border-bottom: 1px solid rgba(201,116,78,.35); }
 @media (max-width: 700px) { .sk-caps { height: 140px; } }
 /* when the section menu is showing, the sketch sits below it */
 .secnav:not(.hidden) ~ .sketch-story .sk-stage { top: 96px; height: calc(100vh - 96px); height: calc(100svh - 96px); }
@@ -405,7 +411,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 
 /* ---- about ---- */
 .about { text-align: center; max-width: 620px; margin: 48px auto 26px; padding: 8px 0 4px; }
-.about .eyebrow { color: #B07A5A; font-family: var(--sans); font-size: 11px; margin-bottom: 12px; }
+.about .eyebrow { color: #8E5A3C; font-family: var(--sans); font-size: 11px; margin-bottom: 12px; }
 .about p { font-family: var(--serif); font-size: clamp(19px, 3.6vw, 23px); line-height: 1.5; color: #6E3E2E; margin: 0; }
 
 /* ---- compact unit card (rooms map to the numbered badges on the plan) ---- */
@@ -433,7 +439,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .group { border-top: 1px solid var(--line); padding: 36px 0 30px; margin-top: 24px; }
 .group h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(26px, 5vw, 32px); margin: 4px 0 10px; color: #6E3E2E; }
 .group p:not(.eyebrow) { font-size: 15.5px; line-height: 1.65; margin: 0 0 16px; max-width: 640px; }
-.intro-title em { font-style: italic; font-weight: 400; color: #9A7E70; font-size: .62em; display: block; margin-bottom: 2px; }
+.intro-title em { font-style: italic; font-weight: 400; color: #7A5F51; font-size: .62em; display: block; margin-bottom: 2px; }
 
 /* map: own compositing layer (prevents stale/blank patches while scrolling on some PCs) */
 .map { transform: translateZ(0); isolation: isolate; }
@@ -441,3 +447,6 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .map .maplibregl-cooperative-gesture-screen { background: transparent !important; align-items: flex-end !important; justify-content: center !important; padding: 0 0 14px !important; pointer-events: none; }
 .map .maplibregl-cooperative-gesture-screen > div { background: rgba(47,74,58,.88); color: #fff; font: 500 12.5px var(--sans); padding: 7px 12px; border-radius: 99px; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
 .about-ov { margin: 8px auto 22px; }
+
+/* accessible contrast for small gold labels */
+.eyebrow { color: #7E6234; }
