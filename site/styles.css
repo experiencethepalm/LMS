@@ -440,3 +440,4 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 /* "Ctrl + scroll to zoom" hint: a small pill instead of a dark screen over the whole map */
 .map .maplibregl-cooperative-gesture-screen { background: transparent !important; align-items: flex-end !important; justify-content: center !important; padding: 0 0 14px !important; pointer-events: none; }
 .map .maplibregl-cooperative-gesture-screen > div { background: rgba(47,74,58,.88); color: #fff; font: 500 12.5px var(--sans); padding: 7px 12px; border-radius: 99px; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+.about-ov { margin: 8px auto 22px; }

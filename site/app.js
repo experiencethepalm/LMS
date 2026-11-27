@@ -192,7 +192,7 @@
     $('#project').innerHTML = `
 
       <div class="sec" id="overview" data-track="overview">
-        <p>${esc(p.about)}</p>
+        <div class="about about-ov"><p class="eyebrow">About The Palm Unity</p><p>${esc(p.about)}</p></div>
         <div class="facts">
           <div class="fact"><span>Type</span><b>${esc(p.type)}</b></div>
           <div class="fact"><span>Possession</span><b>${val(p.possession)}</b></div>
