@@ -22,12 +22,12 @@
   if (incomingRef && incomingRef !== myShareId) {
     fetch(C.API_BASE + '/api/open', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ref: incomingRef, device }), keepalive: true }).catch(() => {});
   }
+  const source = params.get('utm_source') ? [params.get('utm_source'), params.get('utm_campaign')].filter(Boolean).join('/') : document.referrer ? new URL(document.referrer).hostname : '';
+  const ref = store.get('unity_ref') || '';
   // Google Ads click ID: kept for 90 days so a later verification is still credited to the ad
   const clickId = params.get('gclid') || params.get('gbraid') || params.get('wbraid');
   if (clickId) store.set('unity_gclid', JSON.stringify({ id: clickId, t: Date.now() }));
   const gclid = (() => { try { const g = JSON.parse(store.get('unity_gclid') || 'null'); return g && Date.now() - g.t < 90 * 864e5 ? g.id : ''; } catch { return ''; } })();
-  const source = params.get('utm_source') ? [params.get('utm_source'), params.get('utm_campaign')].filter(Boolean).join('/') : document.referrer ? new URL(document.referrer).hostname : '';
-  const ref = store.get('unity_ref') || '';
   // Personal link from the CRM (?i=…): greet the person and prefill their name
   const invite = (params.get('i') || '').trim();
   if (invite && !store.get('unity_token')) {
@@ -54,7 +54,7 @@
   }
 
   // ---------- static bits ----------
-  setImg($('#heroImg'));
+  if ($('#heroImg')) setImg($('#heroImg'));
   $('#privacyLink').href = C.PRIVACY_URL;
   const tel = `tel:${C.SALES_PHONE}`;
   const wa = `https://wa.me/${C.SALES_WHATSAPP}?text=${encodeURIComponent(C.WHATSAPP_TEXT)}`;
@@ -164,7 +164,7 @@
 
   // ---------- render unlocked page ----------
   const SECTIONS = [
-    ['overview', 'Overview'], ['highlights', 'Highlights'], ['gallery', 'Gallery'], ['floorplans', 'Floor plans'],
+    ['story', 'Story'], ['overview', 'Overview'], ['gallery', 'Gallery'], ['floorplans', 'Floor plans'],
     ['amenities', 'Amenities'], ['specifications', 'Specifications'],
     ['location', 'Location'], ['visit', 'Visit'],
   ];
@@ -178,16 +178,18 @@
       try { history.replaceState(null, '', `${location.pathname}?r=${encodeURIComponent(shareId)}${location.hash}`); } catch {}
     }
     $('#gate').classList.add('hidden');
+    $('#about')?.classList.add('hidden'); // Overview carries the same passage once verified
     $('#actionbar').classList.remove('hidden');
-    $('#heroBadge').textContent = `✓ Verified${name ? ` · Welcome, ${name.split(' ')[0]}` : ''}`;
-    $('#heroBadge').classList.add('ok');
+    if ($('#heroBadge')) $('#heroBadge').textContent = `✓ Verified${name ? ` · Welcome, ${name.split(' ')[0]}` : ''}`;
+    $('#heroBadge')?.classList.add('ok');
     if (!isTbc(c.project.rera)) $('#footRera').textContent = `RERA: ${c.project.rera}`;
     const p = c.project;
     const plansByConfig = [...new Set(c.floorplans.map((f) => f.config))];
     const yt = c.walkthrough?.youtubeId;
 
+    $('#secnav').innerHTML = SECTIONS.map(([id, label]) => `<a href="#${id}" data-nav="${id}">${label}</a>`).join('');
+    $('#secnav').classList.remove('hidden');
     $('#project').innerHTML = `
-      <nav class="secnav">${SECTIONS.map(([id, label]) => `<a href="#${id}" data-nav="${id}">${label}</a>`).join('')}</nav>
 
       <div class="sec" id="overview" data-track="overview">
         <p>${esc(p.about)}</p>
@@ -197,11 +199,6 @@
           <div class="fact"><span>Homes</span><b>3 & 4 BHK · Penthouses</b></div>
           <div class="fact"><span>Developer</span><b>${esc(p.developer)}</b></div>
         </div>
-      </div>
-
-      <div class="sec" id="highlights" data-track="highlights">
-        <h2>Highlights</h2>
-        <ol class="hl2">${c.highlights.map((h, i) => typeof h === 'string' ? `<li><p>${esc(h)}</p></li>` : `<li class="${h.image ? 'has-art' : ''}">${h.image ? `<figure class="hl-art${h.image.style === 'photo' ? ' photo' : ''}"><img src="${esc(h.image.thumb || h.image.src)}"${h.image.thumb ? ` srcset="${esc(h.image.thumb)} 800w, ${esc(h.image.src)} 1600w" sizes="(max-width: 760px) 92vw, 420px"` : ''} alt="${esc(h.image.alt)}" width="${h.image.w}" height="${h.image.h}" loading="lazy" decoding="async" /></figure>` : ''}<div class="hl-body"><span class="hl-n">${String(i + 1).padStart(2, '0')}</span><div><h3>${esc(h.title)}</h3><p>${esc(h.text)}</p></div></div></li>`).join('')}</ol>
       </div>
 
       <div class="sec" id="gallery" data-track="gallery">
@@ -353,10 +350,21 @@
     }, { threshold: 0.35 });
     $$('[data-track]').forEach((s) => io.observe(s));
     // Menu follows the section crossing the middle of the screen (works for tall sections too)
-    const navIO = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) setActiveNav(e.target.dataset.track); });
-    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
-    $$('[data-track]').forEach((s) => navIO.observe(s));
+    // Pick the section that crosses the middle of the screen, measured on scroll
+    // (IntersectionObserver margins are ignored inside embedded frames, so measure directly)
+    const navSecs = $$('[data-track]').filter((s) => $(`.secnav a[data-nav="${s.dataset.track}"]`));
+    let navRaf = 0;
+    const pickNav = () => {
+      navRaf = 0;
+      const mid = innerHeight * 0.45;
+      let cur = navSecs[0];
+      for (const s of navSecs) { if (s.offsetParent !== null && s.getBoundingClientRect().top <= mid) cur = s; }
+      if (cur) setActiveNav(cur.dataset.track);
+    };
+    const onNavScroll = () => { if (!navRaf) navRaf = requestAnimationFrame(pickNav); };
+    addEventListener('scroll', onNavScroll, { passive: true, capture: true });
+    addEventListener('resize', onNavScroll);
+    pickNav();
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') { flush(true); visible.clear(); }
     });
