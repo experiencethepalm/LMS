@@ -369,7 +369,7 @@
       const q = $('#pq').value.toLowerCase().trim();
       const rows = list.filter((p) => !q || [p.name, p.company, p.phone].some((x) => (x || '').toLowerCase().includes(q)));
       $('#cpRows').innerHTML = rows.map((p) => `<tr class="row" data-code="${p.code}" style="${p.active ? '' : 'opacity:.5'}">
-          <td><b>${esc(p.name)}</b>${p.active ? '' : ' <span class="tag">Inactive</span>'}<br><span class="small">${esc(p.company || '—')} · +91 ${esc(p.phone || '')}</span></td>
+          <td><b>${esc(p.name)}</b>${p.active ? '' : ' <span class="tag">Inactive</span>'}<br><span class="small">${esc(p.company || '—')} · ${p.phone ? `+91 ${esc(p.phone)}` : 'No number'}</span></td>
           <td class="hide-m">${p.clients}</td><td class="hide-m">${p.link_opens}</td><td class="hide-m small">${esc(p.created_by_name || '—')}</td>
           <td><button class="btn ghost xs" data-copy="${esc(shareLink(p))}">Copy link</button></td></tr>`).join('') || `<tr><td colspan="5" class="empty">No channel partners yet. Add one to give them a tracked link.</td></tr>`;
       $$('#cpRows tr.row').forEach((tr) => (tr.onclick = (e) => { if (e.target.closest('[data-copy]')) return; openUser(tr.dataset.code); }));
@@ -417,7 +417,7 @@
     const canRole = isSuper();
     box.innerHTML = `<form class="box form" id="uf"><h4>${u.code ? 'Edit' : 'Add'} ${u.role === 'channel_partner' && !canRole ? 'channel partner' : 'user'}</h4>
       <div class="grid2"><label>Name<input name="name" value="${esc(u.name || '')}" required></label>
-      <label>Mobile number<input name="phone" inputmode="numeric" value="${esc(u.phone || '')}" placeholder="98765 43210" required></label></div>
+      <label>Mobile number <i>(optional for channel partners)</i><input name="phone" inputmode="numeric" value="${esc(u.phone || '')}" placeholder="98765 43210"></label></div>
       <div class="grid2">${canRole ? `<label>User type<select name="role">${Object.entries(ROLES).map(([k, v]) => `<option value="${k}" ${k === (u.role || 'sales') ? 'selected' : ''}>${v}</option>`).join('')}</select></label>` : ''}
       <label>Firm / company <i>(channel partners)</i><input name="company" value="${esc(u.company || '')}"></label></div>
       ${u.code ? `<label style="display:flex;gap:8px;align-items:center;font-weight:500"><input type="checkbox" name="active" style="width:auto" ${u.active ? 'checked' : ''}> Active</label>` : ''}
@@ -501,7 +501,7 @@
     const draw = () => {
       const r = $('#tRole').value;
       $('#tRows').innerHTML = team.filter((u) => !r || u.role === r).map((u) => `<tr class="row" data-code="${u.code}" style="${u.active ? '' : 'opacity:.5'}">
-        <td><b>${esc(u.name)}</b>${u.code === me.code ? ' <span class="small">(you)</span>' : ''}<br><span class="small">+91 ${esc(u.phone || '—')}${u.company ? ` · ${esc(u.company)}` : ''}</span></td>
+        <td><b>${esc(u.name)}</b>${u.code === me.code ? ' <span class="small">(you)</span>' : ''}<br><span class="small">${u.phone ? `+91 ${esc(u.phone)}` : 'No number'}${u.company ? ` · ${esc(u.company)}` : ''}</span></td>
         <td><span class="role ${u.role}">${ROLES[u.role]}</span>${u.active ? '' : ' <span class="tag">Inactive</span>'}</td>
         <td class="hide-m">${u.clients}</td><td class="hide-m">${u.open_followups}</td><td class="hide-m small">${ago(u.last_activity || u.last_login)}</td>
         <td><button class="btn ghost xs" data-edit="${u.code}">Edit</button></td></tr>`).join('');

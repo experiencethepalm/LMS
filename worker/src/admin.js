@@ -365,10 +365,11 @@ async function saveUser(request, env, me) {
   const name = clean(b.name, 80);
   const phone = normalisePhone(b.phone);
   if (!name) return bad('Name is required.');
-  if (!phone) return bad('Enter a valid 10-digit mobile number.');
+  // Channel partners may have no number (e.g. a source like Google Business); everyone else signs in with theirs
+  if (!phone && (role !== 'channel_partner' || String(b.phone || '').trim())) return bad('Enter a valid 10-digit mobile number.');
   const company = clean(b.company, 120) || null;
   const active = b.active === false ? 0 : 1;
-  const clash = await env.DB.prepare('SELECT code FROM salespeople WHERE phone=? AND code != ?').bind(phone, b.code || '').first();
+  const clash = phone ? await env.DB.prepare('SELECT code FROM salespeople WHERE phone=? AND code != ?').bind(phone, b.code || '').first() : null;
   if (clash) return bad('Another user already has this mobile number.');
 
   if (b.code) {
