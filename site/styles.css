@@ -433,3 +433,4 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .group { border-top: 1px solid var(--line); padding: 36px 0 30px; margin-top: 24px; }
 .group h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(26px, 5vw, 32px); margin: 4px 0 10px; color: #6E3E2E; }
 .group p:not(.eyebrow) { font-size: 15.5px; line-height: 1.65; margin: 0 0 16px; max-width: 640px; }
+.intro-title em { font-style: italic; font-weight: 400; color: #9A7E70; font-size: .62em; display: block; margin-bottom: 2px; }
