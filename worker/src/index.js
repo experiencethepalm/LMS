@@ -5,7 +5,7 @@ import { sendOtp } from './otp.js';
 import { scoreLead } from './score.js';
 import { askAssistant } from './chat.js';
 import { adminRoute, assignLead } from './admin.js';
-import { crmRoute, inviteOpen } from './crm.js';
+import { crmRoute, inviteOpen, pushLead } from './crm.js';
 
 const BUYER_TTL = 180 * 86400;   // verified buyers stay unlocked for 6 months on that device
 const OTP_TTL = 600;             // code valid 10 minutes
@@ -49,7 +49,7 @@ async function route(request, env, ctx) {
 
   if (p === '/api/health') return json({ ok: true });
   if (p === '/api/otp/start' && m === 'POST') return otpStart(request, env);
-  if (p === '/api/otp/verify' && m === 'POST') return otpVerify(request, env);
+  if (p === '/api/otp/verify' && m === 'POST') return otpVerify(request, env, ctx);
   if (p === '/api/me' && m === 'GET') return me(request, env);
   if (p === '/api/open' && m === 'POST') return linkOpen(request, env);
   if (p === '/api/track' && m === 'POST') return track(request, env);
@@ -95,7 +95,7 @@ async function otpStart(request, env) {
   return json({ ok: true, channel: sent.channel, ...(sent.devCode ? { devCode: sent.devCode } : {}) });
 }
 
-async function otpVerify(request, env) {
+async function otpVerify(request, env, ctx) {
   const body = await readJson(request);
   const phone = normalisePhone(body.phone);
   const code = String(body.code || '').replace(/\D/g, '');
@@ -133,6 +133,8 @@ async function otpVerify(request, env) {
   await assignLead(env, leadId);
   await logEvents(env, leadId, [{ type: 'session_start', target: via.leadId ? `lead:${via.leadId}` : ref || '' }]);
   const mine = await env.DB.prepare('SELECT share_id FROM leads WHERE id=?').bind(leadId).first();
+  // New verified lead → send it to the CRM in the background (never slows down or blocks the visitor)
+  if (isNew && ctx?.waitUntil) ctx.waitUntil(pushLead(env, leadId).catch(() => {}));
 
   const token = await signToken({ sub: leadId, role: 'buyer' }, env.TOKEN_SECRET, BUYER_TTL);
   return json({ ok: true, token, name: info.name, shareId: mine.share_id, isNew, leadId, content });

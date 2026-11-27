@@ -129,3 +129,75 @@ export async function revokeKey(env, id) {
   await env.DB.prepare('UPDATE api_keys SET active=0 WHERE id=?').bind(id).run();
   return json({ ok: true });
 }
+
+
+// ---------- Outbound: send verified website leads into the Reecosys CRM ----------
+const PUSH_URL = 'https://www.reecosys.com/api/Services/LeadNew';
+const PUSH_KEYS = ['push_api_key', 'push_project', 'push_sub_source', 'push_enabled'];
+
+async function getPush(env) {
+  const rows = (await env.DB.prepare(`SELECT key, value FROM settings WHERE key IN (${PUSH_KEYS.map(() => '?').join(',')})`).bind(...PUSH_KEYS).all()).results;
+  const m = Object.fromEntries(rows.map((r) => [r.key, r.value]));
+  return { key: m.push_api_key || '', project: m.push_project || '', subSource: m.push_sub_source || 'Unity Website', enabled: m.push_enabled === '1' };
+}
+
+export async function pushSettings(env) {
+  const s = await getPush(env);
+  const stats = (await env.DB.prepare("SELECT crm_push_status st, COUNT(*) n FROM leads WHERE crm_push_status IS NOT NULL GROUP BY crm_push_status").all()).results;
+  return json({ ok: true, push: { keySet: !!s.key, keyHint: s.key ? s.key.slice(-4) : '', project: s.project, subSource: s.subSource, enabled: s.enabled, stats: Object.fromEntries(stats.map((r) => [r.st, r.n])) } });
+}
+
+export async function savePushSettings(request, env, me) {
+  const b = await readJson(request);
+  const t = now();
+  const put = (k, v) => env.DB.prepare('INSERT INTO settings (key, value, updated_at, updated_by) VALUES (?,?,?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at, updated_by=excluded.updated_by').bind(k, v, t, me.code).run();
+  if (typeof b.apiKey === 'string' && b.apiKey.trim()) await put('push_api_key', clean(b.apiKey, 200));
+  if (typeof b.project === 'string') await put('push_project', clean(b.project, 120));
+  if (typeof b.subSource === 'string') await put('push_sub_source', clean(b.subSource, 80) || 'Unity Website');
+  if (typeof b.enabled === 'boolean') await put('push_enabled', b.enabled ? '1' : '0');
+  return pushSettings(env);
+}
+
+// Sends one lead. Skips leads that came from the CRM, team/test entries and leads already sent (unless force).
+export async function pushLead(env, leadId, force = false) {
+  const s = await getPush(env);
+  if (!s.key || !s.project) return { ok: false, skipped: 'Connection not set up yet' };
+  if (!s.enabled && !force) return { ok: false, skipped: 'Sending is switched off' };
+  const l = await env.DB.prepare(`SELECT l.*, sp.name AS src_name, sp.role AS src_role, sp.company AS src_company, rb.name AS ref_name,
+      (COALESCE(l.internal,0)=1 OR (COALESCE(l.internal,0)=0 AND l.phone IN (SELECT phone FROM salespeople WHERE COALESCE(phone,'')!=''))) AS is_internal
+    FROM leads l LEFT JOIN salespeople sp ON sp.code = l.first_ref LEFT JOIN leads rb ON rb.id = l.referred_by WHERE l.id=?`).bind(leadId).first();
+  if (!l) return { ok: false, skipped: 'Client not found' };
+  if (l.crm_id) return { ok: false, skipped: 'This lead came from the CRM' };
+  if (l.is_internal) return { ok: false, skipped: 'Team / test entry' };
+  if (!l.verified_at) return { ok: false, skipped: 'Not verified yet' };
+  if (l.crm_push_status === 'sent' && !force) return { ok: true, skipped: 'Already sent' };
+
+  const [srcName, srcCampaign] = String(l.source || '').split('/');
+  const via = l.src_role === 'channel_partner' ? `Channel partner: ${l.src_name}${l.src_company ? ` (${l.src_company})` : ''}`
+    : l.ref_name ? `Shared by client: ${l.ref_name}`
+    : l.gclid ? 'Google Ads'
+    : l.src_name ? `Team link: ${l.src_name}`
+    : l.source ? `Source: ${l.source}` : 'Direct visit';
+  const body = new URLSearchParams({
+    full_name: l.name,
+    email_address: l.email || '',
+    contact_no: l.phone,
+    country_code: '91',
+    project_name: s.project,
+    sub_source: s.subSource,
+    remarks: [`Verified on WhatsApp at unity.thepalm.in`, via, l.profession ? `Profession: ${l.profession}` : ''].filter(Boolean).join(' · '),
+    utm_source: l.gclid ? 'Google Ads' : l.src_role === 'channel_partner' ? l.src_name : srcName || 'unity.thepalm.in',
+    utm_campaign: srcCampaign || '',
+    utm_gclid: l.gclid || '',
+  });
+  let status = 'failed', msg = '';
+  try {
+    const r = await fetch(PUSH_URL, { method: 'POST', headers: { Authorization: `api_key ${s.key}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body, signal: AbortSignal.timeout(12000) });
+    const text = (await r.text()).trim();
+    let d = {}; try { d = JSON.parse(text); } catch { d = { message: text.slice(0, 200) }; }
+    msg = clean(d.message || `HTTP ${r.status}`, 200);
+    if (Number(d.success) === 1) status = 'sent';
+  } catch (e) { msg = clean(`Could not reach the CRM: ${e.message || e}`, 200); }
+  await env.DB.prepare('UPDATE leads SET crm_push_status=?, crm_push_at=?, crm_push_msg=? WHERE id=?').bind(status, now(), msg, leadId).run();
+  return { ok: status === 'sent', status, message: msg };
+}

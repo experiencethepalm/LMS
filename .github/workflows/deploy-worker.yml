@@ -52,7 +52,7 @@ jobs:
           npx wrangler d1 execute palm-unity-leads --remote --command "UPDATE leads SET assigned_to=first_ref WHERE assigned_to IS NULL AND first_ref IN (SELECT code FROM salespeople WHERE COALESCE(role,'sales') IN ('sales','super_admin'))"
           npx wrangler d1 execute palm-unity-leads --remote --command "CREATE INDEX IF NOT EXISTS idx_leads_assigned ON leads(assigned_to)"
           npx wrangler d1 execute palm-unity-leads --remote --command "ALTER TABLE leads ADD COLUMN internal INTEGER DEFAULT 0" || echo "leads.internal exists"
-          for col in "email TEXT" "crm_id TEXT" "invite_id TEXT" "verified_at INTEGER" "gclid TEXT"; do
+          for col in "email TEXT" "crm_id TEXT" "invite_id TEXT" "verified_at INTEGER" "gclid TEXT" "crm_push_status TEXT" "crm_push_at INTEGER" "crm_push_msg TEXT"; do
             npx wrangler d1 execute palm-unity-leads --remote --command "ALTER TABLE leads ADD COLUMN $col" || echo "leads.$col exists"
           done
           npx wrangler d1 execute palm-unity-leads --remote --command "UPDATE leads SET verified_at=created_at WHERE verified_at IS NULL AND crm_id IS NULL"

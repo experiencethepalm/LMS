@@ -287,6 +287,7 @@
         <span>Came via</span><b>${src}${d.source && d.source.role === 'channel_partner' ? ` <a class="lnk" data-user="${esc(d.source.code)}">View</a>` : ''}</b>
         <span>Assigned to</span><b><select id="assignSel" style="padding:6px 10px;width:auto"><option value="">Unassigned</option>${staff().map((u) => `<option value="${u.code}" ${d.assigned && d.assigned.code === u.code ? 'selected' : ''}>${esc(u.name)}</option>`).join('')}</select></b>
         ${l.crm_id ? `<span>CRM lead ID</span><b>${esc(l.crm_id)}</b>` : ''}
+        ${!l.crm_id && !l.is_internal && l.verified_at && (l.crm_push_status || isSuper()) ? `<span>Reecosys CRM</span><b>${l.crm_push_status === 'sent' ? `<span class="tag tag-ok">Sent</span> <span class="small">${ago(l.crm_push_at)}</span>` : l.crm_push_status === 'failed' ? `<span class="tag tag-red">Not sent</span> <span class="small">${esc(l.crm_push_msg || '')}</span>` : '<span class="small">Not sent yet</span>'}${isSuper() && l.crm_push_status !== 'sent' ? ` <button class="btn ghost xs" id="crmPush">Send now</button>` : ''}</b>` : ''}
         ${l.invite_id ? `<span>Personal link</span><b><span class="linkbox"><input readonly value="${esc(siteUrl + '?i=' + l.invite_id)}"><button class="btn ghost xs" data-copy="${esc(siteUrl + '?i=' + l.invite_id)}">Copy link</button></span></b>` : ''}
         ${l.verified_at ? '' : '<span>WhatsApp</span><b><span class="tag tag-red">Not verified yet</span></b>'}
         ${l.email ? `<span>Email</span><b>${esc(l.email)}</b>` : ''}
@@ -350,6 +351,11 @@
       };
     };
     if ($('#toClient')) $('#toClient').onclick = () => setInternal(false);
+    if ($('#crmPush')) $('#crmPush').onclick = async (e) => {
+      e.target.disabled = true; e.target.textContent = 'Sending…';
+      try { const r = await api(`/api/admin/leads/${id}/crm-push`, { method: 'POST' }); toast(r.ok ? 'Sent to CRM' : (r.skipped || r.message || 'Not sent')); } catch (err) { toast(err.message); }
+      openLead(id);
+    };
     $('#assignSel').onchange = async (e) => { await api(`/api/admin/leads/${id}`, { method: 'PATCH', body: JSON.stringify({ assigned_to: e.target.value }) }); toast('Assignment saved'); };
     $('#leadForm').onsubmit = async (e) => {
       e.preventDefault();
@@ -527,11 +533,23 @@
 
   // ---------- CRM integration (super admin) ----------
   async function viewIntegrations() {
-    const d = await api('/api/admin/integrations');
+    const [d, pu] = await Promise.all([api('/api/admin/integrations'), api('/api/admin/integrations/push')]);
+    const push = pu.push;
     const base = C.API_BASE;
     const sample = JSON.stringify({ crm_id: 'CRM-10234', name: 'Rahul Shah', phone: '9876543210', email: 'rahul@example.com', source: 'Facebook ads', assigned_to: '9900000002', notes: 'Wants 4 BHK' }, null, 2);
     const reply = JSON.stringify({ ok: true, result: 'created', crm_id: 'CRM-10234', lead_id: 128, link: siteUrl + '?i=k7m2qx' }, null, 2);
-    $('#view').innerHTML = `<div class="box"><h4>CRM integration</h4>
+    const pst = push.stats || {};
+    $('#view').innerHTML = `<form class="box form" id="pushF"><h4>Send website leads to Reecosys CRM</h4>
+        <p class="small" style="margin:0 0 10px">Every visitor who verifies on WhatsApp for the first time is sent to the CRM automatically, with their source, campaign and Google Ads click ID. Leads that came from the CRM and team/test entries are never sent.
+        ${push.keySet ? `<br><b>Status:</b> ${push.enabled && push.project ? '<span class="tag tag-ok">On</span>' : '<span class="tag">Off</span>'} · key ••••${esc(push.keyHint)} · ${pst.sent || 0} sent${pst.failed ? ` · <span class="od">${pst.failed} failed</span>` : ''}` : ''}</p>
+        <div class="grid2"><label>API key<input name="apiKey" type="password" autocomplete="off" placeholder="${push.keySet ? 'Saved — leave blank to keep' : 'Paste the key from Reecosys'}"></label>
+        <label>Project name <i>(exactly as in the CRM)</i><input name="project" value="${esc(push.project)}" placeholder="e.g. The Palm Unity"></label></div>
+        <div class="grid2"><label>Sub-source<input name="subSource" value="${esc(push.subSource)}"></label>
+        <label style="display:flex;gap:8px;align-items:center;font-weight:500;margin-top:22px"><input type="checkbox" name="enabled" style="width:auto" ${push.enabled ? 'checked' : ''}> Send new verified leads automatically</label></div>
+        <p class="error"></p>
+        <div class="btnrow"><button class="btn primary sm">Save</button></div>
+      </form>
+      <div class="box"><h4>CRM integration</h4>
         <p class="small" style="margin:0 0 10px">${d.linked} client${d.linked === 1 ? '' : 's'} linked to CRM lead IDs.</p>
         <div id="keyNew"></div>
         <div class="btnrow" style="margin-bottom:8px"><input id="keyName" placeholder="Key name, e.g. Our CRM" style="max-width:240px"><button class="btn primary sm" id="mkKey">Create API key</button></div>
@@ -553,6 +571,13 @@ ${esc(sample)}</pre>
 Authorization: Bearer plms_…</pre>
         <p>Returns the same <code>crm_id</code>, <code>lead_id</code> and <code>link</code>, or 404 <code>not_registered</code> if that lead hasn't been sent yet. No visit or engagement data is shared with the CRM.</p>
       </div>`;
+    $('#pushF').onsubmit = async (e) => {
+      e.preventDefault(); const f = e.target;
+      try {
+        await api('/api/admin/integrations/push', { method: 'POST', body: JSON.stringify({ apiKey: f.elements.apiKey.value, project: f.elements.project.value, subSource: f.elements.subSource.value, enabled: f.elements.enabled.checked }) });
+        toast('Saved'); viewIntegrations();
+      } catch (err) { $('.error', f).textContent = err.message; }
+    };
     $('#mkKey').onclick = async () => {
       const r = await api('/api/admin/integrations/keys', { method: 'POST', body: JSON.stringify({ name: $('#keyName').value }) });
       await viewIntegrations();

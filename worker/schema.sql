@@ -140,3 +140,11 @@ CREATE TABLE IF NOT EXISTS api_keys (
   last_used   INTEGER,
   active      INTEGER NOT NULL DEFAULT 1
 );
+
+-- Key/value settings managed from the dashboard (e.g. outbound CRM connection). Secrets live here, never in the repo.
+CREATE TABLE IF NOT EXISTS settings (
+  key         TEXT PRIMARY KEY,
+  value       TEXT,
+  updated_at  INTEGER,
+  updated_by  TEXT
+);
