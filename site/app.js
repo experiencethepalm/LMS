@@ -271,7 +271,7 @@
         <div class="fp-side">
           <small class="fp-cfg">${esc(f.config)}</small><h3>${esc(f.name)}</h3>
           <div class="fp-facts"><div><span>Super built-up</span><b>${f.sbAreaSqYd} sq.yds</b><em>≈ ${sqft} sq.ft</em></div>${f.parking ? `<div><span>Parking</span><b>${f.parking} cars</b><em>allocated</em></div>` : ''}</div>
-          ${f.rooms ? `<table class="fp-rooms"><tbody>${f.rooms.map((r) => `<tr class="${r.n.includes('A') ? 'sub' : ''}"><td>${esc(r.n)}</td><td>${esc(r.room)}</td><td>${esc(r.size)}</td></tr>`).join('')}</tbody></table><p class="fp-note">Room sizes are internal dimensions.</p>` : ''}
+          ${f.rooms ? `<table class="fp-rooms"><tbody>${f.rooms.map((r) => `<tr class="${r.n.includes('A') ? 'sub' : ''}"><td><i class="rn">${esc(r.n)}</i></td><td>${esc(r.room)}</td><td>${esc(r.size)}</td></tr>`).join('')}</tbody></table><p class="fp-note">Room sizes are internal dimensions.</p>` : ''}
           ${f.planNote ? `<p class="fp-note strong">${esc(f.planNote)}</p>` : ''}
         </div>`;
       $$('#fp [data-zoom]').forEach((b) => (b.onclick = () => {

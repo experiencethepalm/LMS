@@ -407,3 +407,29 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 .about { text-align: center; max-width: 620px; margin: 48px auto 26px; padding: 8px 0 4px; }
 .about .eyebrow { color: #B07A5A; font-family: var(--sans); font-size: 11px; margin-bottom: 12px; }
 .about p { font-family: var(--serif); font-size: clamp(19px, 3.6vw, 23px); line-height: 1.5; color: #6E3E2E; margin: 0; }
+
+/* ---- compact unit card (rooms map to the numbered badges on the plan) ---- */
+.fp-side { padding: 12px 14px; }
+.fp-side h3 { font-size: 24px; margin: 0 0 6px; }
+.fp-facts { gap: 18px; margin-bottom: 4px; }
+.fp-facts b { font-size: 16px; }
+.fp-facts span, .fp-facts em { font-size: 11.5px; }
+.fp-rooms { font-size: 13px; margin-top: 4px; }
+.fp-rooms td { padding: 3px 0; line-height: 1.3; }
+.fp-rooms td:first-child { width: 3.4em; }
+.fp-rooms tr.sub td:nth-child(2) { padding-left: 0; }
+.rn { display: inline-block; min-width: 2.5em; text-align: center; font: 600 11px/1.6 var(--sans); font-style: normal; color: #FAF4EC; background: #4A2E24; border-radius: 99px; padding: 0 6px; }
+.fp-rooms tr.sub .rn { background: #7A5A4C; }
+.fp-note { margin-top: 6px; }
+@media (max-width: 700px) {
+  .fp-track { margin: 0 -18px; }                 /* plan uses the full screen width on phones */
+  .fp-nav.prev { left: -10px; } .fp-nav.next { right: -10px; }
+}
+@media (min-width: 720px) {
+  .fp { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: start; }   /* plan and room list side by side */
+  .fp-side { position: sticky; top: 110px; }
+}
+/* ---- about the developer ---- */
+.group { border-top: 1px solid var(--line); padding: 36px 0 30px; margin-top: 24px; }
+.group h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(26px, 5vw, 32px); margin: 4px 0 10px; color: #6E3E2E; }
+.group p:not(.eyebrow) { font-size: 15.5px; line-height: 1.65; margin: 0 0 16px; max-width: 640px; }
