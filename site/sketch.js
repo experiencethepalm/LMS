@@ -14,6 +14,7 @@ root.style.height=(N*95+70)+'vh';
 const caps=root.querySelector('.sk-caps'), dots=root.querySelector('.sk-dots');
 // captions live in the HTML (crawlable); only the dots are added here
 SCENES.forEach(()=>dots.insertAdjacentHTML('beforeend','<b></b>'));
+const hint=root.querySelector('.sk-hint');
 const capEls=[...caps.children], dotEls=[...dots.children];
 const cv=root.querySelector('canvas');
 const gl=cv.getContext('webgl',{antialias:false,premultipliedAlpha:false});
@@ -105,6 +106,7 @@ function draw(){
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
   const cur=(B!=null&&tB[0]>.6)?B:A, on=B==null?tA[0]>.6:(tA[0]>.6||tB[0]>.6), end=u>=N+0.2;
   capEls.forEach((c,i)=>c.classList.toggle('on',end?i===N:(on&&i===cur)));
+  hint&&hint.classList.toggle('off',end);
   dotEls.forEach((d,i)=>d.classList.toggle('on',i===cur));
   if(on&&!seen.has(cur)){seen.add(cur);window.dispatchEvent(new CustomEvent('sketch-scene',{detail:SCENES[cur].id}));}
 }

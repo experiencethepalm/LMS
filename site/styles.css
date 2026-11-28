@@ -448,3 +448,14 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 
 /* accessible contrast for small gold labels */
 .eyebrow { color: #7E6234; }
+
+/* scroll cue inside the sketch story (fades out on the closing line) */
+.sk-hint { position: absolute; left: 50%; bottom: calc(78px + env(safe-area-inset-bottom)); transform: translateX(-50%); font: 400 12px var(--sans); color: #7A5F51; text-align: center; transition: opacity .4s ease; pointer-events: none; }
+.sk-hint i { display: block; width: 1px; height: 30px; margin: 8px auto 0; background: linear-gradient(#7A5F51, transparent); animation: drip 2s infinite; }
+.sk-hint.off { opacity: 0; }
+.sk-fallback .sk-hint { display: none; }
+@media (max-height: 640px) { .sk-hint { display: none; } }
+/* keep room at the bottom of the story for the scroll cue and the action bar */
+.sk-stage { padding-bottom: 140px; }
+.sk-stage canvas { width: min(100vw, 1100px, calc((100svh - 360px) * 16 / 9)); }
+@media (max-width: 700px) { .sk-stage { padding-bottom: 120px; } .sk-stage canvas { width: 100vw; } }
