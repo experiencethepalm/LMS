@@ -214,6 +214,7 @@
 
   // ---------- Clients ----------
   let clientScope = 'all';
+  let statFilter = 'all';
   async function viewClients() {
     $('#view').innerHTML = `<div class="toolbar"><div class="left">
         <input id="q" placeholder="Search name or number" />
@@ -241,12 +242,20 @@
   function renderLeads() {
     const leads = window.__leads || [];
     const q = $('#q').value.toLowerCase().trim(), pr = $('#fPri').value, st = $('#fStatus').value;
-    const rows = leads.filter((l) => (!q || l.name.toLowerCase().includes(q) || l.phone.includes(q)) && (!pr || l.priority === pr) && (!st || l.status === st));
     const dayAgo = Date.now() / 1000 - 86400;
-    $('#stats').innerHTML = [
-      ['Clients', leads.length], ['New today', leads.filter((l) => l.created_at > dayAgo).length], ['Hot (P0–P1)', leads.filter((l) => ['P0', 'P1'].includes(l.priority)).length],
-      ['Follow-up overdue', leads.filter((l) => l.overdue).length], ['Via channel partners', leads.filter((l) => l.source_user_role === 'channel_partner').length], ['Via family/friends', leads.filter((l) => l.referred_by).length],
-    ].map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join('');
+    // Stat tiles double as quick filters (tap again, or tap "Clients", to clear)
+    const TILES = [
+      ['all', 'Clients', () => true],
+      ['new', 'New today', (l) => l.created_at > dayAgo],
+      ['hot', 'Hot (P0–P1)', (l) => ['P0', 'P1'].includes(l.priority)],
+      ['overdue', 'Follow-up overdue', (l) => l.overdue],
+      ['cp', 'Via channel partners', (l) => l.source_user_role === 'channel_partner'],
+      ['ref', 'Via family/friends', (l) => !!l.referred_by],
+    ];
+    const tile = TILES.find((t) => t[0] === statFilter) || TILES[0];
+    const rows = leads.filter((l) => (!q || l.name.toLowerCase().includes(q) || l.phone.includes(q)) && (!pr || l.priority === pr) && (!st || l.status === st) && tile[2](l));
+    $('#stats').innerHTML = TILES.map(([key, label, fn]) => `<button type="button" class="stat stat-btn${key === tile[0] ? ' on' : ''}" data-f="${key}" aria-pressed="${key === tile[0]}"><span>${label}</span><b>${leads.filter(fn).length}</b></button>`).join('');
+    $$('#stats .stat-btn').forEach((b) => (b.onclick = () => { statFilter = b.dataset.f === statFilter ? 'all' : b.dataset.f; renderLeads(); }));
     $('#leadRows').innerHTML = rows.map((l) => `<tr class="row" data-id="${l.id}">
         <td><span class="pri ${l.priority}">${l.priority}</span><span class="bar"><i style="width:${l.score}%"></i></span></td>
         <td><b>${esc(l.name)}</b><br><span class="small">+91 ${esc(l.phone)}${l.assigned_name ? ` · ${esc(l.assigned_name)}` : ' · Unassigned'}</span>
@@ -255,7 +264,7 @@
         <td class="hide-m">${l.openRequests.map((r) => `<span class="tag">${r === 'site_visit' ? 'Wants visit' : 'Callback'}</span>`).join('')}${l.sessions > 1 ? `<span class="tag">${l.sessions} visits</span>` : ''}${l.questions ? `<span class="tag">${l.questions} questions</span>` : ''}${l.referrals ? `<span class="tag tag-share">Brought ${l.referrals}</span>` : l.link_opens ? `<span class="tag tag-share">Shared · ${l.link_opens} opened</span>` : ''}</td>
         <td class="hide-m">${STATUSES[l.status] || l.status}</td>
         <td class="hide-m small">${l.next_followup ? `<span class="${l.overdue ? 'tag tag-red' : ''}">${when(l.next_followup)}</span>` : '<span class="tag tag-red" style="background:#F1F1EF;color:#888">None planned</span>'}</td>
-      </tr>`).join('') || `<tr><td colspan="6" class="empty">No clients here yet.</td></tr>`;
+      </tr>`).join('') || `<tr><td colspan="6" class="empty">${tile[0] === 'all' ? 'No clients here yet.' : `No clients under “${tile[1]}”.`}</td></tr>`;
     $$('#leadRows tr.row').forEach((tr) => (tr.onclick = () => openLead(tr.dataset.id)));
   }
 

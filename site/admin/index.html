@@ -30,6 +30,10 @@
     .stat { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
     .stat span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
     .stat b { display: block; font-size: 24px; font-family: var(--serif); }
+    .stat-btn { font: inherit; color: inherit; text-align: left; cursor: pointer; transition: border-color .15s, box-shadow .15s, background .15s; }
+    .stat-btn:hover { border-color: #b9b3a8; }
+    .stat-btn.on { background: var(--green, #2F4A3A); border-color: var(--green, #2F4A3A); color: #fff; }
+    .stat-btn.on span { color: rgba(255,255,255,.8); }
     table.list { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
     .list th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 10px 12px; background: #FBF9F5; border-bottom: 1px solid var(--line); }
     .list td { padding: 11px 12px; border-bottom: 1px solid var(--line); font-size: 14px; vertical-align: middle; }
@@ -197,6 +201,6 @@ a.btn{text-decoration:none}
   <div class="scrim hidden" id="scrim"></div>
 
   <script src="../config.js?v=28"></script>
-  <script src="admin.js?v=30"></script>
+  <script src="admin.js?v=31"></script>
 </body>
 </html>
