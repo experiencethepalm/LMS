@@ -395,8 +395,6 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); outl
 @media (max-width: 480px) { .intro-eyebrow { font-size: 11px; letter-spacing: .2em; } }
 .sk-cap em { font-style: normal; color: #93502F; border-bottom: 1px solid rgba(201,116,78,.35); }
 @media (max-width: 700px) { .sk-caps { height: 140px; } }
-/* when the section menu is showing, the sketch sits below it */
-.secnav:not(.hidden) ~ .sketch-story .sk-stage { top: 96px; height: calc(100vh - 96px); height: calc(100svh - 96px); }
 
 .intro-h1 { margin: 0; font: inherit; }
 .intro-h1 span { display: block; }
